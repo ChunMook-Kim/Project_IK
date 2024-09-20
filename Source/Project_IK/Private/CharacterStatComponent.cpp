@@ -8,7 +8,10 @@ Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
-#include "CharacterStatComponent.h"
+#include "Project_IK/Public/CharacterStatComponent.h"
+
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Project_IK/Public/IKGameInstance.h"
 
 // Sets default values
 UCharacterStatComponent::UCharacterStatComponent()
@@ -17,6 +20,25 @@ UCharacterStatComponent::UCharacterStatComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	bWantsInitializeComponent = true;
+}
+
+void UCharacterStatComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	auto ik_game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	FCharacterData* character_data = ik_game_instance->GetCharacterData(0);
+
+	ability_power_ = character_data->ability_power_;
+	attack_ = character_data->attack_;
+	attack_speed_ = character_data->attack_speed_;
+	hit_point_ = character_data->hit_point_;
+	magazine_ = character_data->magazine_;
+
+	fire_range_ = character_data->fire_range_;
+	move_speed_ = character_data->move_speed_;
+	sight_range_ = character_data->sight_range_;
 }
 
 // Called when the game starts or when spawned

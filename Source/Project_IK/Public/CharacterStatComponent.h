@@ -14,7 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/ActorComponent.h"
 #include "CharacterStatComponent.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PROJECT_IK_API UCharacterStatComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -23,6 +23,7 @@ public:
 	// Sets default values for this actor's properties
 	UCharacterStatComponent();
 
+	virtual void InitializeComponent() override;
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunctionoverride);
 
