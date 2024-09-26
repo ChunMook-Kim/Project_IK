@@ -16,14 +16,4 @@ See LICENSE file in the project root for full license information.
 AIKGameModeBase::AIKGameModeBase()
 {
 
-	static ConstructorHelpers::FClassFinder<AHUD> hud_class(TEXT("/Game/MyIKHUD"));
-	if (hud_class.Succeeded())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Successfully find a HUD class!"));
-		HUDClass = hud_class.Class;
-	}
-	else
-	{
-		HUDClass = AIKHUD::StaticClass();
-	}
 }
