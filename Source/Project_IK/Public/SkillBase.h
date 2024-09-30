@@ -25,11 +25,15 @@ class PROJECT_IK_API USkillBase : public UObject
 	
 public:
 	USkillBase();
+	USkillBase(float cost);
+
+	UFUNCTION(BlueprintCallable)
+	bool SpendCost();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ActivateSkill();
+	bool ActivateSkill();
 
-	virtual void ActivateSkill_Implementation() PURE_VIRTUAL(USkillBase::ActivateSkill_Implementation, ;);
+	virtual bool ActivateSkill_Implementation() PURE_VIRTUAL(USkillBase::ActivateSkill_Implementation, return true;);
 
 protected:
 	UPROPERTY(VisibleAnywhere)
