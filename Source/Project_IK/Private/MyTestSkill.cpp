@@ -12,13 +12,22 @@ See LICENSE file in the project root for full license information.
 
 #include "MyTestSkill.h"
 
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
+
 UMyTestSkill::UMyTestSkill()
-	: Super::USkillBase()
+	: Super::USkillBase(10.f)
 {
-	cost_ = 0;
 }
 
-void UMyTestSkill::ActivateSkill_Implementation()
+bool UMyTestSkill::ActivateSkill_Implementation()
 {
+	const bool is_energy_enough = SpendCost();
+	if (is_energy_enough == false)
+	{
+		return false;	
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("Skill executed in derived class!"));
+	return true;
 }

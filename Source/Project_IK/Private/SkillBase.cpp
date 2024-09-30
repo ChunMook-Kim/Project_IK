@@ -12,7 +12,28 @@ See LICENSE file in the project root for full license information.
 
 #include "SkillBase.h"
 
+#include "EnergySystemComponent.h"
+#include "IKGameState.h"
+
+
+
 USkillBase::USkillBase()
-	: cost_(0)
+	: Super::UObject(), cost_(0.f)
 {
+}
+
+USkillBase::USkillBase(float cost)
+	: Super::UObject(), cost_(cost)
+{
+}
+
+bool USkillBase::SpendCost()
+{
+	AIKGameState* game_state = GetWorld()->GetGameState<AIKGameState>();
+	if (game_state && game_state->energy_system_)
+	{
+		return game_state->energy_system_->UseEnergy(cost_);
+	}
+
+	return false;
 }
