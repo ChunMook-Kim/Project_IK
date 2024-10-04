@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 
 #include "GameFramework/PlayerController.h"
 #include "Components/DecalComponent.h"
+#include "IKPlayerController.h"
 #include "Engine/World.h"
 
 // Sets default values for this component's properties
@@ -31,8 +32,8 @@ UTargetingComponent::UTargetingComponent()
 void UTargetingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	player_controller_ = Cast<APlayerController>(GetOwner()->GetInstigatorController());
+	
+	player_controller_ = Cast<AIKPlayerController>(GetOwner());
 	
 	AActor* owner = GetOwner();
 	if (owner)
@@ -74,6 +75,9 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		switch (current_mode_)
 		{
 		case ETargetingMode::None:
+			UE_LOG(LogTemp, Display, TEXT("Broadcast is done"));
+			OnTargetDataSelected.Broadcast(current_tarrget_data_);
+			StopTargeting();
 			break;
 		case ETargetingMode::Actor:
 			HandleActorTargeting();
@@ -91,6 +95,7 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UTargetingComponent::StartTargeting(ETargetingMode mode, float Range, float Radius)
 {
+	UE_LOG(LogTemp, Display, TEXT("StartTargeting is called"));
 	is_targeting_ = true;
 	current_mode_ = mode;
 	current_tarrget_data_.range_ = Range;

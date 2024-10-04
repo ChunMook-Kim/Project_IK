@@ -28,7 +28,7 @@ protected:
 	TSubclassOf<class UUserWidget> HUD_widget_class_;
 	
 	// Reference to the widget instance
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "UI")
 	UUserWidget* HUD_widget_;
 
 	virtual void BeginPlay() override;
