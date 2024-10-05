@@ -22,7 +22,9 @@ void AIKPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	bShowMouseCursor = true;
+	bEnableClickEvents = true;
+	bEnableMouseOverEvents = true;
 }
 
 void AIKPlayerController::HandleSkillButtonPressed()

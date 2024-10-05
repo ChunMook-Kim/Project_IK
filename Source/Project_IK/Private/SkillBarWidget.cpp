@@ -12,6 +12,9 @@ See LICENSE file in the project root for full license information.
 
 #include "SkillBarWidget.h"
 
+#include "Kismet/GameplayStatics.h"
+
+#include "SkillContainer.h"
 #include "TargetingComponent.h"
 #include "IKPlayerController.h"
 
@@ -45,4 +48,26 @@ void USkillBarWidget::OnButtonClicked()
 void USkillBarWidget::TMP(const FTargetData& TargetData)
 {
 	UE_LOG(LogTemp, Display, TEXT("TMP is called"));
+
+	TArray<AActor*> all_actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), all_actors);
+
+	TArray<USkillContainer*> skill_containers;
+
+	for (AActor* actor : all_actors)
+	{
+		if (actor)
+		{
+			if (auto skill_container= actor->FindComponentByClass<USkillContainer>();
+				skill_container)
+			{
+				skill_containers.Add(skill_container);
+			}
+		}
+	}
+
+	for (USkillContainer* skill_container : skill_containers)
+	{
+		skill_container->InvokeSkills();
+	}
 }
