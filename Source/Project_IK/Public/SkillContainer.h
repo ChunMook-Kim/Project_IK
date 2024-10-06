@@ -14,6 +14,9 @@ See LICENSE file in the project root for full license information.
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "SkillBase.h"
+
+#include "TargetingComponent.h"
+
 #include "SkillContainer.generated.h"
 
 
@@ -29,7 +32,7 @@ public:
 	virtual void InitializeComponent() override;
 
 	UFUNCTION(BlueprintCallable)
-	void InvokeSkills();
+	void InvokeSkills(const FTargetData& TargetData);
 
 protected:
 	// Called when the game starts

@@ -31,7 +31,7 @@ protected:
 	void OnButtonClicked();
 
 	UFUNCTION()
-	void TMP(const FTargetData& TargetData);
+	void InvokeSkills(const FTargetData& TargetData);
 
 private:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))

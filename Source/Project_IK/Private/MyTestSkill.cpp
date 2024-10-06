@@ -20,7 +20,7 @@ UMyTestSkill::UMyTestSkill()
 {
 }
 
-bool UMyTestSkill::ActivateSkill_Implementation()
+bool UMyTestSkill::ActivateSkill_Implementation(const FTargetData& TargetData)
 {
 	const bool is_energy_enough = SpendCost();
 	if (is_energy_enough == false)
@@ -28,6 +28,6 @@ bool UMyTestSkill::ActivateSkill_Implementation()
 		return false;	
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Skill executed in derived class!"));
+	UE_LOG(LogTemp, Warning, TEXT("Skill executed in derived class! %s"), *TargetData.target_location_.ToString());
 	return true;
 }

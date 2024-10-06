@@ -13,6 +13,9 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "SkillBase.h"
+
+#include "TargetingComponent.h"
+
 #include "MyTestSkill.generated.h"
 
 /**
@@ -26,7 +29,7 @@ class PROJECT_IK_API UMyTestSkill : public USkillBase
 public:
 	UMyTestSkill();
 
-	virtual bool ActivateSkill_Implementation() override;
+	virtual bool ActivateSkill_Implementation(const FTargetData& TargetData) override;
 
 private:
 

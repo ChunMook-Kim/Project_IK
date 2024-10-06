@@ -13,6 +13,9 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+
+#include "TargetingComponent.h"
+
 #include "SkillBase.generated.h"
 
 /**
@@ -31,9 +34,9 @@ public:
 	bool SpendCost();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool ActivateSkill();
+	bool ActivateSkill(const FTargetData& TargetData);
 
-	virtual bool ActivateSkill_Implementation() PURE_VIRTUAL(USkillBase::ActivateSkill_Implementation, return true;);
+	virtual bool ActivateSkill_Implementation(const FTargetData& TargetData) PURE_VIRTUAL(USkillBase::ActivateSkill_Implementation, return true;);
 
 protected:
 	UPROPERTY(VisibleAnywhere)

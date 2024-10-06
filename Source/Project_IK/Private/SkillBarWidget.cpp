@@ -32,7 +32,7 @@ void USkillBarWidget::NativeConstruct()
 		targeting_component_ = PC->GetTargetingComponent();
 		if (targeting_component_)
 		{
-			targeting_component_->OnTargetDataSelected.AddDynamic(this, &USkillBarWidget::TMP);
+			targeting_component_->OnTargetDataSelected.AddDynamic(this, &USkillBarWidget::InvokeSkills);
 		}
 	}
 }
@@ -41,11 +41,11 @@ void USkillBarWidget::OnButtonClicked()
 {
 	if (targeting_component_)
 	{
-		targeting_component_->StartTargeting(ETargetingMode::None);
+		targeting_component_->StartTargeting(ETargetingMode::Location);
 	}
 }
 
-void USkillBarWidget::TMP(const FTargetData& TargetData)
+void USkillBarWidget::InvokeSkills(const FTargetData& TargetData)
 {
 	UE_LOG(LogTemp, Display, TEXT("TMP is called"));
 
@@ -68,6 +68,6 @@ void USkillBarWidget::TMP(const FTargetData& TargetData)
 
 	for (USkillContainer* skill_container : skill_containers)
 	{
-		skill_container->InvokeSkills();
+		skill_container->InvokeSkills(TargetData);
 	}
 }

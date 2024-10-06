@@ -31,11 +31,11 @@ void USkillContainer::InitializeComponent()
 	}
 }
 
-void USkillContainer::InvokeSkills()
+void USkillContainer::InvokeSkills(const FTargetData& TargetData)
 {
 	if (skill_)
 	{
-		skill_->ActivateSkill();
+		skill_->ActivateSkill(TargetData);
 	}
 }
 

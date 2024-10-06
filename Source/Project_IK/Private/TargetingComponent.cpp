@@ -75,7 +75,6 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		switch (current_mode_)
 		{
 		case ETargetingMode::None:
-			UE_LOG(LogTemp, Display, TEXT("Broadcast is done"));
 			OnTargetDataSelected.Broadcast(current_tarrget_data_);
 			StopTargeting();
 			break;
@@ -167,6 +166,7 @@ void UTargetingComponent::HandleLocationTargeting()
 	FVector owner_location = GetOwner()->GetActorLocation();
 	if (FVector::DistXY(owner_location, target_location) <= current_tarrget_data_.range_)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("HandleLocationTargeting called"));
 		current_tarrget_data_.target_location_ = target_location;
 		OnTargetDataSelected.Broadcast(current_tarrget_data_);
 		StopTargeting();
