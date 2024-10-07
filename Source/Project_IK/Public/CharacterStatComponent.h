@@ -50,6 +50,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, Category = Stats)
+	int32 character_id_;
+
 private:
 	// Scaling powers
 	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
@@ -70,4 +73,15 @@ private:
 	float move_speed_;
 	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
 	float sight_range_;
+
+
+	float max_ability_power_;
+	float max_attack_;
+	float max_attack_speed_;
+	float max_hit_point_;
+	float max_magazine_;
+
+	float max_fire_range_;
+	float max_move_speed_;
+	float max_sight_range_;
 };
