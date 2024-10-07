@@ -47,8 +47,6 @@ void USkillBarWidget::OnButtonClicked()
 
 void USkillBarWidget::InvokeSkills(const FTargetData& TargetData)
 {
-	UE_LOG(LogTemp, Display, TEXT("TMP is called"));
-
 	TArray<AActor*> all_actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), all_actors);
 

@@ -77,10 +77,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Targeting")
 	void StopTargeting();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
 	UMaterialInterface* targeting_decal_material_;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
 	UStaticMesh* aoe_indicator_mesh_;
 
 private:

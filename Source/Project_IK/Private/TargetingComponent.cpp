@@ -41,12 +41,15 @@ void UTargetingComponent::BeginPlay()
 		targeting_decal_ = NewObject<UDecalComponent>(owner);
 		targeting_decal_->SetDecalMaterial(targeting_decal_material_);
 		targeting_decal_->RegisterComponent();
-		targeting_decal_->SetVisibility(false);
+		targeting_decal_->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		targeting_decal_->DecalSize = FVector(500.f, 500.f, 500.f);
+		targeting_decal_->SetVisibility(true);
 
 		aoe_indicator_ = NewObject<UStaticMeshComponent>(owner);
+		aoe_indicator_->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		aoe_indicator_->SetStaticMesh(aoe_indicator_mesh_);
 		aoe_indicator_->RegisterComponent();
-		aoe_indicator_->SetVisibility(false);
+		aoe_indicator_->SetVisibility(true);
 	}
 }
 
@@ -94,7 +97,6 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UTargetingComponent::StartTargeting(ETargetingMode mode, float Range, float Radius)
 {
-	UE_LOG(LogTemp, Display, TEXT("StartTargeting is called"));
 	is_targeting_ = true;
 	current_mode_ = mode;
 	current_tarrget_data_.range_ = Range;
@@ -111,8 +113,11 @@ void UTargetingComponent::StartTargeting(ETargetingMode mode, float Range, float
 		player_controller_->CurrentMouseCursor = EMouseCursor::GrabHand;
 		if (Radius > 0.f)
 		{
-			aoe_indicator_->SetVisibility(true);
-			aoe_indicator_->SetWorldScale3D(FVector(Radius / 50.f));
+			if (aoe_indicator_)
+			{
+				aoe_indicator_->SetVisibility(true);
+				aoe_indicator_->SetWorldScale3D(FVector(Radius / 50.f));
+			}
 		}
 		else
 		{
@@ -166,7 +171,6 @@ void UTargetingComponent::HandleLocationTargeting()
 	FVector owner_location = GetOwner()->GetActorLocation();
 	if (FVector::DistXY(owner_location, target_location) <= current_tarrget_data_.range_)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HandleLocationTargeting called"));
 		current_tarrget_data_.target_location_ = target_location;
 		OnTargetDataSelected.Broadcast(current_tarrget_data_);
 		StopTargeting();
