@@ -28,9 +28,6 @@ public:
 	virtual void BeginPlay();
 
 	UFUNCTION(BlueprintCallable, Category = "Skill")
-	void HandleSkillButtonPressed();
-
-	UFUNCTION(BlueprintCallable, Category = "Skill")
 	class UTargetingComponent* GetTargetingComponent();
 
 protected:

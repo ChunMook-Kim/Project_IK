@@ -60,6 +60,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	// Called every frame
@@ -73,29 +74,36 @@ public:
 	FOnTargetingCanceled OnTargetingCanceled;
 
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
-	void StartTargeting(ETargetingMode mode, float Range = 1000.f, float Radius = 0.f);
+	void StartTargeting(AActor* invoker, ETargetingMode mode, float Range = 1000.f, float Radius = 0.f);
 	UFUNCTION(BlueprintCallable, Category="Targeting")
 	void StopTargeting();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
-	UMaterialInterface* targeting_decal_material_;
+	UMaterialInterface* range_material_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
-	UStaticMesh* aoe_indicator_mesh_;
+	UMaterialInterface* radius_material_;
 
 private:
+	UPROPERTY() 
+	AActor* targeting_visual_actor_;
 	ETargetingMode current_mode_;
 	bool is_targeting_;
 	APlayerController* player_controller_;
 	FTargetData current_tarrget_data_;
 
-	// Components for visuul feedback
-	UDecalComponent* targeting_decal_;
-	UStaticMeshComponent* aoe_indicator_;
+	// Components for visual feedback
+	UPROPERTY()
+	UDecalComponent* range_decal_;
+	UPROPERTY()
+	UDecalComponent* radius_decal_;
+
+	AActor* invoker_;
 
 	void HandleActorTargeting();
 	void HandleLocationTargeting();
 	
+	void InitializeTargetingVisuals();
 	void UpdateTargetingVisuals();
 	void CleanupTargetingVisuals();
 

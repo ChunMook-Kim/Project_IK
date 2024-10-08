@@ -32,24 +32,20 @@ UTargetingComponent::UTargetingComponent()
 void UTargetingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	player_controller_ = Cast<AIKPlayerController>(GetOwner());
-	
-	AActor* owner = GetOwner();
-	if (owner)
-	{
-		targeting_decal_ = NewObject<UDecalComponent>(owner);
-		targeting_decal_->SetDecalMaterial(targeting_decal_material_);
-		targeting_decal_->RegisterComponent();
-		targeting_decal_->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-		targeting_decal_->DecalSize = FVector(500.f, 500.f, 500.f);
-		targeting_decal_->SetVisibility(true);
 
-		aoe_indicator_ = NewObject<UStaticMeshComponent>(owner);
-		aoe_indicator_->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-		aoe_indicator_->SetStaticMesh(aoe_indicator_mesh_);
-		aoe_indicator_->RegisterComponent();
-		aoe_indicator_->SetVisibility(true);
+	player_controller_ = Cast<AIKPlayerController>(GetOwner());
+
+	InitializeTargetingVisuals();
+}
+
+void UTargetingComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (targeting_visual_actor_)
+	{
+		targeting_visual_actor_->Destroy();
+		targeting_visual_actor_ = nullptr;
 	}
 }
 
@@ -95,9 +91,10 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	}
 }
 
-void UTargetingComponent::StartTargeting(ETargetingMode mode, float Range, float Radius)
+void UTargetingComponent::StartTargeting(AActor* invoker, ETargetingMode mode, float Range, float Radius)
 {
 	is_targeting_ = true;
+	invoker_ = invoker;
 	current_mode_ = mode;
 	current_tarrget_data_.range_ = Range;
 	current_tarrget_data_.radius_ = Radius;
@@ -108,21 +105,12 @@ void UTargetingComponent::StartTargeting(ETargetingMode mode, float Range, float
 		break;
 	case ETargetingMode::Actor:
 		player_controller_->CurrentMouseCursor = EMouseCursor::Crosshairs;
+		range_decal_->SetVisibility(true);
 		break;
 	case ETargetingMode::Location:
 		player_controller_->CurrentMouseCursor = EMouseCursor::GrabHand;
-		if (Radius > 0.f)
-		{
-			if (aoe_indicator_)
-			{
-				aoe_indicator_->SetVisibility(true);
-				aoe_indicator_->SetWorldScale3D(FVector(Radius / 50.f));
-			}
-		}
-		else
-		{
-			targeting_decal_->SetVisibility(true);
-		}
+		radius_decal_->SetVisibility(true);
+		range_decal_->SetVisibility(true);
 		break;
 	case ETargetingMode::Direction:
 		break;
@@ -147,7 +135,7 @@ void UTargetingComponent::HandleActorTargeting()
 	if (player_controller_->DeprojectMousePositionToWorld(world_location, world_direction))
 	{
 		FVector trace_end = world_location + (world_direction * current_tarrget_data_.range_);
-		if(GetWorld()->LineTraceSingleByChannel(hit_result, world_location, trace_end, ECC_Visibility))
+		if (GetWorld()->LineTraceSingleByChannel(hit_result, world_location, trace_end, ECC_Visibility))
 		{
 			if (AActor* hit_actor = hit_result.GetActor())
 			{
@@ -168,41 +156,97 @@ void UTargetingComponent::HandleLocationTargeting()
 	FVector target_location = GetGroundLocation();
 
 	// Check if location is within range
-	FVector owner_location = GetOwner()->GetActorLocation();
-	if (FVector::DistXY(owner_location, target_location) <= current_tarrget_data_.range_)
+	FVector owner_location = invoker_->GetActorLocation();
+	if (FVector::DistXY(owner_location, target_location) >= current_tarrget_data_.range_)
+	{
+		// @@ TODO: Project it to maximum range and calculate a real target location
+		current_tarrget_data_.target_location_ = target_location;
+	}
+	else
 	{
 		current_tarrget_data_.target_location_ = target_location;
-		OnTargetDataSelected.Broadcast(current_tarrget_data_);
-		StopTargeting();
+	}
+	OnTargetDataSelected.Broadcast(current_tarrget_data_);
+	StopTargeting();
+}
+
+void UTargetingComponent::InitializeTargetingVisuals()
+{
+	AActor* owner = GetOwner();
+	if (owner)
+	{
+		FActorSpawnParameters spawn_params;
+		spawn_params.Owner = GetOwner();
+
+		// Spawn an actor for visual aids
+		// PlayerController itself does not have a visual child actors because they do not have body that have visuals.
+		targeting_visual_actor_ = GetWorld()->SpawnActor<AActor>(AActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, spawn_params);
+
+		if (targeting_visual_actor_)
+		{
+			USceneComponent* root_component = NewObject<USceneComponent>(targeting_visual_actor_, TEXT("RootComponent"));
+			targeting_visual_actor_->SetRootComponent(root_component);
+			root_component->RegisterComponent();
+
+			range_decal_ = NewObject<UDecalComponent>(targeting_visual_actor_);
+			range_decal_->SetupAttachment(root_component);
+			range_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
+			range_decal_->DecalSize = FVector(500.f, 500.f, 500.f);
+			range_decal_->SetVisibility(false);
+			if (range_material_)
+			{
+				range_decal_->SetDecalMaterial(range_material_);
+			}
+			range_decal_->RegisterComponent();
+
+			radius_decal_ = NewObject<UDecalComponent>(targeting_visual_actor_);
+			radius_decal_->SetupAttachment(root_component);
+			radius_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
+			radius_decal_->DecalSize = FVector(50.f, 50.f, 50.f);
+			if (radius_material_)
+			{
+				radius_decal_->SetDecalMaterial(radius_material_);
+			}
+			radius_decal_->SetVisibility(false);
+			radius_decal_->RegisterComponent();
+		}
 	}
 }
 
 void UTargetingComponent::UpdateTargetingVisuals()
 {
+	if (current_mode_ == ETargetingMode::Actor)
+	{
+		// @@ TODO: Set location of radius_decal_ to caster's location
+		//radius_decal_->SetWorldLocation(target_location);
+		range_decal_->SetWorldLocation(invoker_->GetActorLocation());
+	}
 	if (current_mode_ == ETargetingMode::Location)
 	{
 		FVector target_location = GetGroundLocation();
 
-		if (current_tarrget_data_.radius_ > 0.f)
-		{
-			aoe_indicator_->SetWorldLocation(target_location);
-		}
-		else
-		{
-			targeting_decal_->SetWorldLocation(target_location);
-		}
+		radius_decal_->SetWorldLocation(target_location);
+		range_decal_->SetWorldLocation(invoker_->GetActorLocation());
+	}
+	if (current_mode_ == ETargetingMode::Direction)
+	{
+		FVector target_location = GetGroundLocation();
+
+		// @@ TODO: Visuallize sector based on arc
+		//radius_decal_->SetWorldLocation(target_location);
+		range_decal_->SetWorldLocation(invoker_->GetActorLocation());
 	}
 }
 
 void UTargetingComponent::CleanupTargetingVisuals()
 {
-	if (targeting_decal_)
+	if (range_decal_)
 	{
-		targeting_decal_->SetVisibility(false);
+		range_decal_->SetVisibility(false);
 	}
-	if (aoe_indicator_)
+	if (radius_decal_)
 	{
-		aoe_indicator_->SetVisibility(false);
+		radius_decal_->SetVisibility(false);
 	}
 }
 
