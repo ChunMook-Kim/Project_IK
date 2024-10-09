@@ -99,6 +99,10 @@ void UTargetingComponent::StartTargeting(AActor* invoker, ETargetingMode mode, f
 	current_tarrget_data_.range_ = Range;
 	current_tarrget_data_.radius_ = Radius;
 
+
+	range_decal_->DecalSize = FVector(current_tarrget_data_.range_);
+	radius_decal_->DecalSize = FVector(current_tarrget_data_.radius_);
+
 	switch (mode)
 	{
 	case ETargetingMode::None:
@@ -159,8 +163,7 @@ void UTargetingComponent::HandleLocationTargeting()
 	FVector owner_location = invoker_->GetActorLocation();
 	if (FVector::DistXY(owner_location, target_location) >= current_tarrget_data_.range_)
 	{
-		// @@ TODO: Project it to maximum range and calculate a real target location
-		current_tarrget_data_.target_location_ = target_location;
+		current_tarrget_data_.target_location_ = ProjectPointOntoCircle(target_location, owner_location, current_tarrget_data_.range_);
 	}
 	else
 	{
@@ -191,7 +194,6 @@ void UTargetingComponent::InitializeTargetingVisuals()
 			range_decal_ = NewObject<UDecalComponent>(targeting_visual_actor_);
 			range_decal_->SetupAttachment(root_component);
 			range_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
-			range_decal_->DecalSize = FVector(500.f, 500.f, 500.f);
 			range_decal_->SetVisibility(false);
 			if (range_material_)
 			{
@@ -202,7 +204,6 @@ void UTargetingComponent::InitializeTargetingVisuals()
 			radius_decal_ = NewObject<UDecalComponent>(targeting_visual_actor_);
 			radius_decal_->SetupAttachment(root_component);
 			radius_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
-			radius_decal_->DecalSize = FVector(50.f, 50.f, 50.f);
 			if (radius_material_)
 			{
 				radius_decal_->SetDecalMaterial(radius_material_);
@@ -215,26 +216,30 @@ void UTargetingComponent::InitializeTargetingVisuals()
 
 void UTargetingComponent::UpdateTargetingVisuals()
 {
+	FVector target_location = GetGroundLocation();
+	FVector invoker_location = invoker_->GetActorLocation();
+	if (FVector::DistXY(invoker_location, target_location) >= current_tarrget_data_.range_)
+	{
+		target_location = ProjectPointOntoCircle(target_location, invoker_location, current_tarrget_data_.range_);
+	}
+
 	if (current_mode_ == ETargetingMode::Actor)
 	{
 		// @@ TODO: Set location of radius_decal_ to caster's location
 		//radius_decal_->SetWorldLocation(target_location);
-		range_decal_->SetWorldLocation(invoker_->GetActorLocation());
+		range_decal_->SetWorldLocation(invoker_location);
 	}
 	if (current_mode_ == ETargetingMode::Location)
 	{
-		FVector target_location = GetGroundLocation();
 
 		radius_decal_->SetWorldLocation(target_location);
-		range_decal_->SetWorldLocation(invoker_->GetActorLocation());
+		range_decal_->SetWorldLocation(invoker_location);
 	}
 	if (current_mode_ == ETargetingMode::Direction)
 	{
-		FVector target_location = GetGroundLocation();
-
 		// @@ TODO: Visuallize sector based on arc
 		//radius_decal_->SetWorldLocation(target_location);
-		range_decal_->SetWorldLocation(invoker_->GetActorLocation());
+		range_decal_->SetWorldLocation(invoker_location);
 	}
 }
 
@@ -248,6 +253,17 @@ void UTargetingComponent::CleanupTargetingVisuals()
 	{
 		radius_decal_->SetVisibility(false);
 	}
+}
+
+FVector UTargetingComponent::ProjectPointOntoCircle(const FVector& Point, const FVector& Origin, float Radius)
+{
+	FVector direction = Point - Origin;
+
+	direction.Normalize();
+
+	FVector result = Origin + direction * Radius;
+
+	return result;
 }
 
 bool UTargetingComponent::IsValidTarget(AActor* target) const

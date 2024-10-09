@@ -74,7 +74,7 @@ public:
 	FOnTargetingCanceled OnTargetingCanceled;
 
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
-	void StartTargeting(AActor* invoker, ETargetingMode mode, float Range = 1000.f, float Radius = 0.f);
+	void StartTargeting(AActor* invoker, ETargetingMode mode, float Range = 500.f, float Radius = 50.f);
 	UFUNCTION(BlueprintCallable, Category="Targeting")
 	void StopTargeting();
 
@@ -106,6 +106,8 @@ private:
 	void InitializeTargetingVisuals();
 	void UpdateTargetingVisuals();
 	void CleanupTargetingVisuals();
+
+	FVector ProjectPointOntoCircle(const FVector& Point, const FVector& Origin, float Radius);
 
 	bool IsValidTarget(AActor* target) const;
 	FVector GetGroundLocation() const;
