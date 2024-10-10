@@ -33,6 +33,8 @@ void UCharacterStatComponent::InitializeComponent()
 
 	auto ik_game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
+	if(ik_game_instance)
+	{
 	FCharacterData* character_data = ik_game_instance->GetCharacterData(character_id_);
 
 	ability_power_ = character_data->ability_power_;
@@ -57,6 +59,7 @@ void UCharacterStatComponent::InitializeComponent()
 	max_fire_range_ = max_stats->fire_range_;
 	max_move_speed_ = max_stats->move_speed_;
 	max_sight_range_ = max_stats->sight_range_;
+	}
 }
 
 // Called when the game starts or when spawned
