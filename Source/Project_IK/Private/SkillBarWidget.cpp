@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 
 #include "Kismet/GameplayStatics.h"
 
+#include "IKGameModeBase.h"
 #include "SkillContainer.h"
 #include "TargetingComponent.h"
 #include "IKPlayerController.h"
@@ -94,18 +95,21 @@ void USkillBarWidget::InvokeSkills(const FTargetData& TargetData)
 
 void USkillBarWidget::FindCharacters()
 {
-	TArray<AActor*> all_actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), all_actors);
+	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	for (AActor* actor : all_actors)
+	if (game_mode)
 	{
-		if (actor)
+		characters_ = game_mode->GetHeroContainers();
+
+		for (AActor* actor : characters_)
 		{
-			if (auto skill_container = actor->FindComponentByClass<USkillContainer>();
-				skill_container)
+			if (actor)
 			{
-				characters_.Add(actor);
-				skill_containers_.Add(skill_container);
+				if (auto skill_container = actor->FindComponentByClass<USkillContainer>();
+					skill_container)
+				{
+					skill_containers_.Add(skill_container);
+				}
 			}
 		}
 	}

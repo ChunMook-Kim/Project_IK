@@ -12,6 +12,7 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+
 #include "IKGameModeBase.generated.h"
 
 /**
@@ -25,4 +26,15 @@ class PROJECT_IK_API AIKGameModeBase : public AGameModeBase
 public:
 
 	AIKGameModeBase();
+
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AActor*> GetHeroContainers() noexcept;
+
+protected:
+	void PopulateHeroContainer();
+
+	TSubclassOf<AActor> hero_class;
+	TArray<AActor*> heroes_;
 };
