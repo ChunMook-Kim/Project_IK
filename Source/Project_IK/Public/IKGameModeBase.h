@@ -31,10 +31,29 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<AActor*> GetHeroContainers() noexcept;
+	UFUNCTION(BlueprintCallable)
+	TArray<AActor*> GetEnemyContainers() noexcept;
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveHero(AActor* hero);
+	void RemoveEnemy(AActor* enemy);
+
+	UFUNCTION(BlueprintCallable)
+	void CheckWinLoseCondition();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGameWin();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGameLose();
 
 protected:
-	void PopulateHeroContainer();
+	void PopulateContainers();
 
-	TSubclassOf<AActor> hero_class;
+	TSubclassOf<AActor> hero_class_;
+	TSubclassOf<AActor> enemy_class_;
+	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> heroes_;
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> enemies_;
 };
