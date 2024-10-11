@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 
 #include "Kismet/GameplayStatics.h"
 
+#include "IKGameModeBase.h"
 #include "SkillContainer.h"
 #include "TargetingComponent.h"
 #include "IKPlayerController.h"
@@ -22,9 +23,23 @@ void USkillBarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (skill_button_)
+	FindCharacters();
+
+	if (skill_button_0_)
 	{
-		skill_button_->OnClicked.AddDynamic(this, &USkillBarWidget::OnButtonClicked);
+		skill_button_0_->OnClicked.AddDynamic(this, &USkillBarWidget::OnButtonClicked0);
+	}
+	if (skill_button_1_)
+	{
+		skill_button_1_->OnClicked.AddDynamic(this, &USkillBarWidget::OnButtonClicked1);
+	}
+	if (skill_button_2_)
+	{
+		skill_button_2_->OnClicked.AddDynamic(this, &USkillBarWidget::OnButtonClicked2);
+	}
+	if (skill_button_3_)
+	{
+		skill_button_3_->OnClicked.AddDynamic(this, &USkillBarWidget::OnButtonClicked3);
 	}
 
 	if (AIKPlayerController* PC = Cast<AIKPlayerController>(GetOwningPlayer()))
@@ -37,37 +52,65 @@ void USkillBarWidget::NativeConstruct()
 	}
 }
 
-void USkillBarWidget::OnButtonClicked()
+void USkillBarWidget::OnButtonClicked0()
 {
+	caster_ = 0;
 	if (targeting_component_)
 	{
-		targeting_component_->StartTargeting(ETargetingMode::Location);
+		targeting_component_->StartTargeting(characters_[caster_], ETargetingMode::Location);
+	}
+}
+
+void USkillBarWidget::OnButtonClicked1()
+{
+	caster_ = 1;
+	if (targeting_component_)
+	{
+		targeting_component_->StartTargeting(characters_[caster_], ETargetingMode::Location);
+	}
+}
+
+void USkillBarWidget::OnButtonClicked2()
+{
+	caster_ = 2;
+	if (targeting_component_)
+	{
+		targeting_component_->StartTargeting(characters_[caster_], ETargetingMode::Location);
+	}
+}
+
+void USkillBarWidget::OnButtonClicked3()
+{
+	caster_ = 3;
+	if (targeting_component_)
+	{
+		targeting_component_->StartTargeting(characters_[caster_], ETargetingMode::Location);
 	}
 }
 
 void USkillBarWidget::InvokeSkills(const FTargetData& TargetData)
 {
-	UE_LOG(LogTemp, Display, TEXT("TMP is called"));
+	skill_containers_[caster_]->InvokeSkills(TargetData);
+}
 
-	TArray<AActor*> all_actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), all_actors);
+void USkillBarWidget::FindCharacters()
+{
+	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	TArray<USkillContainer*> skill_containers;
-
-	for (AActor* actor : all_actors)
+	if (game_mode)
 	{
-		if (actor)
+		characters_ = game_mode->GetHeroContainers();
+
+		for (AActor* actor : characters_)
 		{
-			if (auto skill_container= actor->FindComponentByClass<USkillContainer>();
-				skill_container)
+			if (actor)
 			{
-				skill_containers.Add(skill_container);
+				if (auto skill_container = actor->FindComponentByClass<USkillContainer>();
+					skill_container)
+				{
+					skill_containers_.Add(skill_container);
+				}
 			}
 		}
-	}
-
-	for (USkillContainer* skill_container : skill_containers)
-	{
-		skill_container->InvokeSkills(TargetData);
 	}
 }

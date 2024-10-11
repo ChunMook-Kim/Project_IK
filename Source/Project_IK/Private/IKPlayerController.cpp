@@ -27,16 +27,6 @@ void AIKPlayerController::BeginPlay()
 	bEnableMouseOverEvents = true;
 }
 
-void AIKPlayerController::HandleSkillButtonPressed()
-{
-	if (targeting_component_)
-	{
-		targeting_component_->StartTargeting(ETargetingMode::Location);
-
-		//targeting_component_->OnTargetDataSelected.Add();
-	}
-}
-
 UTargetingComponent* AIKPlayerController::GetTargetingComponent()
 {
 	return targeting_component_;
