@@ -16,7 +16,11 @@ UIKGameInstance::UIKGameInstance()
 
 FCharacterData* UIKGameInstance::GetCharacterData(int32 char_id)
 {
-	return character_table->FindRow<FCharacterData>(*FString::FromInt(char_id), TEXT(""));
+	if(character_table)
+	{
+		return character_table->FindRow<FCharacterData>(*FString::FromInt(char_id), TEXT(""));
+	}
+	return nullptr;
 }
 
 void UIKGameInstance::Init()
