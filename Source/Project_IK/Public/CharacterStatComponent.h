@@ -15,6 +15,7 @@ See LICENSE file in the project root for full license information.
 #include "CharacterStatComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDieDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PROJECT_IK_API UCharacterStatComponent : public UActorComponent
@@ -67,8 +68,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSightRange(float sight_range) noexcept;
 
+	UFUNCTION(BlueprintCallable)
+	float GetHPRatio() noexcept;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FDieDelegate die;
+	FDieDelegate Die;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnHPChangedDelegate OnHPChanged;
 
 protected:
 	// Called when the game starts or when spawned

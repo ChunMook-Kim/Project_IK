@@ -77,13 +77,7 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 void UCharacterStatComponent::GetDamage(float DamageAmount)
 {
-	UE_LOG(LogTemp, Warning, TEXT("GetDamage has been called!"));
-	UE_LOG(LogTemp, Warning, TEXT("DamageAmount is %f"), DamageAmount);
-	hit_point_ = FMath::Clamp<float>(hit_point_ - DamageAmount, 0.f, max_hit_point_);
-	if (hit_point_ <= 0.f)
-	{
-		die.Broadcast();
-	}
+	SetHitPoint(hit_point_ - DamageAmount);
 }
 
 float UCharacterStatComponent::GetAbilityPower() noexcept
@@ -144,6 +138,13 @@ void UCharacterStatComponent::SetAttackSpeed(float attack_speed) noexcept
 void UCharacterStatComponent::SetHitPoint(float hit_point) noexcept
 {
 	hit_point_ = FMath::Min(hit_point, max_hit_point_);
+
+	OnHPChanged.Broadcast();
+	if (hit_point_ < KINDA_SMALL_NUMBER)
+	{
+		hit_point_ = 0.f;
+		Die.Broadcast();
+	}
 }
 
 void UCharacterStatComponent::SetMagazine(float magazine) noexcept
@@ -166,3 +167,14 @@ void UCharacterStatComponent::SetSightRange(float sight_range) noexcept
 	sight_range_ = FMath::Min(sight_range, max_sight_range_);
 }
 
+float UCharacterStatComponent::GetHPRatio() noexcept
+{
+	if (max_hit_point_ < KINDA_SMALL_NUMBER)
+	{
+		return 0.f;
+	}
+	else
+	{
+		return hit_point_ / max_hit_point_;
+	}
+}
