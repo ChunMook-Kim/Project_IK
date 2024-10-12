@@ -75,6 +75,17 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	Super::TickComponent(DELTA, TickType, ThisTickFunctionoverride);
 }
 
+void UCharacterStatComponent::GetDamage(float DamageAmount)
+{
+	UE_LOG(LogTemp, Warning, TEXT("GetDamage has been called!"));
+	UE_LOG(LogTemp, Warning, TEXT("DamageAmount is %f"), DamageAmount);
+	hit_point_ = FMath::Clamp<float>(hit_point_ - DamageAmount, 0.f, max_hit_point_);
+	if (hit_point_ <= 0.f)
+	{
+		die.Broadcast();
+	}
+}
+
 float UCharacterStatComponent::GetAbilityPower() noexcept
 {
 	return ability_power_;
