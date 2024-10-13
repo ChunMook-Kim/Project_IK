@@ -48,17 +48,16 @@ void UCharacterStatComponent::InitializeComponent()
 	sight_range_ = character_data->sight_range_;
 
 
-	FCharacterData* max_stats = ik_game_instance->GetCharacterData(-1);
+	// They are initial data of each attributes. Theoretical oritical limitation will be implemented later
+	max_ability_power_ = ability_power_;
+	max_attack_ = attack_;
+	max_attack_speed_ = attack_speed_;
+	max_hit_point_ = hit_point_;
+	max_magazine_ = magazine_;
 
-	max_ability_power_ = max_stats->ability_power_;
-	max_attack_ = max_stats->attack_;
-	max_attack_speed_ = max_stats->attack_speed_;
-	max_hit_point_ = max_stats->hit_point_;
-	max_magazine_ = max_stats->magazine_;
-
-	max_fire_range_ = max_stats->fire_range_;
-	max_move_speed_ = max_stats->move_speed_;
-	max_sight_range_ = max_stats->sight_range_;
+	max_fire_range_ = fire_range_;
+	max_move_speed_ = move_speed_;
+	max_sight_range_ = sight_range_;
 	}
 }
 
