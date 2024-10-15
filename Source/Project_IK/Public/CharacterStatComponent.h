@@ -14,6 +14,9 @@ See LICENSE file in the project root for full license information.
 #include "Components/ActorComponent.h"
 #include "CharacterStatComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDieDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChangedDelegate);
+
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PROJECT_IK_API UCharacterStatComponent : public UActorComponent
 {
@@ -27,30 +30,58 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunctionoverride);
 
+	UFUNCTION(BlueprintCallable)
+	void GetDamage(float DamageAmount);
+
 	// Getters&Setters of member variables
+	UFUNCTION(BlueprintCallable)
 	float GetAbilityPower() noexcept;
+	UFUNCTION(BlueprintCallable)
 	float GetAttack() noexcept;
+	UFUNCTION(BlueprintCallable)
 	float GetAttackSpeed() noexcept;
+	UFUNCTION(BlueprintCallable)
 	float GetHitPoint() noexcept;
+	UFUNCTION(BlueprintCallable)
 	float GetMagazine() noexcept;
+	UFUNCTION(BlueprintCallable)
 	float GetFireRange() noexcept;
+	UFUNCTION(BlueprintCallable)
 	float GetMoveSpeed() noexcept;
+	UFUNCTION(BlueprintCallable)
 	float GetSightRange() noexcept;
 
+	UFUNCTION(BlueprintCallable)
 	void SetAbilityPower(float ability_power) noexcept;
+	UFUNCTION(BlueprintCallable)
 	void SetAttack(float attack) noexcept;
+	UFUNCTION(BlueprintCallable)
 	void SetAttackSpeed(float attack_speed) noexcept;
+	UFUNCTION(BlueprintCallable)
 	void SetHitPoint(float hit_point) noexcept;
+	UFUNCTION(BlueprintCallable)
 	void SetMagazine(float magazine) noexcept;
+	UFUNCTION(BlueprintCallable)
 	void SetFireRange(float fire_range) noexcept;
+	UFUNCTION(BlueprintCallable)
 	void SetMoveSpeed(float move_speed) noexcept;
+	UFUNCTION(BlueprintCallable)
 	void SetSightRange(float sight_range) noexcept;
+
+	UFUNCTION(BlueprintCallable)
+	float GetHPRatio() noexcept;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FDieDelegate Die;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnHPChangedDelegate OnHPChanged;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = Stats)
+	UPROPERTY(EditAnywhere, Category = "Stats")
 	int32 character_id_;
 
 private:

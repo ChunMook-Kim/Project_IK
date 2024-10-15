@@ -48,17 +48,16 @@ void UCharacterStatComponent::InitializeComponent()
 	sight_range_ = character_data->sight_range_;
 
 
-	FCharacterData* max_stats = ik_game_instance->GetCharacterData(-1);
+	// They are initial data of each attributes. Theoretical oritical limitation will be implemented later
+	max_ability_power_ = ability_power_;
+	max_attack_ = attack_;
+	max_attack_speed_ = attack_speed_;
+	max_hit_point_ = hit_point_;
+	max_magazine_ = magazine_;
 
-	max_ability_power_ = max_stats->ability_power_;
-	max_attack_ = max_stats->attack_;
-	max_attack_speed_ = max_stats->attack_speed_;
-	max_hit_point_ = max_stats->hit_point_;
-	max_magazine_ = max_stats->magazine_;
-
-	max_fire_range_ = max_stats->fire_range_;
-	max_move_speed_ = max_stats->move_speed_;
-	max_sight_range_ = max_stats->sight_range_;
+	max_fire_range_ = fire_range_;
+	max_move_speed_ = move_speed_;
+	max_sight_range_ = sight_range_;
 	}
 }
 
@@ -73,6 +72,11 @@ void UCharacterStatComponent::BeginPlay()
 void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunctionoverride)
 {
 	Super::TickComponent(DELTA, TickType, ThisTickFunctionoverride);
+}
+
+void UCharacterStatComponent::GetDamage(float DamageAmount)
+{
+	SetHitPoint(hit_point_ - DamageAmount);
 }
 
 float UCharacterStatComponent::GetAbilityPower() noexcept
@@ -133,6 +137,13 @@ void UCharacterStatComponent::SetAttackSpeed(float attack_speed) noexcept
 void UCharacterStatComponent::SetHitPoint(float hit_point) noexcept
 {
 	hit_point_ = FMath::Min(hit_point, max_hit_point_);
+
+	OnHPChanged.Broadcast();
+	if (hit_point_ < KINDA_SMALL_NUMBER)
+	{
+		hit_point_ = 0.f;
+		Die.Broadcast();
+	}
 }
 
 void UCharacterStatComponent::SetMagazine(float magazine) noexcept
@@ -155,3 +166,14 @@ void UCharacterStatComponent::SetSightRange(float sight_range) noexcept
 	sight_range_ = FMath::Min(sight_range, max_sight_range_);
 }
 
+float UCharacterStatComponent::GetHPRatio() noexcept
+{
+	if (max_hit_point_ < KINDA_SMALL_NUMBER)
+	{
+		return 0.f;
+	}
+	else
+	{
+		return hit_point_ / max_hit_point_;
+	}
+}
