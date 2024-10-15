@@ -36,6 +36,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveHero(AActor* hero);
+	UFUNCTION(BlueprintCallable)
 	void RemoveEnemy(AActor* enemy);
 
 	UFUNCTION(BlueprintCallable)
