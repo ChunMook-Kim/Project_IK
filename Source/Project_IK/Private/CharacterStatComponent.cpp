@@ -139,11 +139,11 @@ void UCharacterStatComponent::SetHitPoint(float hit_point) noexcept
 	hit_point_ = FMath::Min(hit_point, max_hit_point_);
 
 	OnHPChanged.Broadcast();
-	if (hit_point_ < KINDA_SMALL_NUMBER)
+	/*if (hit_point_ < KINDA_SMALL_NUMBER)
 	{
 		hit_point_ = 0.f;
 		Die.Broadcast();
-	}
+	}*/
 }
 
 void UCharacterStatComponent::SetMagazine(float magazine) noexcept
