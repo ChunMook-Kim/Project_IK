@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 
 #include "Kismet/GameplayStatics.h"
 
+#include "Components/Button.h"
 #include "IKGameModeBase.h"
 #include "SkillContainer.h"
 #include "TargetingComponent.h"

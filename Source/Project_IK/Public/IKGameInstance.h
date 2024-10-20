@@ -15,6 +15,8 @@ See LICENSE file in the project root for full license information.
 #include "Engine/GameInstance.h"
 #include "IKGameInstance.generated.h"
 
+class UItemInventory;
+
 USTRUCT(BlueprintType)
 struct FCharacterData : public FTableRowBase
 {
@@ -61,7 +63,14 @@ public:
 
 	virtual void Init() override;
 
+	class UItemInventory* GetItemInventory() noexcept;
+
 private:
+	void InitializeCharacterData();
+	void InitializeItemInventory();
+
 	UPROPERTY()
 	class UDataTable* character_table;
+	UPROPERTY()
+	class UItemInventory* item_inventory_;
 };

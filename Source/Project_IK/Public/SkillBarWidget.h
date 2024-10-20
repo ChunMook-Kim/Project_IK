@@ -12,9 +12,9 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/Button.h"
 #include "SkillBarWidget.generated.h"
 
+class UButton;
 class USkillContainer;
 
 /**

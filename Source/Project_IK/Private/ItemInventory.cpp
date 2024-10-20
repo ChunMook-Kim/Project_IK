@@ -14,6 +14,9 @@ See LICENSE file in the project root for full license information.
 
 #include "SkillBase.h"
 
+// Usage:
+// TSubclassOf<AItem> WeaponClass = AWeapon::StaticClass();
+
 void UItemInventory::AddItem(TSubclassOf<USkillBase> item_class)
 {
 	if (*item_class)
