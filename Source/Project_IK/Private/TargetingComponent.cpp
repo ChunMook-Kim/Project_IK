@@ -91,7 +91,7 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	}
 }
 
-void UTargetingComponent::StartTargeting(AActor* invoker, ETargetingMode mode, float Range, float Radius)
+void UTargetingComponent::StartSkillTargeting(AActor* invoker, ETargetingMode mode, float Range, float Radius)
 {
 	is_targeting_ = true;
 	invoker_ = invoker;
@@ -109,12 +109,46 @@ void UTargetingComponent::StartTargeting(AActor* invoker, ETargetingMode mode, f
 		break;
 	case ETargetingMode::Actor:
 		player_controller_->CurrentMouseCursor = EMouseCursor::Crosshairs;
+		radius_decal_->SetVisibility(false);
 		range_decal_->SetVisibility(true);
 		break;
 	case ETargetingMode::Location:
 		player_controller_->CurrentMouseCursor = EMouseCursor::GrabHand;
 		radius_decal_->SetVisibility(true);
 		range_decal_->SetVisibility(true);
+		break;
+	case ETargetingMode::Direction:
+		break;
+	default:
+		break;
+	}
+}
+
+void UTargetingComponent::StartItemTargeting(ETargetingMode mode, float Range, float Radius)
+{
+	is_targeting_ = true;
+	invoker_ = nullptr;
+	current_mode_ = mode;
+	current_tarrget_data_.range_ = Range;
+	current_tarrget_data_.radius_ = Radius;
+
+
+	range_decal_->DecalSize = FVector(current_tarrget_data_.range_);
+	radius_decal_->DecalSize = FVector(current_tarrget_data_.radius_);
+
+	switch (mode)
+	{
+	case ETargetingMode::None:
+		break;
+	case ETargetingMode::Actor:
+		player_controller_->CurrentMouseCursor = EMouseCursor::Crosshairs;
+		radius_decal_->SetVisibility(false);
+		range_decal_->SetVisibility(false);
+		break;
+	case ETargetingMode::Location:
+		player_controller_->CurrentMouseCursor = EMouseCursor::GrabHand;
+		radius_decal_->SetVisibility(true);
+		range_decal_->SetVisibility(false);
 		break;
 	case ETargetingMode::Direction:
 		break;
@@ -159,16 +193,8 @@ void UTargetingComponent::HandleLocationTargeting()
 {
 	FVector target_location = GetGroundLocation();
 
-	// Check if location is within range
-	FVector owner_location = invoker_->GetActorLocation();
-	if (FVector::DistXY(owner_location, target_location) >= current_tarrget_data_.range_)
-	{
-		current_tarrget_data_.target_location_ = ProjectPointOntoCircle(target_location, owner_location, current_tarrget_data_.range_);
-	}
-	else
-	{
-		current_tarrget_data_.target_location_ = target_location;
-	}
+	current_tarrget_data_.target_location_ = ClampingOntoInvoker(target_location);
+
 	OnTargetDataSelected.Broadcast(current_tarrget_data_);
 	StopTargeting();
 }
@@ -217,10 +243,17 @@ void UTargetingComponent::InitializeTargetingVisuals()
 void UTargetingComponent::UpdateTargetingVisuals()
 {
 	FVector target_location = GetGroundLocation();
-	FVector invoker_location = invoker_->GetActorLocation();
-	if (FVector::DistXY(invoker_location, target_location) >= current_tarrget_data_.range_)
+	target_location = ClampingOntoInvoker(target_location);
+
+	FVector invoker_location;
+	if (invoker_)
 	{
-		target_location = ProjectPointOntoCircle(target_location, invoker_location, current_tarrget_data_.range_);
+		invoker_location = invoker_->GetActorLocation();
+	}
+	else
+	{
+		// set its location to be logically invalid
+		invoker_location = FVector(10000, 10000, 10000);
 	}
 
 	if (current_mode_ == ETargetingMode::Actor)
@@ -288,4 +321,19 @@ FVector UTargetingComponent::GetGroundLocation() const
 		}
 	}
 	return FVector::ZeroVector;
+}
+
+FVector UTargetingComponent::ClampingOntoInvoker(FVector TargetLocation)
+{
+	// Check if location is within range
+	if (invoker_)
+	{
+		FVector owner_location = invoker_->GetActorLocation();
+		if (FVector::DistXY(owner_location, TargetLocation) >= current_tarrget_data_.range_)
+		{
+			return ProjectPointOntoCircle(TargetLocation, owner_location, current_tarrget_data_.range_);
+		}
+	}
+
+	return TargetLocation;
 }

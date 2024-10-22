@@ -25,6 +25,7 @@ void UIKGameInstance::Init()
 {
 	Super::Init();
 
+	item_inventory_->AddItem(UMyTestItem::StaticClass());
 }
 
 UItemInventory* UIKGameInstance::GetItemInventory() noexcept
@@ -46,6 +47,4 @@ void UIKGameInstance::InitializeCharacterData()
 void UIKGameInstance::InitializeItemInventory()
 {
 	item_inventory_ = NewObject<UItemInventory>();
-
-	item_inventory_->AddItem(UMyTestItem::StaticClass());
 }

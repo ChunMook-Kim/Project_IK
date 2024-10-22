@@ -18,5 +18,6 @@ UMyTestItem::UMyTestItem()
 
 bool UMyTestItem::ActivateSkill_Implementation(const FTargetData& TargetData)
 {
+	UE_LOG(LogTemp, Warning, TEXT("MyTestItem has successfully activated!"));
 	return true;
 }
