@@ -17,6 +17,13 @@ See LICENSE file in the project root for full license information.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDieDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 
+UENUM(BlueprintType)
+enum class ECharacterID : uint8
+{
+	Gunner UMETA(DisplayName = "Gunner"),
+	Cover UMETA(DisplayName = "Cover"),
+};
+
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PROJECT_IK_API UCharacterStatComponent : public UActorComponent
 {
@@ -82,7 +89,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 character_id_;
+	ECharacterID character_id_;
 
 private:
 	// Scaling powers
