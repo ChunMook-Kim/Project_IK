@@ -74,7 +74,10 @@ public:
 	FOnTargetingCanceled OnTargetingCanceled;
 
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
-	void StartTargeting(AActor* invoker, ETargetingMode mode, float Range = 500.f, float Radius = 50.f);
+	void StartSkillTargeting(AActor* invoker, ETargetingMode mode, float Range = 500.f, float Radius = 50.f);
+
+	UFUNCTION(BlueprintCallable, Category = "Targeting")
+	void StartItemTargeting(ETargetingMode mode, float Range = 500.f, float Radius = 50.f);
 	UFUNCTION(BlueprintCallable, Category="Targeting")
 	void StopTargeting();
 
@@ -111,4 +114,5 @@ private:
 
 	bool IsValidTarget(AActor* target) const;
 	FVector GetGroundLocation() const;
+	FVector ClampingOntoInvoker(FVector TargetLocation);
 };
