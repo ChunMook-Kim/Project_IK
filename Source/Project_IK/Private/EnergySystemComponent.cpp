@@ -44,17 +44,17 @@ void UEnergySystemComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	RegenEnergy(DeltaTime);
 }
 
-float UEnergySystemComponent::GetEnergy() noexcept
+float UEnergySystemComponent::GetEnergy() const noexcept
 {
 	return energy_;
 }
 
-float UEnergySystemComponent::GetRegenRate() noexcept
+float UEnergySystemComponent::GetRegenRate() const noexcept
 {
 	return regen_rate_;
 }
 
-float UEnergySystemComponent::GetMaxEnergy() noexcept
+float UEnergySystemComponent::GetMaxEnergy() const noexcept
 {
 	return max_energy_;
 }

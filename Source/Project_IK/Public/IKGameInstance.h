@@ -59,11 +59,12 @@ class PROJECT_IK_API UIKGameInstance : public UGameInstance
 public:
 	UIKGameInstance();
 
-	FCharacterData* GetCharacterData(int32 char_id);
+	FCharacterData* GetCharacterData(int32 char_id) const;
 
 	virtual void Init() override;
 
-	class UItemInventory* GetItemInventory() noexcept;
+	UFUNCTION(BlueprintPure)
+	class UItemInventory* GetItemInventory() const noexcept;
 
 private:
 	void InitializeCharacterData();
