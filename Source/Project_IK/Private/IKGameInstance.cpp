@@ -12,7 +12,7 @@ UIKGameInstance::UIKGameInstance()
 	InitializeItemInventory();
 }
 
-FCharacterData* UIKGameInstance::GetCharacterData(int32 char_id)
+FCharacterData* UIKGameInstance::GetCharacterData(int32 char_id) const
 {
 	if(character_table)
 	{
@@ -28,7 +28,7 @@ void UIKGameInstance::Init()
 	item_inventory_->AddItem(UMyTestItem::StaticClass());
 }
 
-UItemInventory* UIKGameInstance::GetItemInventory() noexcept
+UItemInventory* UIKGameInstance::GetItemInventory() const noexcept
 {
 	return item_inventory_;
 }

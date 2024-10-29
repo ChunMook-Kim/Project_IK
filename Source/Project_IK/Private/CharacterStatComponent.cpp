@@ -79,42 +79,42 @@ void UCharacterStatComponent::GetDamage(float DamageAmount)
 	SetHitPoint(hit_point_ - DamageAmount);
 }
 
-float UCharacterStatComponent::GetAbilityPower() noexcept
+float UCharacterStatComponent::GetAbilityPower() const noexcept
 {
 	return ability_power_;
 }
 
-float UCharacterStatComponent::GetAttack() noexcept
+float UCharacterStatComponent::GetAttack() const noexcept
 {
 	return attack_;
 }
 
-float UCharacterStatComponent::GetAttackSpeed() noexcept
+float UCharacterStatComponent::GetAttackSpeed() const noexcept
 {
 	return attack_speed_;
 }
 
-float UCharacterStatComponent::GetHitPoint() noexcept
+float UCharacterStatComponent::GetHitPoint() const noexcept
 {
 	return hit_point_;
 }
 
-float UCharacterStatComponent::GetMagazine() noexcept
+float UCharacterStatComponent::GetMagazine() const noexcept
 {
 	return magazine_;
 }
 
-float UCharacterStatComponent::GetFireRange() noexcept
+float UCharacterStatComponent::GetFireRange() const noexcept
 {
 	return fire_range_;
 }
 
-float UCharacterStatComponent::GetMoveSpeed() noexcept
+float UCharacterStatComponent::GetMoveSpeed() const noexcept
 {
 	return move_speed_;
 }
 
-float UCharacterStatComponent::GetSightRange() noexcept
+float UCharacterStatComponent::GetSightRange() const noexcept
 {
 	return sight_range_;
 }
@@ -166,7 +166,7 @@ void UCharacterStatComponent::SetSightRange(float sight_range) noexcept
 	sight_range_ = FMath::Min(sight_range, max_sight_range_);
 }
 
-float UCharacterStatComponent::GetHPRatio() noexcept
+float UCharacterStatComponent::GetHPRatio() const noexcept
 {
 	if (max_hit_point_ < KINDA_SMALL_NUMBER)
 	{

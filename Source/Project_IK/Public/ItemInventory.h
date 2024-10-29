@@ -30,6 +30,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddItem(TSubclassOf<USkillBase> item_class);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	USkillBase* GetItem(int32 index);
 };

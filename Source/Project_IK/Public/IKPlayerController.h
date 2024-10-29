@@ -27,7 +27,7 @@ public:
 
 	virtual void BeginPlay();
 
-	UFUNCTION(BlueprintCallable, Category = "Skill")
+	UFUNCTION(BlueprintPure, Category = "Skill")
 	class UTargetingComponent* GetTargetingComponent();
 
 protected:

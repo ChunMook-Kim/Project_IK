@@ -26,12 +26,12 @@ void AIKGameModeBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-TArray<AActor*> AIKGameModeBase::GetHeroContainers() noexcept
+TArray<AActor*> AIKGameModeBase::GetHeroContainers() const noexcept
 {
 	return heroes_;
 }
 
-TArray<AActor*> AIKGameModeBase::GetEnemyContainers() noexcept
+TArray<AActor*> AIKGameModeBase::GetEnemyContainers() const noexcept
 {
 	return enemies_;
 }

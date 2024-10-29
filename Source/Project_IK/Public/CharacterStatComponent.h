@@ -41,22 +41,22 @@ public:
 	void GetDamage(float DamageAmount);
 
 	// Getters&Setters of member variables
-	UFUNCTION(BlueprintCallable)
-	float GetAbilityPower() noexcept;
-	UFUNCTION(BlueprintCallable)
-	float GetAttack() noexcept;
-	UFUNCTION(BlueprintCallable)
-	float GetAttackSpeed() noexcept;
-	UFUNCTION(BlueprintCallable)
-	float GetHitPoint() noexcept;
-	UFUNCTION(BlueprintCallable)
-	float GetMagazine() noexcept;
-	UFUNCTION(BlueprintCallable)
-	float GetFireRange() noexcept;
-	UFUNCTION(BlueprintCallable)
-	float GetMoveSpeed() noexcept;
-	UFUNCTION(BlueprintCallable)
-	float GetSightRange() noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetAbilityPower() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetAttack() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetAttackSpeed() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetHitPoint() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetMagazine() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetFireRange() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetMoveSpeed() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetSightRange() const noexcept;
 
 	UFUNCTION(BlueprintCallable)
 	void SetAbilityPower(float ability_power) noexcept;
@@ -75,8 +75,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSightRange(float sight_range) noexcept;
 
-	UFUNCTION(BlueprintCallable)
-	float GetHPRatio() noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetHPRatio() const noexcept;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FDieDelegate Die;

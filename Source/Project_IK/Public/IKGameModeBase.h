@@ -29,10 +29,10 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> GetHeroContainers() noexcept;
-	UFUNCTION(BlueprintCallable)
-	TArray<AActor*> GetEnemyContainers() noexcept;
+	UFUNCTION(BlueprintPure)
+	TArray<AActor*> GetHeroContainers() const noexcept;
+	UFUNCTION(BlueprintPure)
+	TArray<AActor*> GetEnemyContainers() const noexcept;
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveHero(AActor* hero);

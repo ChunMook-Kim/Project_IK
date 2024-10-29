@@ -35,9 +35,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	float GetEnergy() noexcept;
-	float GetRegenRate() noexcept;
-	float GetMaxEnergy() noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetEnergy() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetRegenRate() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetMaxEnergy() const noexcept;
 	void RegenEnergy(float DeltaTime);
 
 	UFUNCTION(BlueprintCallable, Category = "Energy")
