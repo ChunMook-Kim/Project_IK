@@ -93,7 +93,7 @@ private:
 	ETargetingMode current_mode_;
 	bool is_targeting_;
 	APlayerController* player_controller_;
-	FTargetData current_tarrget_data_;
+	FTargetData current_target_data_;
 
 	// Components for visual feedback
 	UPROPERTY()
@@ -102,6 +102,12 @@ private:
 	UDecalComponent* radius_decal_;
 
 	AActor* invoker_;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* highlight_material_;
+
+	TArray<UMaterialInterface*> original_materials_;
+	AActor* previously_chosen_actor_;
 
 	void HandleActorTargeting();
 	void HandleLocationTargeting();
@@ -115,4 +121,6 @@ private:
 	bool IsValidTarget(AActor* target) const;
 	FVector GetGroundLocation() const;
 	FVector ClampingOntoInvoker(FVector TargetLocation);
+	AActor* FindClosestActor(FVector TargetLocation);
+	void ApplyMaterialHighlight(AActor* target);
 };

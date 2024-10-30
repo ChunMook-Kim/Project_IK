@@ -122,7 +122,7 @@ void UButtonBarWidget::OnItemButtonClicked0()
 	{
 		caster_ = -1;
 		selected_item_index_ = 0;
-		targeting_component_->StartItemTargeting(ETargetingMode::Location);
+		targeting_component_->StartItemTargeting(ETargetingMode::Actor);
 	}
 }
 

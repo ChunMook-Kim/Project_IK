@@ -12,9 +12,12 @@ See LICENSE file in the project root for full license information.
 
 #include "TargetingComponent.h"
 
+
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/DecalComponent.h"
 #include "IKPlayerController.h"
+#include "IKGameModeBase.h"
 #include "Engine/World.h"
 
 // Sets default values for this component's properties
@@ -25,6 +28,12 @@ UTargetingComponent::UTargetingComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	is_targeting_ = false;
 	current_mode_ = ETargetingMode::None;
+
+	static ConstructorHelpers::FObjectFinder<UMaterial> HighlightMat(TEXT("/Game/Materials/SelectionMat.SelectionMat"));
+	if (HighlightMat.Succeeded())
+	{
+		highlight_material_ = UMaterialInstanceDynamic::Create(HighlightMat.Object, this);
+	}
 }
 
 
@@ -74,7 +83,7 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		switch (current_mode_)
 		{
 		case ETargetingMode::None:
-			OnTargetDataSelected.Broadcast(current_tarrget_data_);
+			OnTargetDataSelected.Broadcast(current_target_data_);
 			StopTargeting();
 			break;
 		case ETargetingMode::Actor:
@@ -96,12 +105,12 @@ void UTargetingComponent::StartSkillTargeting(AActor* invoker, ETargetingMode mo
 	is_targeting_ = true;
 	invoker_ = invoker;
 	current_mode_ = mode;
-	current_tarrget_data_.range_ = Range;
-	current_tarrget_data_.radius_ = Radius;
+	current_target_data_.range_ = Range;
+	current_target_data_.radius_ = Radius;
 
 
-	range_decal_->DecalSize = FVector(current_tarrget_data_.range_);
-	radius_decal_->DecalSize = FVector(current_tarrget_data_.radius_);
+	range_decal_->DecalSize = FVector(current_target_data_.range_);
+	radius_decal_->DecalSize = FVector(current_target_data_.radius_);
 
 	switch (mode)
 	{
@@ -129,12 +138,12 @@ void UTargetingComponent::StartItemTargeting(ETargetingMode mode, float Range, f
 	is_targeting_ = true;
 	invoker_ = nullptr;
 	current_mode_ = mode;
-	current_tarrget_data_.range_ = Range;
-	current_tarrget_data_.radius_ = Radius;
+	current_target_data_.range_ = Range;
+	current_target_data_.radius_ = Radius;
 
 
-	range_decal_->DecalSize = FVector(current_tarrget_data_.range_);
-	radius_decal_->DecalSize = FVector(current_tarrget_data_.radius_);
+	range_decal_->DecalSize = FVector(current_target_data_.range_);
+	radius_decal_->DecalSize = FVector(current_target_data_.radius_);
 
 	switch (mode)
 	{
@@ -167,35 +176,24 @@ void UTargetingComponent::StopTargeting()
 
 void UTargetingComponent::HandleActorTargeting()
 {
-	FHitResult hit_result;
-	FVector world_location, world_direction;
 
-	if (player_controller_->DeprojectMousePositionToWorld(world_location, world_direction))
-	{
-		FVector trace_end = world_location + (world_direction * current_tarrget_data_.range_);
-		if (GetWorld()->LineTraceSingleByChannel(hit_result, world_location, trace_end, ECC_Visibility))
-		{
-			if (AActor* hit_actor = hit_result.GetActor())
-			{
-				if (IsValidTarget(hit_actor))
-				{
-					current_tarrget_data_.target_actor_ = hit_actor;
-					current_tarrget_data_.target_location_ = hit_result.Location;
-					OnTargetDataSelected.Broadcast(current_tarrget_data_);
-					StopTargeting();
-				}
-			}
-		}
-	}
+	FVector target_location = GetGroundLocation();
+	AActor* closest_actor = FindClosestActor(target_location);
+
+	current_target_data_.target_location_ = target_location;
+	current_target_data_.target_actor_ = closest_actor;
+
+	OnTargetDataSelected.Broadcast(current_target_data_);
+	StopTargeting();
 }
 
 void UTargetingComponent::HandleLocationTargeting()
 {
 	FVector target_location = GetGroundLocation();
 
-	current_tarrget_data_.target_location_ = ClampingOntoInvoker(target_location);
+	current_target_data_.target_location_ = ClampingOntoInvoker(target_location);
 
-	OnTargetDataSelected.Broadcast(current_tarrget_data_);
+	OnTargetDataSelected.Broadcast(current_target_data_);
 	StopTargeting();
 }
 
@@ -261,6 +259,8 @@ void UTargetingComponent::UpdateTargetingVisuals()
 		// @@ TODO: Set location of radius_decal_ to caster's location
 		//radius_decal_->SetWorldLocation(target_location);
 		range_decal_->SetWorldLocation(invoker_location);
+
+		ApplyMaterialHighlight(FindClosestActor(GetGroundLocation()));
 	}
 	if (current_mode_ == ETargetingMode::Location)
 	{
@@ -278,6 +278,17 @@ void UTargetingComponent::UpdateTargetingVisuals()
 
 void UTargetingComponent::CleanupTargetingVisuals()
 {
+	if (previously_chosen_actor_)
+	{
+		USkeletalMeshComponent* previous_mesh = previously_chosen_actor_->FindComponentByClass<USkeletalMeshComponent>();
+		for (int32 i = 0; i < previous_mesh->GetNumMaterials(); i++)
+		{
+			previous_mesh->SetMaterial(i, original_materials_[i]);
+		}
+
+		previously_chosen_actor_ = nullptr;
+	}
+
 	if (range_decal_)
 	{
 		range_decal_->SetVisibility(false);
@@ -329,11 +340,90 @@ FVector UTargetingComponent::ClampingOntoInvoker(FVector TargetLocation)
 	if (invoker_)
 	{
 		FVector owner_location = invoker_->GetActorLocation();
-		if (FVector::DistXY(owner_location, TargetLocation) >= current_tarrget_data_.range_)
+		if (FVector::DistXY(owner_location, TargetLocation) >= current_target_data_.range_)
 		{
-			return ProjectPointOntoCircle(TargetLocation, owner_location, current_tarrget_data_.range_);
+			return ProjectPointOntoCircle(TargetLocation, owner_location, current_target_data_.range_);
 		}
 	}
 
 	return TargetLocation;
+}
+
+AActor* UTargetingComponent::FindClosestActor(FVector TargetLocation)
+{
+	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (!game_mode)
+	{
+		return nullptr;
+	}
+
+	auto characters = game_mode->GetHeroContainers();
+	auto enemies = game_mode->GetEnemyContainers();
+	AActor* closest_actor = nullptr;
+	float closest_distance_sq = MAX_FLT;
+
+	for (AActor* actor : characters)
+	{
+		if (actor)
+		{
+			float distance_sq = FVector::DistSquared(TargetLocation, actor->GetActorLocation());
+			if (distance_sq < closest_distance_sq)
+			{
+				closest_distance_sq = distance_sq;
+				closest_actor = actor;
+			}
+		}
+	}
+
+	for (AActor* actor : enemies)
+	{
+		if (actor)
+		{
+			float distance_sq = FVector::DistSquared(TargetLocation, actor->GetActorLocation());
+			if (distance_sq < closest_distance_sq)
+			{
+				closest_distance_sq = distance_sq;
+				closest_actor = actor;
+			}
+		}
+	}
+
+	return closest_actor;
+}
+
+void UTargetingComponent::ApplyMaterialHighlight(AActor* target)
+{
+	if (!target) return;
+
+	if (previously_chosen_actor_ != target)
+	{
+		if (previously_chosen_actor_)
+		{
+			USkeletalMeshComponent* previous_mesh = previously_chosen_actor_->FindComponentByClass<USkeletalMeshComponent>();
+			for (int32 i = 0; i < previous_mesh->GetNumMaterials(); i++)
+			{
+				previous_mesh->SetMaterial(i, original_materials_[i]);
+			}
+		}
+
+		// Store original materials
+		USkeletalMeshComponent* MeshComponent = target->FindComponentByClass<USkeletalMeshComponent>();
+		if (MeshComponent)
+		{
+			original_materials_.Empty();
+			for (int32 i = 0; i < MeshComponent->GetNumMaterials(); i++)
+			{
+				original_materials_.Add(MeshComponent->GetMaterial(i));
+			}
+
+			// Apply highlight material to all slots
+			for (int32 i = 0; i < MeshComponent->GetNumMaterials(); i++)
+			{
+				MeshComponent->SetMaterial(i, highlight_material_);
+			}
+		}
+
+		previously_chosen_actor_ = target;
+	}
 }
