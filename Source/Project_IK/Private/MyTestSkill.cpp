@@ -29,9 +29,9 @@ bool UMyTestSkill::ActivateSkill_Implementation(const FTargetData& TargetData)
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Skill executed in derived class! %s"), *TargetData.target_location_.ToString());
-	if (TargetData.target_actor_)
+	for (int32 i = 0; i < TargetData.target_actors_.Num(); ++i)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Skill executed in derived class! %s"), *TargetData.target_actor_->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Selected %ith actor name: %s"), i, *TargetData.target_actors_[i]->GetName());
 	}
 	return true;
 }

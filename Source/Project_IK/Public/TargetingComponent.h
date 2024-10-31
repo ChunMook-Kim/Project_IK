@@ -30,7 +30,7 @@ struct FTargetData
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
-	AActor* target_actor_ = nullptr;
+	TArray<AActor*> target_actors_= TArray<AActor*>();
 
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	FVector target_location_ = FVector::ZeroVector;
@@ -38,9 +38,11 @@ struct FTargetData
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	FRotator target_rotation_ = FRotator::ZeroRotator;
 
+	// How far selectable
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	float range_ = 1000.f;
 
+	// A radius of selected area
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	float radius_ = 0.f;
 };
@@ -111,6 +113,7 @@ private:
 
 	void HandleActorTargeting();
 	void HandleLocationTargeting();
+	void HandleDirectionTargeting();
 	
 	void InitializeTargetingVisuals();
 	void UpdateTargetingVisuals();
@@ -120,7 +123,11 @@ private:
 
 	bool IsValidTarget(AActor* target) const;
 	FVector GetGroundLocation() const;
-	FVector ClampingOntoInvoker(FVector TargetLocation);
-	AActor* FindClosestActor(FVector TargetLocation);
+	FVector ClampingOntoInvoker(const FVector& TargetLocation);
+	
+	AActor* FindClosestActor(const FVector& TargetLocation);
 	void ApplyMaterialHighlight(AActor* target);
+
+	bool IsWithinSector(const FVector& origin, const FVector& direction, float range, float angle, const FVector& actor_location);
+
 };
