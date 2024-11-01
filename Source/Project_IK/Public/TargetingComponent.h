@@ -42,7 +42,7 @@ struct FTargetData
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	float range_ = 1000.f;
 
-	// A radius of selected area
+	// A radius of selected area, an arc width for direction mode
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	float radius_ = 0.f;
 };
@@ -92,6 +92,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
 	UMaterialInterface* arc_material_;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
+	UMaterialInterface* highlight_material_;
+
 private:
 	UPROPERTY() 
 	AActor* targeting_visual_actor_;
@@ -106,12 +109,12 @@ private:
 	UPROPERTY()
 	UDecalComponent* radius_decal_;
 	UPROPERTY()
-	UDecalComponent* arc_decal_;
+	UDecalComponent* sector_decal_;
 
 	AActor* invoker_;
 
 	UPROPERTY()
-	UMaterialInstanceDynamic* highlight_material_;
+	UMaterialInstanceDynamic* highlight_dynamic_material_;
 
 	TArray<UMaterialInterface*> original_materials_;
 	AActor* previously_chosen_actor_;

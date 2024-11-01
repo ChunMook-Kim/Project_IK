@@ -27,10 +27,9 @@ public:
 
 	virtual void BeginPlay();
 
-	UFUNCTION(BlueprintPure, Category = "Skill")
+	UFUNCTION(BlueprintPure, Category = "Targeting")
 	class UTargetingComponent* GetTargetingComponent();
 
-protected:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Targeting")
 	class UTargetingComponent* targeting_component_;
 };

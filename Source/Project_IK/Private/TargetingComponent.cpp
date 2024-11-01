@@ -28,13 +28,7 @@ UTargetingComponent::UTargetingComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	is_targeting_ = false;
-	current_mode_ = ETargetingMode::None;
-
-	static ConstructorHelpers::FObjectFinder<UMaterial> HighlightMat(TEXT("/Game/Materials/SelectionMat.SelectionMat"));
-	if (HighlightMat.Succeeded())
-	{
-		highlight_material_ = UMaterialInstanceDynamic::Create(HighlightMat.Object, this);
-	}
+	current_mode_ = ETargetingMode::None;	
 }
 
 
@@ -114,7 +108,13 @@ void UTargetingComponent::StartSkillTargeting(AActor* invoker, ETargetingMode mo
 
 	range_decal_->DecalSize = FVector(current_target_data_.range_);
 	radius_decal_->DecalSize = FVector(current_target_data_.radius_);
-	arc_decal_->DecalSize = FVector(current_target_data_.range_);
+	sector_decal_->DecalSize = FVector(current_target_data_.range_);
+	UMaterialInstanceDynamic* dynamic_material = sector_decal_->CreateDynamicMaterialInstance();
+	if (dynamic_material)
+	{
+		dynamic_material->SetScalarParameterValue(FName("ArcWidth"), current_target_data_.radius_ / 360);
+	}
+	
 
 	switch (mode)
 	{
@@ -124,18 +124,18 @@ void UTargetingComponent::StartSkillTargeting(AActor* invoker, ETargetingMode mo
 		player_controller_->CurrentMouseCursor = EMouseCursor::Crosshairs;
 		radius_decal_->SetVisibility(false);
 		range_decal_->SetVisibility(true);
-		arc_decal_->SetVisibility(false);
+		sector_decal_->SetVisibility(false);
 		break;
 	case ETargetingMode::Location:
 		player_controller_->CurrentMouseCursor = EMouseCursor::GrabHand;
 		radius_decal_->SetVisibility(true);
 		range_decal_->SetVisibility(true);
-		arc_decal_->SetVisibility(false);
+		sector_decal_->SetVisibility(false);
 		break;
 	case ETargetingMode::Direction:
 		radius_decal_->SetVisibility(false);
 		range_decal_->SetVisibility(true);
-		arc_decal_->SetVisibility(true);
+		sector_decal_->SetVisibility(true);
 		break;
 	default:
 		break;
@@ -153,7 +153,12 @@ void UTargetingComponent::StartItemTargeting(ETargetingMode mode, float Range, f
 
 	range_decal_->DecalSize = FVector(current_target_data_.range_);
 	radius_decal_->DecalSize = FVector(current_target_data_.radius_);
-	arc_decal_->DecalSize = FVector(current_target_data_.range_);
+	sector_decal_->DecalSize = FVector(current_target_data_.range_);
+	UMaterialInstanceDynamic* dynamic_material = sector_decal_->CreateDynamicMaterialInstance();
+	if (dynamic_material)
+	{
+		dynamic_material->SetScalarParameterValue(FName("ArcWidth"), current_target_data_.radius_ / 360);
+	}
 
 	switch (mode)
 	{
@@ -163,13 +168,13 @@ void UTargetingComponent::StartItemTargeting(ETargetingMode mode, float Range, f
 		player_controller_->CurrentMouseCursor = EMouseCursor::Crosshairs;
 		radius_decal_->SetVisibility(false);
 		range_decal_->SetVisibility(false);
-		arc_decal_->SetVisibility(false);
+		sector_decal_->SetVisibility(false);
 		break;
 	case ETargetingMode::Location:
 		player_controller_->CurrentMouseCursor = EMouseCursor::GrabHand;
 		radius_decal_->SetVisibility(true);
 		range_decal_->SetVisibility(false);
-		arc_decal_->SetVisibility(false);
+		sector_decal_->SetVisibility(false);
 		break;
 	case ETargetingMode::Direction:
 		UE_LOG(LogTemp, Error, TEXT("Invalid direction targeting to use an item!"));
@@ -284,16 +289,18 @@ void UTargetingComponent::InitializeTargetingVisuals()
 			radius_decal_->SetVisibility(false);
 			radius_decal_->RegisterComponent();
 
-			arc_decal_ = NewObject<UDecalComponent>(targeting_visual_actor_);
-			arc_decal_->SetupAttachment(root_component);
-			arc_decal_->SetVisibility(false);
-			arc_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
+			sector_decal_ = NewObject<UDecalComponent>(targeting_visual_actor_);
+			sector_decal_->SetupAttachment(root_component);
+			sector_decal_->SetVisibility(false);
+			sector_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
 			if (arc_material_)
 			{
-				arc_decal_->SetDecalMaterial(arc_material_);
+				sector_decal_->SetDecalMaterial(arc_material_);
 			}
-			arc_decal_->RegisterComponent();
+			sector_decal_->RegisterComponent();
 		}
+
+		highlight_dynamic_material_ = UMaterialInstanceDynamic::Create(highlight_material_, this);
 	}
 }
 
@@ -328,15 +335,12 @@ void UTargetingComponent::UpdateTargetingVisuals()
 	if (current_mode_ == ETargetingMode::Direction)
 	{
 		// @@ TODO: Visuallize sector based on arc
-		arc_decal_->SetWorldLocation(invoker_location);
+		sector_decal_->SetWorldLocation(invoker_location);
 
 		FVector direction = target_location - invoker_location;
-		direction.Y = 0;
-		direction.Normalize();
-
-		FRotator target_rotation = UKismetMathLibrary::MakeRotFromX(direction);
-		arc_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
-		arc_decal_->AddRelativeRotation(target_rotation);
+		FRotator target_rotation = UKismetMathLibrary::MakeRotFromZ(direction);
+		sector_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
+		sector_decal_->AddRelativeRotation(target_rotation);
 
 		range_decal_->SetWorldLocation(invoker_location);
 	}
@@ -363,9 +367,9 @@ void UTargetingComponent::CleanupTargetingVisuals()
 	{
 		radius_decal_->SetVisibility(false);
 	}
-	if (arc_decal_)
+	if (sector_decal_)
 	{
-		arc_decal_->SetVisibility(false);
+		sector_decal_->SetVisibility(false);
 	}
 }
 
@@ -490,7 +494,7 @@ void UTargetingComponent::ApplyMaterialHighlight(AActor* target)
 			// Apply highlight material to all slots
 			for (int32 i = 0; i < MeshComponent->GetNumMaterials(); i++)
 			{
-				MeshComponent->SetMaterial(i, highlight_material_);
+				MeshComponent->SetMaterial(i, highlight_dynamic_material_);
 			}
 		}
 
