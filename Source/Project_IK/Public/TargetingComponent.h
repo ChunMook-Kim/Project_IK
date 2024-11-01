@@ -89,6 +89,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
 	UMaterialInterface* radius_material_;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
+	UMaterialInterface* arc_material_;
+
 private:
 	UPROPERTY() 
 	AActor* targeting_visual_actor_;
@@ -102,6 +105,8 @@ private:
 	UDecalComponent* range_decal_;
 	UPROPERTY()
 	UDecalComponent* radius_decal_;
+	UPROPERTY()
+	UDecalComponent* arc_decal_;
 
 	AActor* invoker_;
 

@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/DecalComponent.h"
 #include "IKPlayerController.h"
@@ -113,6 +114,7 @@ void UTargetingComponent::StartSkillTargeting(AActor* invoker, ETargetingMode mo
 
 	range_decal_->DecalSize = FVector(current_target_data_.range_);
 	radius_decal_->DecalSize = FVector(current_target_data_.radius_);
+	arc_decal_->DecalSize = FVector(current_target_data_.range_);
 
 	switch (mode)
 	{
@@ -122,15 +124,18 @@ void UTargetingComponent::StartSkillTargeting(AActor* invoker, ETargetingMode mo
 		player_controller_->CurrentMouseCursor = EMouseCursor::Crosshairs;
 		radius_decal_->SetVisibility(false);
 		range_decal_->SetVisibility(true);
+		arc_decal_->SetVisibility(false);
 		break;
 	case ETargetingMode::Location:
 		player_controller_->CurrentMouseCursor = EMouseCursor::GrabHand;
 		radius_decal_->SetVisibility(true);
 		range_decal_->SetVisibility(true);
+		arc_decal_->SetVisibility(false);
 		break;
 	case ETargetingMode::Direction:
-		radius_decal_->SetVisibility(true);
+		radius_decal_->SetVisibility(false);
 		range_decal_->SetVisibility(true);
+		arc_decal_->SetVisibility(true);
 		break;
 	default:
 		break;
@@ -148,6 +153,7 @@ void UTargetingComponent::StartItemTargeting(ETargetingMode mode, float Range, f
 
 	range_decal_->DecalSize = FVector(current_target_data_.range_);
 	radius_decal_->DecalSize = FVector(current_target_data_.radius_);
+	arc_decal_->DecalSize = FVector(current_target_data_.range_);
 
 	switch (mode)
 	{
@@ -157,13 +163,16 @@ void UTargetingComponent::StartItemTargeting(ETargetingMode mode, float Range, f
 		player_controller_->CurrentMouseCursor = EMouseCursor::Crosshairs;
 		radius_decal_->SetVisibility(false);
 		range_decal_->SetVisibility(false);
+		arc_decal_->SetVisibility(false);
 		break;
 	case ETargetingMode::Location:
 		player_controller_->CurrentMouseCursor = EMouseCursor::GrabHand;
 		radius_decal_->SetVisibility(true);
 		range_decal_->SetVisibility(false);
+		arc_decal_->SetVisibility(false);
 		break;
 	case ETargetingMode::Direction:
+		UE_LOG(LogTemp, Error, TEXT("Invalid direction targeting to use an item!"));
 		break;
 	default:
 		break;
@@ -274,6 +283,16 @@ void UTargetingComponent::InitializeTargetingVisuals()
 			}
 			radius_decal_->SetVisibility(false);
 			radius_decal_->RegisterComponent();
+
+			arc_decal_ = NewObject<UDecalComponent>(targeting_visual_actor_);
+			arc_decal_->SetupAttachment(root_component);
+			arc_decal_->SetVisibility(false);
+			arc_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
+			if (arc_material_)
+			{
+				arc_decal_->SetDecalMaterial(arc_material_);
+			}
+			arc_decal_->RegisterComponent();
 		}
 	}
 }
@@ -296,8 +315,6 @@ void UTargetingComponent::UpdateTargetingVisuals()
 
 	if (current_mode_ == ETargetingMode::Actor)
 	{
-		// @@ TODO: Set location of radius_decal_ to caster's location
-		//radius_decal_->SetWorldLocation(target_location);
 		range_decal_->SetWorldLocation(invoker_location);
 
 		ApplyMaterialHighlight(FindClosestActor(GetGroundLocation()));
@@ -311,7 +328,16 @@ void UTargetingComponent::UpdateTargetingVisuals()
 	if (current_mode_ == ETargetingMode::Direction)
 	{
 		// @@ TODO: Visuallize sector based on arc
-		//radius_decal_->SetWorldLocation(target_location);
+		arc_decal_->SetWorldLocation(invoker_location);
+
+		FVector direction = target_location - invoker_location;
+		direction.Y = 0;
+		direction.Normalize();
+
+		FRotator target_rotation = UKismetMathLibrary::MakeRotFromX(direction);
+		arc_decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
+		arc_decal_->AddRelativeRotation(target_rotation);
+
 		range_decal_->SetWorldLocation(invoker_location);
 	}
 }
@@ -336,6 +362,10 @@ void UTargetingComponent::CleanupTargetingVisuals()
 	if (radius_decal_)
 	{
 		radius_decal_->SetVisibility(false);
+	}
+	if (arc_decal_)
+	{
+		arc_decal_->SetVisibility(false);
 	}
 }
 

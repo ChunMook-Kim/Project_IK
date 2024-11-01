@@ -82,7 +82,7 @@ void UButtonBarWidget::OnSkillButtonClicked0()
 	selected_item_index_ = -1;
 	if (targeting_component_)
 	{
-		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Direction, 5000, 90);
+		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Direction, 1000, 90);
 	}
 }
 
