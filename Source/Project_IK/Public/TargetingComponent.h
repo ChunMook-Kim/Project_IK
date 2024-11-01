@@ -30,7 +30,7 @@ struct FTargetData
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
-	AActor* target_actor_ = nullptr;
+	TArray<AActor*> target_actors_= TArray<AActor*>();
 
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	FVector target_location_ = FVector::ZeroVector;
@@ -38,9 +38,11 @@ struct FTargetData
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	FRotator target_rotation_ = FRotator::ZeroRotator;
 
+	// How far selectable
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	float range_ = 1000.f;
 
+	// A radius of selected area, an arc width for direction mode
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	float radius_ = 0.f;
 };
@@ -87,24 +89,39 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
 	UMaterialInterface* radius_material_;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
+	UMaterialInterface* arc_material_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
+	UMaterialInterface* highlight_material_;
+
 private:
 	UPROPERTY() 
 	AActor* targeting_visual_actor_;
 	ETargetingMode current_mode_;
 	bool is_targeting_;
 	APlayerController* player_controller_;
-	FTargetData current_tarrget_data_;
+	FTargetData current_target_data_;
 
 	// Components for visual feedback
 	UPROPERTY()
 	UDecalComponent* range_decal_;
 	UPROPERTY()
 	UDecalComponent* radius_decal_;
+	UPROPERTY()
+	UDecalComponent* sector_decal_;
 
 	AActor* invoker_;
 
+	UPROPERTY()
+	UMaterialInstanceDynamic* highlight_dynamic_material_;
+
+	TArray<UMaterialInterface*> original_materials_;
+	AActor* previously_chosen_actor_;
+
 	void HandleActorTargeting();
 	void HandleLocationTargeting();
+	void HandleDirectionTargeting();
 	
 	void InitializeTargetingVisuals();
 	void UpdateTargetingVisuals();
@@ -114,5 +131,11 @@ private:
 
 	bool IsValidTarget(AActor* target) const;
 	FVector GetGroundLocation() const;
-	FVector ClampingOntoInvoker(FVector TargetLocation);
+	FVector ClampingOntoInvoker(const FVector& TargetLocation);
+	
+	AActor* FindClosestActor(const FVector& TargetLocation);
+	void ApplyMaterialHighlight(AActor* target);
+
+	bool IsWithinSector(const FVector& origin, const FVector& direction, float range, float angle, const FVector& actor_location);
+
 };

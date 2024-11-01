@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "TargetingComponent.h"
 
 AIKPlayerController::AIKPlayerController()
+	: Super::APlayerController()
 {
 	targeting_component_ = CreateDefaultSubobject<UTargetingComponent>(TEXT("Targeting Component"));
 }
