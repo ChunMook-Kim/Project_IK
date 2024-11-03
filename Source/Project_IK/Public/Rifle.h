@@ -13,5 +13,7 @@ UCLASS()
 class PROJECT_IK_API ARifle : public AGun
 {
 	GENERATED_BODY()
-	
+public:
+	ARifle();
+	virtual void FireWeapon(FVector target_pos) override;
 };

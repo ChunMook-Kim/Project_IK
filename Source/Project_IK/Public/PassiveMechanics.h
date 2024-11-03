@@ -19,9 +19,16 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	void ActivePassiveSkill();
+	bool IsPassiveAvailable() const;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+private:
+	float duration_ = 0;
+	float cool_down_ = 0;
+	bool is_activated_ = false;
+	UClass* passive_class_ = nullptr;
 };

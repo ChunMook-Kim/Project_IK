@@ -32,6 +32,11 @@ void AGunner::Tick(float DeltaTime)
 
 }
 
+void AGunner::GetDamage(int damage_amount)
+{
+	character_stat_component_->GetDamage(damage_amount);
+}
+
 // Called to bind functionality to input
 void AGunner::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -41,16 +46,20 @@ void AGunner::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AGunner::OnDie()
 {
+	weapon_mechanics_->OnDestroy();
+	Destroy();
+}
+
+void AGunner::Fire(AActor* target)
+{
+	weapon_mechanics_->FireWeapon(target);
+	PlayAnimMontage(fire_montage_);
 }
 
 void AGunner::Reload()
 {
+	weapon_mechanics_->Reload();
+	PlayAnimMontage(reload_montage_);
 }
 
-void AGunner::Fire()
-{
-}
 
-void AGunner::GetDamage(int damage_amount)
-{
-}

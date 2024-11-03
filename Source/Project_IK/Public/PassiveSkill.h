@@ -4,18 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Bullet.generated.h"
+#include "PassiveSkill.generated.h"
 
-class USphereComponent;
-class UProjectileMovementComponent;
 UCLASS()
-class PROJECT_IK_API ABullet : public AActor
+class PROJECT_IK_API APassiveSkill : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ABullet();
+	APassiveSkill();
+	void Initialize(AActor* caster);
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,8 +24,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-protected:
-	USphereComponent* collision_;
-	UProjectileMovementComponent* movement_;
-	UStaticMeshComponent* bullet_mesh_;
+public:
+	float cool_time_;
+	float duration_;
+	float hold_time_;
+	AActor* caster_;
 };

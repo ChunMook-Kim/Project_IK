@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Gun.generated.h"
 
+class USphereComponent;
 UCLASS()
 class PROJECT_IK_API AGun : public AActor, public IGunInterface
 {
@@ -27,7 +28,9 @@ public:
 	virtual void Reload() override;
 	virtual void FireWeapon(FVector target_pos) override;
 
-private:
+protected:
+	//muzzle의 위치는 따로 설정해야 하므로,모든 총들은 bp를 통해 muzzle위치를 정해야 한다.
+	USphereComponent* muzzle_;
 	int max_megazine_ = 0;
 	int cur_megazine_ = 0;
 	float fire_interval_ = 0;

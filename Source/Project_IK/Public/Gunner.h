@@ -34,12 +34,16 @@ public:
 public:
 	virtual void OnDie();
 	virtual void Reload();
-	virtual void Fire();
+	virtual void Fire(AActor* target);
 	virtual void GetDamage(int damage_amount);
 
-private:
+public:
 	UCharacterStatComponent* character_stat_component_;
 	USkillContainer* skill_container_;
 	UWeaponMechanics* weapon_mechanics_;
 	UWidgetComponent* hp_UI_;
+
+private:
+	UAnimMontage* fire_montage_;
+	UAnimMontage* reload_montage_;
 };
