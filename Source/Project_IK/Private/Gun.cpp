@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Source file for Gun.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 #include "Gun.h"
 #include "Components/SphereComponent.h"
@@ -9,8 +16,13 @@ AGun::AGun()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	gun_mesh_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	muzzle_ = CreateDefaultSubobject<USphereComponent>(TEXT("Muzzle"));
+
+	muzzle_->SetupAttachment(gun_mesh_);
 	muzzle_->SetVisibility(false);
+
+	SetRootComponent(gun_mesh_);
 }
 
 // Called when the game starts or when spawned

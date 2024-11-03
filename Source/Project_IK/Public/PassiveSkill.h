@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Header file for PassiveSkillBase.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -23,10 +30,23 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	float GetCoolTime() const;
+	void SetCoolTime(float Cool_Time);
+	float GetDuration() const;
+	void SetDuration(float Duration);
+	float GetHoldTime() const;
+	void SetHoldTime(float Hold_Time);
 
-public:
-	float cool_time_;
-	float duration_;
-	float hold_time_;
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
+	float cool_time_ = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
+	float duration_ = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
+	float hold_time_ = 0.f;
+	
 	AActor* caster_;
 };

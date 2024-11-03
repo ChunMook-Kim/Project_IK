@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Header file for HealthBurst Passive Skill.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -17,6 +24,8 @@ class PROJECT_IK_API AHealthBurst : public APassiveSkill
 	virtual void Tick(float DeltaSeconds) override;
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	float heal_amount_ = 10.f;
+	
 	AGunner* gunner_caster_ = nullptr;
 };

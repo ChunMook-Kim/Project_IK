@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Source file for PassiveSkillBase.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 #include "PassiveSkill.h"
 
@@ -29,4 +36,35 @@ void APassiveSkill::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+float APassiveSkill::GetCoolTime() const
+{
+	return cool_time_;
+}
+
+void APassiveSkill::SetCoolTime(float Cool_Time)
+{
+	cool_time_ = Cool_Time = Cool_Time;
+}
+
+float APassiveSkill::GetHoldTime() const
+{
+	return hold_time_;
+}
+
+void APassiveSkill::SetHoldTime(float Hold_Time)
+{
+	hold_time_ = Hold_Time = Hold_Time;
+}
+
+float APassiveSkill::GetDuration() const
+{
+	return duration_;
+}
+
+void APassiveSkill::SetDuration(float Duration)
+{
+	duration_ = Duration;
+}
+
 

@@ -36,8 +36,8 @@ void UPassiveMechanics::ActivePassiveSkill()
 {
 	auto spawned_skill = Cast<APassiveSkill>(GetWorld()->SpawnActor(passive_class_));
 	spawned_skill->Initialize(GetOwner());
-	cool_down_ = spawned_skill->cool_time_;
-	duration_ = spawned_skill->duration_;
+	cool_down_ = spawned_skill->GetCoolTime();
+	duration_ = spawned_skill->GetDuration();
 	is_activated_ = true;
 }
 

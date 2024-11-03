@@ -33,7 +33,11 @@ protected:
 
 public:	
 	virtual void OnDie();
-	
+	bool HasCoveringOwner() const;
+	void SetCoveringOwner(bool bHas_Covering_Owner);
+	bool IsBroken() const;
+	void SetIsBroken(bool bIs_Broken);
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* cover_collider_;
@@ -46,8 +50,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	UCharacterStatComponent* character_stat_;
-
-public:
+	
 	bool has_covering_owner_ = false;
 	bool is_broken_ = false;
 };

@@ -17,6 +17,6 @@ void AGunnerAIController::OnDie()
 	UObject* cover = GetBlackboardComponent()->GetValueAsObject(owned_cover_name_);
 	if(cover != nullptr)
 	{
-		Cast<ACover>(cover)->has_covering_owner_ = false;
+		Cast<ACover>(cover)->SetIsBroken(false);
 	}
 }

@@ -48,3 +48,23 @@ void ACover::OnDie()
 	is_broken_ = true;
 	Destroy();
 }
+
+bool ACover::HasCoveringOwner() const
+{
+	return has_covering_owner_;
+}
+
+void ACover::SetCoveringOwner(bool bHas_Covering_Owner)
+{
+	has_covering_owner_ = bHas_Covering_Owner;
+}
+
+bool ACover::IsBroken() const
+{
+	return is_broken_;
+}
+
+void ACover::SetIsBroken(bool bIs_Broken)
+{
+	is_broken_ = bIs_Broken;
+}

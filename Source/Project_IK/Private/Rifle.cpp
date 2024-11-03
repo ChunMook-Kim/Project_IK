@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Header file for Rifle.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 #include "Rifle.h"
 #include "Bullet.h"
@@ -16,6 +23,7 @@ ARifle::ARifle()
 
 void ARifle::FireWeapon(FVector target_pos)
 {
+	//TODO: 오브젝트 풀을 이용하면 최적화 가능.
 	Super::FireWeapon(target_pos);
 	if(cur_megazine_ > 0)
 	{
@@ -24,3 +32,4 @@ void ARifle::FireWeapon(FVector target_pos)
 		cur_megazine_--;	
 	}
 }
+
