@@ -1,19 +1,34 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Source file for Cover.
 
-
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 #include "Cover.h"
 #include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 #include "CharacterStatComponent.h"
 // Sets default values
 ACover::ACover()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	cover_collider_ = CreateDefaultSubobject<USphereComponent>(FName("cover_collider"));
+	PrimaryActorTick.bCanEverTick = false;
+	
+	cover_collider_ = CreateDefaultSubobject<UBoxComponent>(FName("cover_collider"));
 	cover_position_ = CreateDefaultSubobject<USphereComponent>(FName("cover_position"));
 	cover_mesh_ = CreateDefaultSubobject<UStaticMeshComponent>(FName("cover_mesh"));
 	character_stat_ = CreateDefaultSubobject<UCharacterStatComponent>(FName("character_stat"));
-	SetRootComponent(cover_collider_);
+
+	cover_collider_->SetupAttachment(cover_position_);
+	cover_collider_->SetMobility(EComponentMobility::Movable);
+	
+	cover_mesh_->SetupAttachment(cover_collider_);
+	cover_mesh_->SetMobility(EComponentMobility::Movable);
+
+	SetRootComponent(cover_position_);
 }
 
 // Called when the game starts or when spawned
@@ -21,13 +36,6 @@ void ACover::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-// Called every frame
-void ACover::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ACover::GetDamage(int damage_amount)
