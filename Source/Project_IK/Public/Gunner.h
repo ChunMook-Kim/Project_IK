@@ -6,6 +6,11 @@
 #include "GameFramework/Character.h"
 #include "Gunner.generated.h"
 
+class UCharacterStatComponent;
+class USkillContainer;
+class UWeaponMechanics;
+class UWidgetComponent;
+
 UCLASS()
 class PROJECT_IK_API AGunner : public ACharacter
 {
@@ -26,4 +31,15 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	virtual void OnDie();
+	virtual void Reload();
+	virtual void Fire();
+	virtual void GetDamage(int damage_amount);
+
+private:
+	UCharacterStatComponent* character_stat_component_;
+	USkillContainer* skill_container_;
+	UWeaponMechanics* weapon_mechanics_;
+	UWidgetComponent* hp_UI_;
 };

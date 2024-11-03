@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GunInterface.h"
 #include "GameFramework/Actor.h"
 #include "Gun.generated.h"
 
 UCLASS()
-class PROJECT_IK_API AGun : public AActor
+class PROJECT_IK_API AGun : public AActor, public IGunInterface
 {
 	GENERATED_BODY()
 	
@@ -22,5 +23,13 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+		
+	virtual void Reload() override;
+	virtual void FireWeapon(FVector target_pos) override;
 
+private:
+	int max_megazine_ = 0;
+	int cur_megazine_ = 0;
+	float fire_interval_ = 0;
+	float reload_duration_ = 0;
 };

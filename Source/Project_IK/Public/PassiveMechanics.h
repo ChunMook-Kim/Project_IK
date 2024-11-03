@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PassiveMechanics.generated.h"
 
-
+class AGun;
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_IK_API UPassiveMechanics : public UActorComponent
 {
@@ -24,5 +24,4 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
 };

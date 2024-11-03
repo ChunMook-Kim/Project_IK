@@ -25,3 +25,10 @@ void AGun::Tick(float DeltaTime)
 
 }
 
+void AGun::Reload()
+{
+}
+
+void AGun::FireWeapon(FVector target_pos)
+{
+}

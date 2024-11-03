@@ -1,34 +1,70 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "AIController.h"
 #include "WeaponMechanics.h"
+#include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
+#include "Gun.h"
+#include "Rifle.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values for this component's properties
 UWeaponMechanics::UWeaponMechanics()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
 
+void UWeaponMechanics::EquipWeapon()
+{
+	weapon_ref_ = Cast<AGun>(GetWorld()->SpawnActor(weapon_class_));
+	weapon_ref_->AttachToComponent(character_ref_->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, head_socket_name_);
+}
 
 // Called when the game starts
 void UWeaponMechanics::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
+	weapon_class_ = ARifle::StaticClass();
+	character_ref_ = Cast<ACharacter>(GetOwner());
+	EquipWeapon();
 }
 
-
-// Called every frame
-void UWeaponMechanics::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UWeaponMechanics::FireWeapon(AActor* target)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if(weapon_ref_)
+	{
+		ACharacter* casted_target = Cast<ACharacter>(target);
+		const UBlackboardComponent* blackboard = Cast<AAIController>(casted_target->GetController())->GetBlackboardComponent();
+		UObject* cover = blackboard->GetValueAsObject(owned_cover_key_name_);
+		if(IsValid(cover))
+		{
+			if(FMath::RandRange(0, 100) > 50)
+			{
+				weapon_ref_->FireWeapon(casted_target->GetMesh()->GetSocketLocation(head_socket_name_));
+			}
+			else
+			{
+				weapon_ref_->FireWeapon(target->GetActorLocation() - FVector(0, 0, 50));
+			}
+		}
+		else
+		{
+			weapon_ref_->FireWeapon(target->GetActorLocation());
+		}
+	}
+}
 
-	// ...
+void UWeaponMechanics::OnDestroy()
+{
+	if(weapon_ref_) weapon_ref_->Destroy();
+}
+
+void UWeaponMechanics::Reload()
+{
+	if(weapon_ref_) weapon_ref_->Reload();
 }
 

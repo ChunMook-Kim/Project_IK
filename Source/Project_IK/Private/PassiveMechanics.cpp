@@ -13,7 +13,6 @@ UPassiveMechanics::UPassiveMechanics()
 	// ...
 }
 
-
 // Called when the game starts
 void UPassiveMechanics::BeginPlay()
 {
@@ -22,7 +21,6 @@ void UPassiveMechanics::BeginPlay()
 	// ...
 	
 }
-
 
 // Called every frame
 void UPassiveMechanics::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
