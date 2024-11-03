@@ -2,6 +2,7 @@
 
 
 #include "Gunner.h"
+#include "GunnerAIController.h"
 #include "CharacterStatComponent.h"
 #include "SkillContainer.h"
 #include "WeaponMechanics.h"
@@ -47,6 +48,7 @@ void AGunner::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AGunner::OnDie()
 {
 	weapon_mechanics_->OnDestroy();
+	Cast<AGunnerAIController>(GetController())->OnDie();
 	Destroy();
 }
 

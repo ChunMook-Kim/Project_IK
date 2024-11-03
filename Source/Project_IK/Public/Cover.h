@@ -34,5 +34,7 @@ private:
 	UStaticMeshComponent* cover_mesh_;
 	UCharacterStatComponent* character_stat_;
 
-	bool is_broken_;
+public:
+	bool has_covering_owner_ = false;
+	bool is_broken_ = false;
 };
