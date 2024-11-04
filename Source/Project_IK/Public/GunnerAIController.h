@@ -24,7 +24,7 @@ public:
 	void OnDie();
 	virtual void OnPossess(APawn* InPawn) override;
 
-private:
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
 	UBehaviorTree* behavior_tree_;
 

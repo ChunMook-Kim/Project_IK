@@ -41,6 +41,7 @@ void UPassiveMechanics::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UPassiveMechanics::ActivePassiveSkill()
 {
+	//TODO: 동적 생성이 아닌, 한번 생성하고 초기화 하는 방식으로 최적화 가능.
 	auto spawned_skill = Cast<APassiveSkill>(GetWorld()->SpawnActor(passive_class_));
 	spawned_skill->Initialize(GetOwner());
 	cool_down_ = spawned_skill->GetCoolTime();
