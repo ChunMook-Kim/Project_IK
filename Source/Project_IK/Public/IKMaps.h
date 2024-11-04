@@ -24,7 +24,7 @@ enum class NodeType
 
 struct MapNode
 {
-	NodeType type;
+	NodeType type = NodeType::None;
 	TArray<int32> next;
 };
 
@@ -44,4 +44,8 @@ public:
 
 protected:
 	TArray<TArray<MapNode>> map;
+
+	void ClearMaps();
+	bool IsPathCrossed(int32 row, int32 col, int32 path_to) const;
+	inline NodeType QueryNodeType() const;
 };

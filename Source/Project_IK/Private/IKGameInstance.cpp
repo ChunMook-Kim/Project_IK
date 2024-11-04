@@ -4,12 +4,14 @@
 #include "IKGameInstance.h"
 
 #include "ItemInventory.h"
+#include "IKMaps.h"
 #include "MyTestItem.h"
 
 UIKGameInstance::UIKGameInstance()
 {
 	InitializeCharacterData();
 	InitializeItemInventory();
+	InitializeMaps();
 }
 
 FCharacterData* UIKGameInstance::GetCharacterData(int32 char_id) const
@@ -47,4 +49,10 @@ void UIKGameInstance::InitializeCharacterData()
 void UIKGameInstance::InitializeItemInventory()
 {
 	item_inventory_ = NewObject<UItemInventory>();
+}
+
+void UIKGameInstance::InitializeMaps()
+{
+	maps_ = NewObject<UIKMaps>();
+	maps_->GenerateMaps(7, 4);
 }
