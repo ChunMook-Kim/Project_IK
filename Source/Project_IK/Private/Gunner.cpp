@@ -48,6 +48,16 @@ void AGunner::SetCharacterStatComponent(UCharacterStatComponent* Character_Stat_
 	character_stat_component_ = Character_Stat_Component;
 }
 
+FVector AGunner::GetForwardDir() const
+{
+	return forward_dir_;
+}
+
+void AGunner::SetForwardDir(const FVector& Forward_Dir)
+{
+	forward_dir_ = Forward_Dir;
+}
+
 // Called to bind functionality to input
 void AGunner::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

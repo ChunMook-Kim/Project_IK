@@ -24,7 +24,7 @@ class PROJECT_IK_API AHealthBurst : public APassiveSkill
 	virtual void Tick(float DeltaSeconds) override;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthBurst", meta = (AllowPrivateAccess = "true"))
 	float heal_amount_ = 10.f;
 	
 	AGunner* gunner_caster_ = nullptr;

@@ -26,6 +26,6 @@ public:
 	APassiveSkillGunner();
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveSkillGunner", meta = (AllowPrivateAccess = "true"))
 	UPassiveMechanics* passive_mechanics_;
 };
