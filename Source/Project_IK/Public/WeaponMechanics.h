@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Header file for WeaponMechanics.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -29,12 +36,18 @@ private:
 	void EquipWeapon();
 	
 private:
-	//weapon_class는 Default로 Rifle로 지정되어 있음. BP를 통해 변경 가능하게 하는것이 좋을듯.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	UClass* weapon_class_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	FName head_socket_name_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
+	FName gun_socket_name_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	FName owned_cover_key_name_;
 	
-	//TODO: 이거 SharedPtr이나 Weak Ptr로 해야 하나?
 	AGun* weapon_ref_ = nullptr;
 	ACharacter* character_ref_ = nullptr;
 };

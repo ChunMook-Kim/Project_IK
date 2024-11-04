@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Source file for Gunner AI Controller.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 #include "GunnerAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -8,13 +15,13 @@
 void AGunnerAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	RunBehaviorTree(tree_);
-	GetBlackboardComponent()->SetValueAsClass(target_class_name_, target_class_);
+	RunBehaviorTree(behavior_tree_);
+	GetBlackboardComponent()->SetValueAsClass(target_class_key_name_, target_class_);
 }
 
 void AGunnerAIController::OnDie()
 {
-	UObject* cover = GetBlackboardComponent()->GetValueAsObject(owned_cover_name_);
+	UObject* cover = GetBlackboardComponent()->GetValueAsObject(owned_cover_key_name_);
 	if(cover != nullptr)
 	{
 		Cast<ACover>(cover)->SetIsBroken(false);

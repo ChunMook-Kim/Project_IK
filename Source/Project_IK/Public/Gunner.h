@@ -37,13 +37,25 @@ public:
 	virtual void Fire(AActor* target);
 	virtual void GetDamage(int damage_amount);
 
-public:
-	UCharacterStatComponent* character_stat_component_;
-	USkillContainer* skill_container_;
-	UWeaponMechanics* weapon_mechanics_;
-	UWidgetComponent* hp_UI_;
+	UCharacterStatComponent* GetCharacterStatComponent() const;
+	void SetCharacterStatComponent(UCharacterStatComponent* Character_Stat_Component);
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
+	UCharacterStatComponent* character_stat_component_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
+	USkillContainer* skill_container_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
+	UWeaponMechanics* weapon_mechanics_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))\
+	UWidgetComponent* hp_UI_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* fire_montage_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* reload_montage_;
 };

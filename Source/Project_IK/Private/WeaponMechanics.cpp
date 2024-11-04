@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Source file for WeaponMechanics.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 #include "WeaponMechanics.h"
 #include "AIController.h"
 #include "GameFramework/Actor.h"
@@ -21,7 +28,7 @@ UWeaponMechanics::UWeaponMechanics()
 void UWeaponMechanics::EquipWeapon()
 {
 	weapon_ref_ = Cast<AGun>(GetWorld()->SpawnActor(weapon_class_));
-	weapon_ref_->AttachToComponent(character_ref_->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, head_socket_name_);
+	weapon_ref_->AttachToComponent(character_ref_->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, gun_socket_name_);
 }
 
 // Called when the game starts

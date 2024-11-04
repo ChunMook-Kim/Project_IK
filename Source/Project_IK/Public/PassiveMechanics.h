@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.03.2024
+Summary : Header file for Passive Mechanics.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -27,8 +34,15 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	float duration_ = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	float cool_down_ = 0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	bool is_activated_ = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
 	UClass* passive_class_ = nullptr;
 };

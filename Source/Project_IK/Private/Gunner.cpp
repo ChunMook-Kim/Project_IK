@@ -38,6 +38,16 @@ void AGunner::GetDamage(int damage_amount)
 	character_stat_component_->GetDamage(damage_amount);
 }
 
+UCharacterStatComponent* AGunner::GetCharacterStatComponent() const
+{
+	return character_stat_component_;
+}
+
+void AGunner::SetCharacterStatComponent(UCharacterStatComponent* Character_Stat_Component)
+{
+	character_stat_component_ = Character_Stat_Component;
+}
+
 // Called to bind functionality to input
 void AGunner::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
