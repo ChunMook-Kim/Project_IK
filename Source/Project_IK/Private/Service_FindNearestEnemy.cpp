@@ -1,13 +1,20 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.05.2024
+Summary : Source file for Find Nearest Enemy service node.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 #include "Service_FindNearestEnemy.h"
 
+#include "AIController.h"
 #include "CharacterStatComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
 #include "Gunner.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "Engine/OverlapResult.h"
 
 UService_FindNearestEnemy::UService_FindNearestEnemy()
@@ -24,36 +31,40 @@ void UService_FindNearestEnemy::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
-	AActor* owner_actor = OwnerComp.GetOwner();
+	AGunner* casted_gunner = Cast<AGunner>(OwnerComp.GetAIOwner()->GetPawn());
 	UWorld* world = GetWorld();
 
 	float min_distance = TNumericLimits<float>::Max();
 	if (blackboard) 
 	{
-		UClass* target_class = blackboard->GetValueAsClass(target_class_key_.SelectedKeyName);
-		if (target_class) {
+		if (UClass* target_class = blackboard->GetValueAsClass(target_class_key_.SelectedKeyName)) {
 			//TODO: 확실히 C++에서 Target Class만 검사하는 방법을 알아야 함. 만약 없다면 ECC를 새로 생성해야 함.
 			TArray<FOverlapResult> overlap_results;
-			FCollisionQueryParams CollisionQueryParam(NAME_None, false, owner_actor);
+			FCollisionQueryParams CollisionQueryParam(NAME_None, false, casted_gunner);
 			ECollisionChannel channel(ECC_Pawn);
-			AGunner* casted_gunner = Cast<AGunner>(owner_actor);
+
 			if(IsValid(casted_gunner))
 			{
-				bool result = world->OverlapMultiByChannel(
-				overlap_results,
-				owner_actor->GetActorLocation(),
-				FQuat::Identity,
-				channel,
-				FCollisionShape::MakeSphere(casted_gunner->GetCharacterStatComponent()->GetSightRange()),
-				CollisionQueryParam
+				bool overlap_result = world->OverlapMultiByChannel(
+			overlap_results,
+			casted_gunner->GetActorLocation(),
+			FQuat::Identity,
+			channel,
+			FCollisionShape::MakeSphere(casted_gunner->GetCharacterStatComponent()->GetSightRange()),
+			CollisionQueryParam
 				);
 			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Failed to cast owner to gunner!"));
+			}
+			
 			AActor* nearest_actor = nullptr;
 			for(const auto& elem : overlap_results)
 			{
 				if(elem.GetActor()->IsA(target_class))
 				{
-					FVector owner_pos = owner_actor->GetActorLocation();
+					FVector owner_pos = casted_gunner->GetActorLocation();
 					FVector target_pos = elem.GetActor()->GetActorLocation();
 					float cur_distance = FVector::DistSquared2D(owner_pos, target_pos);
 					if(cur_distance < min_distance)
