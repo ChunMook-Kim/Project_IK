@@ -63,7 +63,7 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 				for (int32 t = 0; t < map[i][j].next.Num(); t++)
 				{
 					const int32 target = map[i][j].next[t];
-					MapNode& node = map[i + 1][target];
+					FMapNode& node = map[i + 1][target];
 					node.type = QueryNodeType();
 
 					int32 paths = FMath::CeilToInt32(FMath::RandRange(0.f, 1.1f));
@@ -81,6 +81,26 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 	}
 
 	UE_LOG(LogTemp, Display, TEXT("Map Generation has been done!"));
+}
+
+int32 UIKMaps::GetMaxNode() const
+{
+	return GetWidth() * GetHeight();
+}
+
+int32 UIKMaps::GetWidth() const
+{
+	 return map[0].Num();
+}
+
+int32 UIKMaps::GetHeight() const
+{
+	return map.Num();
+}
+
+const FMapNode UIKMaps::GetNode(int32 x, int32 y) const
+{
+	return map[y][x];
 }
 
 void UIKMaps::ClearMaps()
