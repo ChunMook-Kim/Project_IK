@@ -48,6 +48,9 @@ public:
 	void SetCharacterStatComponent(UCharacterStatComponent* Character_Stat_Component);
 	FVector GetForwardDir() const;
 	void SetForwardDir(const FVector& Forward_Dir);
+	bool IsMegazineEmpty() const;
+	float GetReloadDuration() const;
+	float GetFireInterval() const;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))

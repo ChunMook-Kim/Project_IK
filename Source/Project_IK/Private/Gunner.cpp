@@ -100,4 +100,17 @@ void AGunner::Reload()
 	PlayAnimMontage(reload_montage_);
 }
 
+bool AGunner::IsMegazineEmpty() const
+{
+	return weapon_mechanics_->IsMegazineEmpty();
+}
 
+float AGunner::GetReloadDuration() const
+{
+	return weapon_mechanics_->GetReloadDuration();
+}
+
+float AGunner::GetFireInterval() const
+{
+	return weapon_mechanics_->GetFireInterval();
+}

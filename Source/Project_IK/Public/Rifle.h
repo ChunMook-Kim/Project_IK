@@ -23,4 +23,8 @@ class PROJECT_IK_API ARifle : public AGun
 public:
 	ARifle();
 	virtual void FireWeapon(FVector target_pos) override;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet", meta = (AllowPrivateAccess = "true"))
+	UClass* bullet_class_;
 };

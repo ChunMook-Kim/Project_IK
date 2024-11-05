@@ -35,6 +35,12 @@ public:
 	virtual void Reload() override;
 	virtual void FireWeapon(FVector target_pos) override;
 
+	bool IsMegazineEmpty() const;
+	float GetFireInterval() const;
+	void SetFireInterval(float Fire_Interval);
+	float GetReloadDuration() const;
+	void SetReloadDuration(float Reload_Duration);
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gun", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* gun_mesh_;

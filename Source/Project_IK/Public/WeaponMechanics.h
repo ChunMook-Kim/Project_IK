@@ -31,6 +31,10 @@ public:
 	void OnDestroy();
 	void FireWeapon(AActor* target);
 	void Reload();
+	bool IsMegazineEmpty() const;
+	float GetFireInterval() const;
+	float GetReloadDuration() const;
+	
 	
 private:
 	void EquipWeapon();

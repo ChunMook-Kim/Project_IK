@@ -15,10 +15,12 @@ See LICENSE file in the project root for full license information.
 ABullet::ABullet()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	collision_ = CreateDefaultSubobject<USphereComponent>(FName("Sphere"));
 	movement_ = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovement"));
 	bullet_mesh_ = CreateDefaultSubobject<UStaticMeshComponent>(FName("StaticMesh"));
+	bullet_mesh_->SetupAttachment(collision_);
+	
 	SetRootComponent(collision_);
 }
 

@@ -27,8 +27,9 @@ void ARifle::FireWeapon(FVector target_pos)
 	Super::FireWeapon(target_pos);
 	if(cur_megazine_ > 0)
 	{
-		GetWorld()->SpawnActor<ABullet>(muzzle_->GetComponentTransform().GetLocation(),
-			UKismetMathLibrary::FindLookAtRotation(muzzle_->GetComponentTransform().GetLocation(), target_pos));
+		FVector location = muzzle_->GetComponentLocation();
+		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(muzzle_->GetComponentLocation(), target_pos);
+		GetWorld()->SpawnActor<AActor>(bullet_class_, muzzle_->GetComponentLocation(), rotation);
 		cur_megazine_--;	
 	}
 }

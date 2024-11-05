@@ -21,6 +21,5 @@ EBTNodeResult::Type UTask_ClearValues::ExecuteTask(UBehaviorTreeComponent& Owner
 {
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
 	blackboard->ClearValue(owned_cover_key_.GetSelectedKeyID());
-	blackboard->ClearValue(attack_target_key_.GetSelectedKeyID());
 	return EBTNodeResult::Succeeded;
 }

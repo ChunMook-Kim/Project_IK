@@ -38,6 +38,8 @@ void AGunnerAIController::OnDie()
 	UObject* cover = GetBlackboardComponent()->GetValueAsObject(owned_cover_key_name_);
 	if(cover != nullptr)
 	{
-		Cast<ACover>(cover)->SetIsBroken(false);
+		ACover* casted_cover = Cast<ACover>(cover);
+		casted_cover->SetIsBroken(false);
+		casted_cover->SetCoveringOwner(false);
 	}
 }

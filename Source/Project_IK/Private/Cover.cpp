@@ -28,6 +28,8 @@ ACover::ACover()
 	cover_mesh_->SetupAttachment(cover_collider_);
 	cover_mesh_->SetMobility(EComponentMobility::Movable);
 
+	cover_position_->SetMobility(EComponentMobility::Static);
+	
 	SetRootComponent(cover_position_);
 }
 

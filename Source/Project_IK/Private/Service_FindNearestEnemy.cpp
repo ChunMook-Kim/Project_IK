@@ -20,7 +20,7 @@ See LICENSE file in the project root for full license information.
 UService_FindNearestEnemy::UService_FindNearestEnemy()
 {
 	NodeName = "FindNearestEnemy";
-	Interval = 0.05f;
+	Interval = 0.001f;
 	RandomDeviation = 0.f;
 
 	target_class_key_.AddClassFilter(this, GET_MEMBER_NAME_CHECKED(UService_FindNearestEnemy, target_class_key_), UObject::StaticClass());

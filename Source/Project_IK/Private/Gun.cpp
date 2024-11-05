@@ -47,3 +47,28 @@ void AGun::Reload()
 void AGun::FireWeapon(FVector target_pos)
 {
 }
+
+bool AGun::IsMegazineEmpty() const
+{
+	return cur_megazine_ <= 0;
+}
+
+float AGun::GetFireInterval() const
+{
+	return fire_interval_;
+}
+
+void AGun::SetFireInterval(float Fire_Interval)
+{
+	fire_interval_ = Fire_Interval;
+}
+
+float AGun::GetReloadDuration() const
+{
+	return reload_duration_;
+}
+
+void AGun::SetReloadDuration(float Reload_Duration)
+{
+	reload_duration_ = Reload_Duration;
+}
