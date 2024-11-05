@@ -35,16 +35,15 @@ void UService_FindNearestEnemy::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 			//TODO: 확실히 C++에서 Target Class만 검사하는 방법을 알아야 함. 만약 없다면 ECC를 새로 생성해야 함.
 			TArray<FOverlapResult> overlap_results;
 			FCollisionQueryParams CollisionQueryParam(NAME_None, false, owner_actor);
-			FCollisionObjectQueryParams query_params(ECC_Pawn);
-			
+			ECollisionChannel channel(ECC_Pawn);
 			AGunner* casted_gunner = Cast<AGunner>(owner_actor);
 			if(IsValid(casted_gunner))
 			{
-				bool result = world->OverlapMultiByObjectType(
+				bool result = world->OverlapMultiByChannel(
 				overlap_results,
 				owner_actor->GetActorLocation(),
 				FQuat::Identity,
-				query_params,
+				channel,
 				FCollisionShape::MakeSphere(casted_gunner->GetCharacterStatComponent()->GetSightRange()),
 				CollisionQueryParam
 				);

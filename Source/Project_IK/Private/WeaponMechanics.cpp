@@ -21,12 +21,14 @@ UWeaponMechanics::UWeaponMechanics()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
+	head_socket_name_ = TEXT("head_socket");
+	gun_socket_name_ = TEXT("rifle_socket");
+	owned_cover_key_name_ = TEXT("OwnedCover");
 }
 
 void UWeaponMechanics::EquipWeapon()
 {
+	//Weapon class는 C++에서 생성&Load하지 않는다. Gun들의 BP를 각 Hero/Enemy의  WeaponMechanics BP에서 설정해 줘야 한다.
 	weapon_ref_ = Cast<AGun>(GetWorld()->SpawnActor(weapon_class_));
 	weapon_ref_->AttachToComponent(character_ref_->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, gun_socket_name_);
 }
@@ -35,7 +37,6 @@ void UWeaponMechanics::EquipWeapon()
 void UWeaponMechanics::BeginPlay()
 {
 	Super::BeginPlay();
-	weapon_class_ = ARifle::StaticClass();
 	character_ref_ = Cast<ACharacter>(GetOwner());
 	EquipWeapon();
 }

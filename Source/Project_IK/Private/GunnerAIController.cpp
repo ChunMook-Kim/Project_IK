@@ -15,8 +15,22 @@ See LICENSE file in the project root for full license information.
 void AGunnerAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	RunBehaviorTree(behavior_tree_);
-	GetBlackboardComponent()->SetValueAsClass(target_class_key_name_, target_class_);
+	if(behavior_tree_)
+	{
+		RunBehaviorTree(behavior_tree_);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BlackBoard isn't exist!"));
+	}
+	if(GetBlackboardComponent()->IsValidKey(GetBlackboardComponent()->GetKeyID(target_class_key_name_)))
+	{
+		GetBlackboardComponent()->SetValueAsClass(target_class_key_name_, target_class_);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target class key name is wrong!"));
+	}
 }
 
 void AGunnerAIController::OnDie()

@@ -42,7 +42,7 @@ public:
 	FVector GetForwardDir() const;
 	void SetForwardDir(const FVector& Forward_Dir);
 
-private:
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
 	UCharacterStatComponent* character_stat_component_;
 
@@ -52,7 +52,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
 	UWeaponMechanics* weapon_mechanics_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))\
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* hp_UI_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
