@@ -25,5 +25,4 @@ void UEQC_ForwardDestination::ProvideContext(FEnvQueryInstance& QueryInstance, F
 			UEnvQueryItemType_Point::SetContextHelper(ContextData, new_location);
 		}
 	}
-	UEnvQueryItemType_Point::SetContextHelper(ContextData, {0, 0, 0});
 }

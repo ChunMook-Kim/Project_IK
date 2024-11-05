@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.04.2024
+Summary : Header file for ForwardDestination Environment Query Context.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 #include "Gunner.h"
 #include "GunnerAIController.h"
@@ -20,7 +27,7 @@ AGunner::AGunner()
 	
 	hp_UI_->SetWidgetSpace(EWidgetSpace::Screen);
 	hp_UI_->SetDrawSize({100, 50});
-	//TODO: 현재 UI를 위한 경로가 문자열로 되어있으므로, UI BP의 경로 변경시 같이 변경해야 한다.
+	//UI를 위한 경로가 문자열로 되어있으므로, UI BP의 경로 변경시 같이 변경해야 한다.
 	static ConstructorHelpers::FClassFinder<UHitPointsUI> UI_BP(TEXT("/Game/__BluePrints/BP_HitPointsUI"));
 	if(UI_BP.Succeeded() && UI_BP.Class != nullptr)
 	{
