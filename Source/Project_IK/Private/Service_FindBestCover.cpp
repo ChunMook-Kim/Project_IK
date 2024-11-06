@@ -31,16 +31,17 @@ void UService_FindBestCover::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
+
+	AActor* cover = Cast<AActor>(blackboard->GetValueAsObject(owned_cover_key_.SelectedKeyName));
+	AActor* attack_target = Cast<AActor>(blackboard->GetValueAsObject(attack_target_key_.SelectedKeyName));
+	
 	//현재 소유한 cover가 없어야만 새로운 cover를 찾아야 함.
-	if(blackboard->IsValidKey(owned_cover_key_.GetSelectedKeyID()) == false)
+	if(cover == nullptr)
 	{
 		//cover의 계산에는 적의 위치가 필요함.
-		if(blackboard->IsValidKey(attack_target_key_.GetSelectedKeyID()))
+		if(attack_target)
 		{
 			AGunner* casted_gunner = Cast<AGunner>(OwnerComp.GetAIOwner()->GetPawn());
-			AActor* attack_target = Cast<AActor>(blackboard->GetValueAsObject(attack_target_key_.SelectedKeyName));
-			
-			FVector owner_pos = casted_gunner->GetActorLocation();
 			FVector attack_target_pos = attack_target->GetActorLocation();
 			
 			TArray<FOverlapResult> overlap_results;
@@ -70,10 +71,10 @@ void UService_FindBestCover::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 
 					FVector cover_to_target = attack_target_pos - cover_pos;
 					cover_to_target.Normalize();
-
+					
 					//만약 엄폐물이 적을 가리고 있지 않다면 넘어간다.
-					if(FVector::DotProduct(cover_to_target, casted_cover->GetActorForwardVector()) < 0.5) continue;
-
+					if(FVector::DotProduct(cover_to_target, casted_cover->GetActorForwardVector()) < 0.7) continue;
+					
 					best_cover = casted_cover;
 				}
 			}

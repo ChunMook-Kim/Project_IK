@@ -47,7 +47,6 @@ bool UDecorator_IsArrivedFirePosition::CalculateRawConditionValue(UBehaviorTreeC
 			FVector target_pos = attack_target->GetActorLocation();
 			float owner_enemy_dist = FVector::Dist2D(attack_target->GetActorLocation(), casted_gunner->GetActorLocation());
 			float fire_range = casted_gunner->GetCharacterStatComponent()->GetFireRange();
-			UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), owner_enemy_dist);
 			if(owner_enemy_dist <= fire_range)
 			{
 				return true;
