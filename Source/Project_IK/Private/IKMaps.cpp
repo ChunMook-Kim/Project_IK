@@ -20,20 +20,20 @@ UIKMaps::UIKMaps()
 
 void UIKMaps::GenerateMaps(int32 row, int32 col)
 {
+	// Reserve spaces in 2D arrays
 	ClearMaps();
 	map.SetNum(row);
-
 	for (int32 i = 0; i < row; i++)
 	{
 		map[i].SetNum(col);
 	}
+
 	// The First Rooms randomly chosen at the 1rst Floor cannot be the same.
 	int32 departures_num = FMath::CeilToInt(col / 2.f);
 	TArray<int32> departures;
 	while (departures.Num() < departures_num)
 	{
 		int32 d = FMath::RandRange(0, col - 1);
-		UE_LOG(LogTemp, Warning, TEXT("%d"), d);
 		departures.AddUnique(d);
 	}
 
@@ -66,21 +66,25 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 					FMapNode& node = map[i + 1][target];
 					node.type = QueryNodeType();
 
-					int32 paths = FMath::CeilToInt32(FMath::RandRange(0.f, 1.1f));
-					while (node.next.Num() < paths)
+					int32 old_path_num = node.next.Num();
+
+					int32 new_path_num = FMath::Min(FMath::CeilToInt32(FMath::RandRange(0.f, 1.1f)) + old_path_num, AvaiableBranchNum(target));
+					while (old_path_num < new_path_num)
 					{
 						int32 next = FMath::Clamp(target + FMath::RandRange(-1, 1), 0, col - 1);
-						if (!IsPathCrossed(i + 1, target, next))
+						if (!map[i + 1][target].next.Contains(next))
 						{
-							map[i + 1][target].next.AddUnique(next);
+							++old_path_num;
+							if (!IsPathCrossed(i + 1, target, next))
+							{
+								map[i + 1][target].next.Add(next);
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-
-	UE_LOG(LogTemp, Display, TEXT("Map Generation has been done!"));
 }
 
 int32 UIKMaps::GetMaxNode() const
@@ -98,7 +102,7 @@ int32 UIKMaps::GetHeight() const
 	return map.Num();
 }
 
-const FMapNode UIKMaps::GetNode(int32 x, int32 y) const
+const FMapNode& UIKMaps::GetNode(int32 x, int32 y) const
 {
 	return map[y][x];
 }
@@ -127,4 +131,18 @@ bool UIKMaps::IsPathCrossed(int32 row, int32 col, int32 path_to) const
 NodeType UIKMaps::QueryNodeType() const
 {
 	return NodeType::Enemy;
+}
+
+int32 UIKMaps::AvaiableBranchNum(int32 col) const
+{
+	// The maximum number of branch : It is 3 because it connects to one of the 3 closest.
+	static constexpr int32 MAX_BRANCH_NUM = 3;
+
+	// If the node is a side node, one branch became impossible to connect.
+	// In other words, 0 -> -1 or W-1 -> W is invalid.
+	if (col <= 0 || col >= GetWidth() - 1)
+	{
+		return MAX_BRANCH_NUM - 1;
+	}
+	return MAX_BRANCH_NUM;
 }

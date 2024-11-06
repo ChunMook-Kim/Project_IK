@@ -58,7 +58,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	inline int32 GetHeight() const;
 	UFUNCTION(BlueprintCallable, Category = "Map")
-	const FMapNode GetNode(int32 x, int32 y) const;
+	const FMapNode& GetNode(int32 x, int32 y) const;
 
 protected:
 	TArray<TArray<FMapNode>> map;
@@ -66,4 +66,5 @@ protected:
 	void ClearMaps();
 	bool IsPathCrossed(int32 row, int32 col, int32 path_to) const;
 	inline NodeType QueryNodeType() const;
+	int32 AvaiableBranchNum(int32 col) const;
 };

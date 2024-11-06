@@ -18,9 +18,16 @@ class PROJECT_IK_API UMapWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	UMapWidget(const FObjectInitializer& object_initializer);
+	virtual bool Initialize() override;
+
+	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+
 protected:
 	virtual void NativeConstruct() override;
 
+	void InitializeWidgetTree();
 	void InitializeButtons();
 
 	UPROPERTY()
