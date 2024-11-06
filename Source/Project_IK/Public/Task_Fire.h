@@ -3,23 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/ObjectMacros.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "Task_Fire.generated.h"
 
-/**
- * 
- */
-UCLASS()
-class PROJECT_IK_API UTask_Fire : public UBTTaskNode
+struct FBTWaitTaskMemory
 {
-	GENERATED_BODY()
+};
+
+UCLASS(MinimalAPI)
+class UTask_Fire : public UBTTaskNode
+{
+	GENERATED_UCLASS_BODY()
 
 public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponMechanics", meta = (AllowPrivateAccess = "true"))
 	FBlackboardKeySelector attack_target_key_;
-	
-	FTimerHandle timer_handle_;
 };
