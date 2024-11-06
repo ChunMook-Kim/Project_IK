@@ -26,12 +26,13 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	void ActivePassiveSkill();
-	bool IsPassiveAvailable() const;
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void ActivePassiveSkill();
+	bool IsPassiveAvailable() const;
+	float GetHoldTime() const;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
@@ -39,6 +40,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
 	float cool_down_ = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
+	float hold_time_ = 0;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
 	bool is_activated_ = false;

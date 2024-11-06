@@ -24,6 +24,9 @@ class PROJECT_IK_API APassiveSkillGunner : public AGunner
 
 public:
 	APassiveSkillGunner();
+	bool IsPassiveAvailable() const;
+	void ActivatePassive();
+	float GetPassiveHoldTime() const;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveSkillGunner", meta = (AllowPrivateAccess = "true"))

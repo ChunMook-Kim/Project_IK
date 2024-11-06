@@ -14,3 +14,17 @@ APassiveSkillGunner::APassiveSkillGunner()
 {
 	passive_mechanics_ = CreateDefaultSubobject<UPassiveMechanics>("PassiveMechanics");
 }
+
+bool APassiveSkillGunner::IsPassiveAvailable() const
+{
+	return passive_mechanics_->IsPassiveAvailable();
+}
+
+void APassiveSkillGunner::ActivatePassive()
+{
+	passive_mechanics_->Activate();
+}
+float APassiveSkillGunner::GetPassiveHoldTime() const
+{
+	return passive_mechanics_->GetHoldTime();
+}

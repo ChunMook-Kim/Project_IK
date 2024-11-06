@@ -46,10 +46,16 @@ void UPassiveMechanics::ActivePassiveSkill()
 	spawned_skill->Initialize(GetOwner());
 	cool_down_ = spawned_skill->GetCoolTime();
 	duration_ = spawned_skill->GetDuration();
+	hold_time_ = spawned_skill->GetHoldTime();
 	is_activated_ = true;
 }
 
 bool UPassiveMechanics::IsPassiveAvailable() const
 {
 	return is_activated_ == false;
+}
+
+float UPassiveMechanics::GetHoldTime() const
+{
+	return hold_time_;
 }
