@@ -9,6 +9,7 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 #pragma once
 
+#include "Damageable.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Gunner.generated.h"
@@ -19,7 +20,7 @@ class UWeaponMechanics;
 class UWidgetComponent;
 
 UCLASS()
-class PROJECT_IK_API AGunner : public ACharacter
+class PROJECT_IK_API AGunner : public ACharacter, public IDamageable
 {
 	GENERATED_BODY()
 
@@ -38,7 +39,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-public:
+	virtual void GetDamage(float damage) override;
+
 	virtual void OnDie();
 	virtual void Reload();
 	virtual void Fire(AActor* target);

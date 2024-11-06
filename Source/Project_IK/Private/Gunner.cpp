@@ -43,6 +43,11 @@ void AGunner::BeginPlay()
 	Cast<UHitPointsUI>(hp_UI_->GetWidget())->BindCharacterStat(character_stat_component_);
 }
 
+void AGunner::GetDamage(float damage)
+{
+	character_stat_component_->GetDamage(damage);
+}
+
 // Called every frame
 void AGunner::Tick(float DeltaTime)
 {

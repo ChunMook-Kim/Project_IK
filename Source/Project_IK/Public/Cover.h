@@ -9,6 +9,7 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 #pragma once
 
+#include "Damageable.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Cover.generated.h"
@@ -18,15 +19,13 @@ class USphereComponent;
 class UBoxComponent;
 
 UCLASS()
-class PROJECT_IK_API ACover : public AActor
+class PROJECT_IK_API ACover : public AActor, public IDamageable
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
 	ACover();
-	virtual void GetDamage(int damage_amount);
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -37,6 +36,7 @@ public:
 	void SetCoveringOwner(bool bHas_Covering_Owner);
 	bool IsBroken() const;
 	void SetIsBroken(bool bIs_Broken);
+	virtual void GetDamage(float damage) override;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
@@ -49,7 +49,7 @@ private:
 	UStaticMeshComponent* cover_mesh_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cover", meta = (AllowPrivateAccess = "true"))
-	UCharacterStatComponent* character_stat_;
+	UCharacterStatComponent* character_stat_component_;
 	
 	bool has_covering_owner_ = false;
 	bool is_broken_ = false;

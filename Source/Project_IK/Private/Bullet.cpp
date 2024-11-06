@@ -8,6 +8,7 @@ Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
 ******************************************************************************/
 #include "Bullet.h"
+#include "Damageable.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -20,7 +21,7 @@ ABullet::ABullet()
 	movement_ = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovement"));
 	bullet_mesh_ = CreateDefaultSubobject<UStaticMeshComponent>(FName("StaticMesh"));
 	bullet_mesh_->SetupAttachment(collision_);
-
+	damage_ = 10.f;
 	collision_->OnComponentBeginOverlap.AddDynamic(this, &ABullet::OnOverlapBegin);
 	
 	SetRootComponent(collision_);
@@ -34,5 +35,7 @@ void ABullet::BeginPlay()
 
 void ABullet::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	IDamageable* casted_damage_logic = Cast<IDamageable>(OtherActor);
+	if(casted_damage_logic) casted_damage_logic->GetDamage(damage_);
 	Destroy();
 }

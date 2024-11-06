@@ -20,7 +20,7 @@ ACover::ACover()
 	cover_collider_ = CreateDefaultSubobject<UBoxComponent>(FName("cover_collider"));
 	cover_position_ = CreateDefaultSubobject<USphereComponent>(FName("cover_position"));
 	cover_mesh_ = CreateDefaultSubobject<UStaticMeshComponent>(FName("cover_mesh"));
-	character_stat_ = CreateDefaultSubobject<UCharacterStatComponent>(FName("character_stat"));
+	character_stat_component_ = CreateDefaultSubobject<UCharacterStatComponent>(FName("character_stat"));
 
 	cover_collider_->SetupAttachment(cover_position_);
 	cover_collider_->SetMobility(EComponentMobility::Movable);
@@ -40,9 +40,9 @@ void ACover::BeginPlay()
 	
 }
 
-void ACover::GetDamage(int damage_amount)
+void ACover::GetDamage(float damage)
 {
-	character_stat_->GetDamage(damage_amount);
+	character_stat_component_->GetDamage(damage);
 }
 
 void ACover::OnDie()
