@@ -1,11 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
-
-#include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
-#include "Task_ClearValues.generated.h"
-
 /******************************************************************************
 Copyright(C) 2024
 Author: chunmook.kim(chunmook.kim97@gmail.com)
@@ -15,6 +7,11 @@ Summary : Header file for Clear Values Task.
 Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
 ******************************************************************************/
+#pragma once
+
+#include "CoreMinimal.h"
+#include "BehaviorTree/BTTaskNode.h"
+#include "Task_ClearValues.generated.h"
 UCLASS()
 class PROJECT_IK_API UTask_ClearValues : public UBTTaskNode
 {
