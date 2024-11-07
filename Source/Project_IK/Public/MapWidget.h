@@ -29,9 +29,13 @@ protected:
 
 	void InitializeWidgetTree();
 	void InitializeButtons();
+	inline FVector2D CalculateButtonPosition(int32 row, int32 col, const FVector2D& buttonSize) const;
+	inline FVector2f CalculateButtonCenterPosition(const FVector2D& position, const FVector2D& buttonSize) const;
 
 	UPROPERTY()
 	UCanvasPanel* canvas_panel_;
 	TArray<UButton*> buttons_;
 	const UIKMaps* maps_;
+
+	TArray<FVector2f> path_points_;
 };

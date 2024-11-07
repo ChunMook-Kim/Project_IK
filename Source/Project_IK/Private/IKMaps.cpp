@@ -54,7 +54,7 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 	}
 	
 	// repeats this procces until reaches to the top floor
-	for (int32 i = 0; i < row - 1; i++)
+	for (int32 i = 0; i < row - 2; i++)
 	{
 		for (int32 j = 0; j < col; j++)
 		{
@@ -72,9 +72,11 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 					while (old_path_num < new_path_num)
 					{
 						int32 next = FMath::Clamp(target + FMath::RandRange(-1, 1), 0, col - 1);
+						// Let's try to add unique path
 						if (!map[i + 1][target].next.Contains(next))
 						{
 							++old_path_num;
+							// If it is invalid path, consider path adding has been done. Did not add though
 							if (!IsPathCrossed(i + 1, target, next))
 							{
 								map[i + 1][target].next.Add(next);
@@ -84,6 +86,12 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 				}
 			}
 		}
+	}
+
+	// Set only NodeType on the top floor nodes
+	for (size_t i = 0; i < col; i++)
+	{
+		map[row - 1][i].type = QueryNodeType();
 	}
 }
 
@@ -102,9 +110,9 @@ int32 UIKMaps::GetHeight() const
 	return map.Num();
 }
 
-const FMapNode& UIKMaps::GetNode(int32 x, int32 y) const
+const FMapNode& UIKMaps::GetNode(int32 row, int32 col) const
 {
-	return map[y][x];
+	return map[row][col];
 }
 
 void UIKMaps::ClearMaps()
