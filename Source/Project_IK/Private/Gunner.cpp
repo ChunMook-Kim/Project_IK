@@ -28,6 +28,8 @@ AGunner::AGunner()
 	hp_UI_->SetWidgetSpace(EWidgetSpace::Screen);
 	hp_UI_->SetDrawSize({100, 50});
 	hp_UI_->SetupAttachment(RootComponent);
+
+	character_stat_component_->Die.AddDynamic(this, &AGunner::Die);
 	//UI를 위한 경로가 문자열로 되어있으므로, UI BP의 경로 변경시 같이 변경해야 한다.
 	static ConstructorHelpers::FClassFinder<UHitPointsUI> UI_BP(TEXT("/Game/__BluePrints/BP_HitPointsUI"));
 	if(UI_BP.Succeeded() && UI_BP.Class != nullptr)
@@ -87,7 +89,7 @@ void AGunner::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AGunner::OnDie()
+void AGunner::Die()
 {
 	weapon_mechanics_->OnDestroy();
 	Cast<AGunnerAIController>(GetController())->OnDie();

@@ -41,10 +41,13 @@ public:
 
 	virtual void GetDamage(float damage) override;
 
-	virtual void OnDie();
 	virtual void Reload();
 	virtual void Fire(AActor* target);
+	
 	virtual void GetDamage(int damage_amount);
+
+	UFUNCTION()
+	virtual void Die() override;
 
 	UCharacterStatComponent* GetCharacterStatComponent() const;
 	void SetCharacterStatComponent(UCharacterStatComponent* Character_Stat_Component);

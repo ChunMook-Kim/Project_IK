@@ -30,6 +30,8 @@ ACover::ACover()
 
 	cover_position_->SetMobility(EComponentMobility::Static);
 	
+	character_stat_component_->Die.AddDynamic(this, &ACover::Die);
+	
 	SetRootComponent(cover_position_);
 }
 
@@ -45,7 +47,7 @@ void ACover::GetDamage(float damage)
 	character_stat_component_->GetDamage(damage);
 }
 
-void ACover::OnDie()
+void ACover::Die()
 {
 	is_broken_ = true;
 	Destroy();
