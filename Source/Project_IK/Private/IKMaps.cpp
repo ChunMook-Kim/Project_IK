@@ -20,20 +20,20 @@ UIKMaps::UIKMaps()
 
 void UIKMaps::GenerateMaps(int32 row, int32 col)
 {
+	// Reserve spaces in 2D arrays
 	ClearMaps();
 	map.SetNum(row);
-
 	for (int32 i = 0; i < row; i++)
 	{
 		map[i].SetNum(col);
 	}
+
 	// The First Rooms randomly chosen at the 1rst Floor cannot be the same.
 	int32 departures_num = FMath::CeilToInt(col / 2.f);
 	TArray<int32> departures;
 	while (departures.Num() < departures_num)
 	{
 		int32 d = FMath::RandRange(0, col - 1);
-		UE_LOG(LogTemp, Warning, TEXT("%d"), d);
 		departures.AddUnique(d);
 	}
 
@@ -54,7 +54,7 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 	}
 	
 	// repeats this procces until reaches to the top floor
-	for (int32 i = 0; i < row - 1; i++)
+	for (int32 i = 0; i < row - 2; i++)
 	{
 		for (int32 j = 0; j < col; j++)
 		{
@@ -63,16 +63,24 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 				for (int32 t = 0; t < map[i][j].next.Num(); t++)
 				{
 					const int32 target = map[i][j].next[t];
-					MapNode& node = map[i + 1][target];
+					FMapNode& node = map[i + 1][target];
 					node.type = QueryNodeType();
 
-					int32 paths = FMath::CeilToInt32(FMath::RandRange(0.f, 1.1f));
-					while (node.next.Num() < paths)
+					int32 old_path_num = node.next.Num();
+
+					int32 new_path_num = FMath::Min(FMath::CeilToInt32(FMath::RandRange(0.f, 1.1f)) + old_path_num, AvaiableBranchNum(target));
+					while (old_path_num < new_path_num)
 					{
 						int32 next = FMath::Clamp(target + FMath::RandRange(-1, 1), 0, col - 1);
-						if (!IsPathCrossed(i + 1, target, next))
+						// Let's try to add unique path
+						if (!map[i + 1][target].next.Contains(next))
 						{
-							map[i + 1][target].next.AddUnique(next);
+							++old_path_num;
+							// If it is invalid path, consider path adding has been done. Did not add though
+							if (!IsPathCrossed(i + 1, target, next))
+							{
+								map[i + 1][target].next.Add(next);
+							}
 						}
 					}
 				}
@@ -80,7 +88,31 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 		}
 	}
 
-	UE_LOG(LogTemp, Display, TEXT("Map Generation has been done!"));
+	// Set only NodeType on the top floor nodes
+	for (size_t i = 0; i < col; i++)
+	{
+		map[row - 1][i].type = QueryNodeType();
+	}
+}
+
+int32 UIKMaps::GetMaxNode() const
+{
+	return GetWidth() * GetHeight();
+}
+
+int32 UIKMaps::GetWidth() const
+{
+	 return map[0].Num();
+}
+
+int32 UIKMaps::GetHeight() const
+{
+	return map.Num();
+}
+
+const FMapNode& UIKMaps::GetNode(int32 row, int32 col) const
+{
+	return map[row][col];
 }
 
 void UIKMaps::ClearMaps()
@@ -107,4 +139,18 @@ bool UIKMaps::IsPathCrossed(int32 row, int32 col, int32 path_to) const
 NodeType UIKMaps::QueryNodeType() const
 {
 	return NodeType::Enemy;
+}
+
+int32 UIKMaps::AvaiableBranchNum(int32 col) const
+{
+	// The maximum number of branch : It is 3 because it connects to one of the 3 closest.
+	static constexpr int32 MAX_BRANCH_NUM = 3;
+
+	// If the node is a side node, one branch became impossible to connect.
+	// In other words, 0 -> -1 or W-1 -> W is invalid.
+	if (col <= 0 || col >= GetWidth() - 1)
+	{
+		return MAX_BRANCH_NUM - 1;
+	}
+	return MAX_BRANCH_NUM;
 }

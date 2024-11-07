@@ -35,6 +35,11 @@ UItemInventory* UIKGameInstance::GetItemInventory() const noexcept
 	return item_inventory_;
 }
 
+const UIKMaps* UIKGameInstance::GetMapPtr() const
+{
+	return maps_;
+}
+
 void UIKGameInstance::InitializeCharacterData()
 {
 	FString character_data_path = TEXT("/Script/Engine.DataTable'/Game/Resources/IK_Proto_GameData.IK_Proto_GameData'");

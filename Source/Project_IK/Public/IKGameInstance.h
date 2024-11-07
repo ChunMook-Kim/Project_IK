@@ -66,6 +66,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	class UItemInventory* GetItemInventory() const noexcept;
+	const class UIKMaps* GetMapPtr() const;
 
 private:
 	void InitializeCharacterData();

@@ -16,15 +16,25 @@ See LICENSE file in the project root for full license information.
 #include "UObject/NoExportTypes.h"
 #include "IKMaps.generated.h"
 
-enum class NodeType
+UENUM(BlueprintType)
+enum class NodeType : uint8
 {
-	None,
-	Enemy,
+	None UMETA(DisplayName = "None"),
+	Enemy UMETA(DisplayName = "Enemy"),
 };
 
-struct MapNode
+USTRUCT(BlueprintType)
+struct FMapNode
 {
-	NodeType type = NodeType::None;
+	GENERATED_BODY()
+
+	FMapNode()
+		:type(NodeType::None)
+	{}
+
+	UPROPERTY(VisibleAnywhere, Category="MapNode")
+	NodeType type;
+	UPROPERTY(VisibleAnywhere, Category = "MapNode")
 	TArray<int32> next;
 };
 
@@ -41,11 +51,20 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Map")
 	void GenerateMaps(int32 row, int32 col);
+	UFUNCTION(BlueprintCallable, Category="Map")
+	inline int32 GetMaxNode() const;
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	inline int32 GetWidth() const;
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	inline int32 GetHeight() const;
+	UFUNCTION(BlueprintCallable, Category = "Map")
+	const FMapNode& GetNode(int32 row, int32 col) const;
 
 protected:
-	TArray<TArray<MapNode>> map;
+	TArray<TArray<FMapNode>> map;
 
 	void ClearMaps();
 	bool IsPathCrossed(int32 row, int32 col, int32 path_to) const;
 	inline NodeType QueryNodeType() const;
+	int32 AvaiableBranchNum(int32 col) const;
 };
