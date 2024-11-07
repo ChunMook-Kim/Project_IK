@@ -69,7 +69,7 @@ void AIKGameModeBase::CheckWinLoseCondition()
 void AIKGameModeBase::PopulateContainers()
 {
 	// Populate a hero container
-	ConstructorHelpers::FClassFinder<AActor> BP_Hero_Finder(TEXT("/Game/__BluePrints/BP_Hero"));
+	ConstructorHelpers::FClassFinder<AActor> BP_Hero_Finder(TEXT("/Game/__BluePrints/HeroBP"));
 	if (BP_Hero_Finder.Succeeded())
 	{
 		hero_class_ = BP_Hero_Finder.Class;
@@ -77,7 +77,7 @@ void AIKGameModeBase::PopulateContainers()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), hero_class_, heroes_);
 
 	// Populate an enemy container
-	ConstructorHelpers::FClassFinder<AActor> BP_Enemy_Finder(TEXT("/Game/__BluePrints/BP_Enemy"));
+	ConstructorHelpers::FClassFinder<AActor> BP_Enemy_Finder(TEXT("/Game/__BluePrints/EnemyGunnerBP"));
 	if (BP_Enemy_Finder.Succeeded())
 	{
 		enemy_class_ = BP_Enemy_Finder.Class;
