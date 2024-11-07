@@ -17,5 +17,7 @@ UCLASS()
 class PROJECT_IK_API AEnemyGunner : public AGunner
 {
 	GENERATED_BODY()
-	
+
+protected:
+	void Die() override;
 };

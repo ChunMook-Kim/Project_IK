@@ -72,7 +72,6 @@ void UService_FindBestCover::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 					FVector cover_to_target = attack_target_pos - cover_pos;
 					cover_to_target.Normalize();
 					
-					//만약 엄폐물이 적을 가리고 있지 않다면 넘어간다.
 					float angle_similarity = FVector::DotProduct(cover_to_target, casted_cover->GetActorForwardVector());
 					if(angle_similarity < 0.5) continue;
 					

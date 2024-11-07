@@ -15,5 +15,7 @@ UCLASS()
 class PROJECT_IK_API AHero : public APassiveSkillGunner
 {
 	GENERATED_BODY()
-	
+
+protected:
+	void Die() override;
 };
