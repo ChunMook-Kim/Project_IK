@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.06.2024
+Summary : Header file for gun interface.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,9 +20,6 @@ class UGunInterface : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
 class AActor;
 class PROJECT_IK_API IGunInterface
 {
