@@ -15,9 +15,8 @@ UTask_ActivatePassive::UTask_ActivatePassive(const FObjectInitializer& ObjectIni
 
 EBTNodeResult::Type UTask_ActivatePassive::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
 	APassiveSkillGunner* casted_p_gunner = Cast<APassiveSkillGunner>(OwnerComp.GetAIOwner()->GetPawn());
-
+	casted_p_gunner->ActivatePassive();
 	SetNextTickTime(NodeMemory, casted_p_gunner->GetPassiveHoldTime());
 
 	return EBTNodeResult::InProgress;

@@ -22,7 +22,7 @@ bool APassiveSkillGunner::IsPassiveAvailable() const
 
 void APassiveSkillGunner::ActivatePassive()
 {
-	passive_mechanics_->Activate();
+	passive_mechanics_->ActivePassiveSkill();
 }
 float APassiveSkillGunner::GetPassiveHoldTime() const
 {

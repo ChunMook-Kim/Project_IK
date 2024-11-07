@@ -21,6 +21,7 @@ class PROJECT_IK_API APassiveSkill : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APassiveSkill();
+	
 	void Initialize(AActor* caster);
 
 protected:
