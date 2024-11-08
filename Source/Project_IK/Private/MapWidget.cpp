@@ -52,9 +52,7 @@ int32 UMapWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedG
 	FLinearColor LineColor = FLinearColor::Red;
 	float LineThickness = 5.0f;
 
-	// @@ Unrengt TODO:: Is it really safe code? Call a chunk of draw functions takes many performance in classic Computer Graphics.
-	// ,Which means invoking Graphics Pipeline a lot need a lot of performance. Need to check the below loop safe or not.
-	for (size_t i = 0; i < path_points_.Num(); i+=2)
+	for (size_t i = 0; i < path_points_.Num(); i += 2)
 	{
 		TArray<FVector2f>tmp(&path_points_[i], 2);
 		// Draw the line
@@ -91,39 +89,43 @@ void UMapWidget::InitializeButtons()
 	{
 		maps_ = ik_game_instance->GetMapPtr();
 
-		for (int32 i = 0; i < maps_->GetHeight(); i++)
+		if (maps_)
 		{
-			for (int32 j = 0; j < maps_->GetWidth(); j++)
+			for (int32 i = 0; i < maps_->GetHeight(); i++)
 			{
-				const FMapNode& node = maps_->GetNode(i, j);
-				if (node.type == NodeType::None)
+				for (int32 j = 0; j < maps_->GetWidth(); j++)
 				{
-					continue;
-				}
-				// Update node path
-				FVector2D position = CalculateButtonPosition(i, j, button_size);
-				FVector2f path_begin_pos = CalculateButtonCenterPosition(position, button_size);
-				for (int32 t = 0; t < node.next.Num(); t++)
-				{
-					path_points_.Add(path_begin_pos);
-					FVector2f path_end_pos = CalculateButtonCenterPosition(CalculateButtonPosition(i + 1, node.next[t], button_size), button_size);
-					path_points_.Add(path_end_pos);
-				}
+					const FMapNode& node = maps_->GetNode(i, j);
+					if (node.type == NodeType::None)
+					{
+						continue;
+					}
+					// Update node path
+					FVector2D position = CalculateButtonPosition(i, j, button_size);
+					FVector2f path_begin_pos = CalculateButtonCenterPosition(position, button_size);
+					for (int32 t = 0; t < node.next.Num(); t++)
+					{
+						path_points_.Add(path_begin_pos);
+						FVector2f path_end_pos = CalculateButtonCenterPosition(CalculateButtonPosition(i + 1, node.next[t], button_size), button_size);
+						path_points_.Add(path_end_pos);
+					}
 
-				// Init buttons
-				UButton* button = NewObject<UButton>();
-				// @@TODO: Set widget styles properly to look like a image button
-				//button->WidgetStyle.SetNormal()
-				UCanvasPanelSlot* button_slot = canvas_panel_->AddChildToCanvas(button);
-				if (button_slot)
-				{
-					// @@TODO: Set anchors properly
-					//button_slot->SetAnchors()
-					button_slot->SetPosition(position);
-					button_slot->SetSize(button_size);
+					// Init buttons
+					UButton* button = NewObject<UButton>();
+					// @@TODO: Set widget styles properly to look like a image button
+					//button->WidgetStyle.SetNormal()
+					UCanvasPanelSlot* button_slot = canvas_panel_->AddChildToCanvas(button);
+					if (button_slot)
+					{
+						// @@TODO: Set anchors properly
+						//button_slot->SetAnchors()
+						button_slot->SetPosition(position);
+						button_slot->SetSize(button_size);
+					}
+					buttons_.Add(button);
 				}
-				buttons_.Add(button);
 			}
+
 		}
 	}
 }
