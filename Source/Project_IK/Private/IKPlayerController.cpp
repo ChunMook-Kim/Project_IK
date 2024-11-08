@@ -11,7 +11,7 @@ See LICENSE file in the project root for full license information.
 
 #include "IKPlayerController.h"
 
-#include "TargetingComponent.h"
+#include "Components/TargetingComponent.h"
 
 AIKPlayerController::AIKPlayerController()
 	: Super::APlayerController()
