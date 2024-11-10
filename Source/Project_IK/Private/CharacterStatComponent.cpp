@@ -21,7 +21,7 @@ See LICENSE file in the project root for full license information.
 UCharacterStatComponent::UCharacterStatComponent()
 	: character_id_(ECharacterID::Gunner)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryComponentTick.bCanEverTick = false;
 
 	bWantsInitializeComponent = true;
@@ -33,31 +33,31 @@ void UCharacterStatComponent::InitializeComponent()
 
 	auto ik_game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
-	if(ik_game_instance)
+	if (ik_game_instance)
 	{
-	FCharacterData* character_data = ik_game_instance->GetCharacterData(static_cast<int32>(character_id_));
+		FCharacterData* character_data = ik_game_instance->GetCharacterDataManager()->GetCharacterData(static_cast<int32>(character_id_));
 
-	ability_power_ = character_data->ability_power_;
-	attack_ = character_data->attack_;
-	attack_speed_ = character_data->attack_speed_;
-	hit_point_ = character_data->hit_point_;
-	magazine_ = character_data->magazine_;
+		stat_.ability_power_ = character_data->ability_power_;
+		stat_.attack_ = character_data->attack_;
+		stat_.attack_speed_ = character_data->attack_speed_;
+		stat_.hit_point_ = character_data->hit_point_;
+		stat_.magazine_ = character_data->magazine_;
 
-	fire_range_ = character_data->fire_range_;
-	move_speed_ = character_data->move_speed_;
-	sight_range_ = character_data->sight_range_;
+		stat_.fire_range_ = character_data->fire_range_;
+		stat_.move_speed_ = character_data->move_speed_;
+		stat_.sight_range_ = character_data->sight_range_;
 
 
-	// They are initial data of each attributes. Theoretical oritical limitation will be implemented later
-	max_ability_power_ = ability_power_;
-	max_attack_ = attack_;
-	max_attack_speed_ = attack_speed_;
-	max_hit_point_ = hit_point_;
-	max_magazine_ = magazine_;
+		// They are initial data of each attributes. Theoretical oritical limitation will be implemented later
+		max_stat_.ability_power_ = stat_.ability_power_;
+		max_stat_.attack_ = stat_.attack_;
+		max_stat_.attack_speed_ = stat_.attack_speed_;
+		max_stat_.hit_point_ = stat_.hit_point_;
+		max_stat_.magazine_ = stat_.magazine_;
 
-	max_fire_range_ = fire_range_;
-	max_move_speed_ = move_speed_;
-	max_sight_range_ = sight_range_;
+		max_stat_.fire_range_ = stat_.fire_range_;
+		max_stat_.move_speed_ = stat_.move_speed_;
+		max_stat_.sight_range_ = stat_.sight_range_;
 	}
 }
 
@@ -65,7 +65,7 @@ void UCharacterStatComponent::InitializeComponent()
 void UCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -76,104 +76,109 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 void UCharacterStatComponent::GetDamage(float DamageAmount)
 {
-	SetHitPoint(hit_point_ - DamageAmount);
+	SetHitPoint(stat_.hit_point_ - DamageAmount);
 }
 
 float UCharacterStatComponent::GetAbilityPower() const noexcept
 {
-	return ability_power_;
+	return stat_.ability_power_;
 }
 
 float UCharacterStatComponent::GetAttack() const noexcept
 {
-	return attack_;
+	return stat_.attack_;
 }
 
 float UCharacterStatComponent::GetAttackSpeed() const noexcept
 {
-	return attack_speed_;
+	return stat_.attack_speed_;
 }
 
 float UCharacterStatComponent::GetHitPoint() const noexcept
 {
-	return hit_point_;
+	return stat_.hit_point_;
 }
 
 float UCharacterStatComponent::GetMagazine() const noexcept
 {
-	return magazine_;
+	return stat_.magazine_;
 }
 
 float UCharacterStatComponent::GetFireRange() const noexcept
 {
-	return fire_range_;
+	return stat_.fire_range_;
 }
 
 float UCharacterStatComponent::GetMoveSpeed() const noexcept
 {
-	return move_speed_;
+	return stat_.move_speed_;
 }
 
 float UCharacterStatComponent::GetSightRange() const noexcept
 {
-	return sight_range_;
+	return stat_.sight_range_;
 }
 
 void UCharacterStatComponent::SetAbilityPower(float ability_power) noexcept
 {
-	ability_power_ = FMath::Min(ability_power, max_ability_power_);
+	stat_.ability_power_ = FMath::Min(ability_power, max_stat_.ability_power_);
 }
 
 void UCharacterStatComponent::SetAttack(float attack) noexcept
 {
-	attack_ = FMath::Min(attack, max_attack_);
+	stat_.attack_ = FMath::Min(attack, max_stat_.attack_);
 }
 
 void UCharacterStatComponent::SetAttackSpeed(float attack_speed) noexcept
 {
-	attack_speed_ = FMath::Min(attack_speed, max_attack_speed_);
+	stat_.attack_speed_ = FMath::Min(attack_speed, max_stat_.attack_speed_);
 }
 
 void UCharacterStatComponent::SetHitPoint(float hit_point) noexcept
 {
-	hit_point_ = FMath::Min(hit_point, max_hit_point_);
+	stat_.hit_point_ = FMath::Min(hit_point, max_stat_.hit_point_);
 
 	OnHPChanged.Broadcast();
-	if (hit_point_ < KINDA_SMALL_NUMBER)
+	if (stat_.hit_point_ < KINDA_SMALL_NUMBER)
 	{
-		hit_point_ = 0.f;
+		stat_.hit_point_ = 0.f;
 		Die.Broadcast();
 	}
 }
 
 void UCharacterStatComponent::SetMagazine(float magazine) noexcept
 {
-	magazine_ = FMath::Min(magazine, max_magazine_);
+	stat_.magazine_ = FMath::Min(magazine, max_stat_.magazine_);
 }
 
 void UCharacterStatComponent::SetFireRange(float fire_range) noexcept
 {
-	fire_range_ = FMath::Min(fire_range, max_fire_range_);
+	stat_.fire_range_ = FMath::Min(fire_range, max_stat_.fire_range_);
 }
 
 void UCharacterStatComponent::SetMoveSpeed(float move_speed) noexcept
 {
-	move_speed_ = FMath::Min(move_speed, max_move_speed_);
+	stat_.move_speed_ = FMath::Min(move_speed, max_stat_.move_speed_);
 }
 
 void UCharacterStatComponent::SetSightRange(float sight_range) noexcept
 {
-	sight_range_ = FMath::Min(sight_range, max_sight_range_);
+	stat_.sight_range_ = FMath::Min(sight_range, max_stat_.sight_range_);
 }
 
 float UCharacterStatComponent::GetHPRatio() const noexcept
 {
-	if (max_hit_point_ < KINDA_SMALL_NUMBER)
+	if (max_stat_.hit_point_ < KINDA_SMALL_NUMBER)
 	{
 		return 0.f;
 	}
 	else
 	{
-		return hit_point_ / max_hit_point_;
+		return stat_.hit_point_ / max_stat_.hit_point_;
 	}
+}
+
+FCharacterData UCharacterStatComponent::GetCharacterData() const noexcept
+{
+	return stat_;
 }

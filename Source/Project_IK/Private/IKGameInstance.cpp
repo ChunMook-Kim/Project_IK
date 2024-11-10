@@ -6,21 +6,13 @@
 #include "ItemInventory.h"
 #include "IKMaps.h"
 #include "MyTestItem.h"
+#include "CharacterDataManager.h"
 
 UIKGameInstance::UIKGameInstance()
 {
-	InitializeCharacterData();
+	InitializeCharacterDataManager();
 	InitializeItemInventory();
 	InitializeMaps();
-}
-
-FCharacterData* UIKGameInstance::GetCharacterData(int32 char_id) const
-{
-	if(character_table)
-	{
-		return character_table->FindRow<FCharacterData>(*FString::FromInt(char_id), TEXT(""));
-	}
-	return nullptr;
 }
 
 void UIKGameInstance::Init()
@@ -28,6 +20,11 @@ void UIKGameInstance::Init()
 	Super::Init();
 
 	item_inventory_->AddItem(UMyTestItem::StaticClass());
+}
+
+const UCharacterDataManager* UIKGameInstance::GetCharacterDataManager()
+{
+	return character_data_manager_;
 }
 
 UItemInventory* UIKGameInstance::GetItemInventory() const noexcept
@@ -40,15 +37,9 @@ const UIKMaps* UIKGameInstance::GetMapPtr() const
 	return maps_;
 }
 
-void UIKGameInstance::InitializeCharacterData()
+void UIKGameInstance::InitializeCharacterDataManager()
 {
-	FString character_data_path = TEXT("/Script/Engine.DataTable'/Game/Resources/IK_Proto_GameData.IK_Proto_GameData'");
-	static ConstructorHelpers::FObjectFinder<UDataTable> dt_character_data(*character_data_path);
-	if (dt_character_data.Succeeded() == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("GameInstance has failed to load a game file data (IK_Proto_GameData)"));
-	}
-	character_table = dt_character_data.Object;
+	character_data_manager_ = NewObject<UCharacterDataManager>();
 }
 
 void UIKGameInstance::InitializeItemInventory()
