@@ -17,7 +17,7 @@ See LICENSE file in the project root for full license information.
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/DecalComponent.h"
-#include "IKPlayerController.h"
+#include "WorldSettings/IKPlayerController.h"
 #include "WorldSettings/IKGameModeBase.h"
 #include "Engine/World.h"
 

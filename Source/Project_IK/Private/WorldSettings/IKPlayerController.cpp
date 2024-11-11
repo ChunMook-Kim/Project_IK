@@ -9,7 +9,7 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 
-#include "IKPlayerController.h"
+#include "WorldSettings/IKPlayerController.h"
 
 #include "Components/TargetingComponent.h"
 

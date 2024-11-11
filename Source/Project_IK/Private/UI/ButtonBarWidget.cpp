@@ -18,7 +18,7 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameModeBase.h"
 #include "Abilities/SkillContainer.h"
 #include "Components/TargetingComponent.h"
-#include "IKPlayerController.h"
+#include "WorldSettings/IKPlayerController.h"
 #include "Abilities/ItemInventory.h"
 #include "WorldSettings/IKGameInstance.h"
 

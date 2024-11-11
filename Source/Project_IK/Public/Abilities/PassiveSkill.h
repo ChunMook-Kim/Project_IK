@@ -22,7 +22,7 @@ public:
 	// Sets default values for this actor's properties
 	APassiveSkill();
 	
-	void Initialize(AActor* caster);
+	virtual void Initialize(AActor* caster);
 
 protected:
 	// Called when the game starts or when spawned
@@ -46,6 +46,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveSkill", meta = (AllowPrivateAccess = "true"))
 	float duration_ = 0.f;
 
+	//HoltTime은 패시브 발동 시 같이 발동되는 애니메이션이 있을 경우, 애니메이션을 위해 멈춰있어야 하는 시간을 말한다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveSkill", meta = (AllowPrivateAccess = "true"))
 	float hold_time_ = 0.f;
 	

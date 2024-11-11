@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 
 void AHealthBurst::Tick(float DeltaSeconds)
 {
+	//TODO: 반복적으로 사용할 수 있어야 함.
 	Super::Tick(DeltaSeconds);
 	if(gunner_caster_ == nullptr) gunner_caster_ = Cast<AGunner>(caster_);
 	gunner_caster_->GetCharacterStatComponent()->SetHitPoint(gunner_caster_->GetCharacterStatComponent()->GetHitPoint() + DeltaSeconds * heal_amount_);
