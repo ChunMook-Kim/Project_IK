@@ -81,6 +81,12 @@ void UMapWidget::InitializeButtons()
 	buttons_.Empty();
 	path_points_.Empty();
 
+	UTexture2D* enemy_icon_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/enemy_icon.enemy_icon")));
+	if (!enemy_icon_texture)
+	{
+		return;
+	}
+
 	auto ik_game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	FVector2D button_size(50.f, 50.f);
@@ -112,8 +118,13 @@ void UMapWidget::InitializeButtons()
 
 					// Init buttons
 					UButton* button = NewObject<UButton>();
-					// @@TODO: Set widget styles properly to look like a image button
-					//button->WidgetStyle.SetNormal()
+					// @@TODO: Set widget styles properly to be distingushable when normal, hovered, and pressed
+					FSlateBrush new_brush;
+					new_brush.SetResourceObject(enemy_icon_texture);
+					new_brush.DrawAs = ESlateBrushDrawType::Type::Image;
+					button->WidgetStyle.SetNormal(new_brush);
+					button->WidgetStyle.SetHovered(new_brush);
+					//button->WidgetStyle.SetPressed(new_brush);
 					UCanvasPanelSlot* button_slot = canvas_panel_->AddChildToCanvas(button);
 					if (button_slot)
 					{
@@ -132,7 +143,7 @@ void UMapWidget::InitializeButtons()
 
 inline FVector2D UMapWidget::CalculateButtonPosition(int32 row, int32 col, const FVector2D& buttonSize) const
 {
-	return FVector2D(col * buttonSize.X, (maps_->GetHeight() - 1 - row) * buttonSize.Y);
+	return FVector2D(col * buttonSize.X, (maps_->GetHeight() - 1 - row) * buttonSize.Y) + FVector2D(100.f, 400.f);
 }
 
 inline FVector2f UMapWidget::CalculateButtonCenterPosition(const FVector2D& position, const FVector2D& buttonSize) const
