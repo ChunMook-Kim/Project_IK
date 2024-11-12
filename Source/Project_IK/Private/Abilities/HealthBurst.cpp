@@ -12,11 +12,25 @@ See LICENSE file in the project root for full license information.
 #include "Components/CharacterStatComponent.h"
 #include "Characters/Gunner.h"
 
+void AHealthBurst::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void AHealthBurst::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if(gunner_caster_ == nullptr) gunner_caster_ = Cast<AGunner>(caster_);
-	gunner_caster_->GetCharacterStatComponent()->SetHitPoint(gunner_caster_->GetCharacterStatComponent()->GetHitPoint() + DeltaSeconds * heal_amount_);
-	duration_ -= DeltaSeconds;
-	if(duration_ < 0) Destroy();
+	if(activated_ && left_duration_ > 0)
+	{
+		gunner_caster_ = Cast<AGunner>(caster_);
+		if(gunner_caster_)
+		{
+			gunner_caster_->GetCharacterStatComponent()->SetHitPoint(gunner_caster_->GetCharacterStatComponent()->GetHitPoint() + DeltaSeconds * heal_amount_);
+		}
+	}
+
+	if(activated_ && left_duration_ <= 0)
+	{
+		FinishPassiveSkill();
+	}
 }

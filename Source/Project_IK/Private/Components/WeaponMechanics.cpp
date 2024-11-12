@@ -12,7 +12,6 @@ See LICENSE file in the project root for full license information.
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
 #include "Weapons/Gun.h"
-#include "Weapons/Rifle.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values for this component's properties
