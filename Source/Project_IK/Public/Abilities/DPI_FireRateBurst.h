@@ -22,7 +22,7 @@ public:
 	virtual void FinishPassiveSkill() override;
 	
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveSkill", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "PassiveSkill", meta = (AllowPrivateAccess = "true"))
 	float accelerate_amount_;
 
 	AGunner* gunner_caster_;

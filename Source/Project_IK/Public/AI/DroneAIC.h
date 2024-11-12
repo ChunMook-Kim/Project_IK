@@ -18,12 +18,12 @@ public:
 	virtual void BeginPlay() override;
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DroneAIController", meta = (AllowPrivateAccess = "true", BindWidget))
 	UBehaviorTree* behavior_tree_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "DroneAIController", meta = (AllowPrivateAccess = "true", BindWidget))
 	UClass* target_class_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DroneAIController", meta = (AllowPrivateAccess = "true"))
 	FName target_class_key_name_;
 };

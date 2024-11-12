@@ -58,22 +58,22 @@ public:
 	float GetFireInterval() const;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UCharacterStatComponent* character_stat_component_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	USkillContainer* skill_container_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UWeaponMechanics* weapon_mechanics_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UWidgetComponent* hp_UI_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UAnimMontage* fire_montage_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UAnimMontage* reload_montage_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))

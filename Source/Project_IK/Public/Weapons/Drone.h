@@ -31,15 +31,14 @@ public:
 	bool IsPluginAvailable() const;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true", BindWidget))
 	USphereComponent* sphere_component_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true", BindWidget))
 	UStaticMeshComponent* mesh_component_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true", BindWidget))
 	UDroneMechanics* drone_mechanics_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true"))
 	AActor* hero_ref_;
 };
