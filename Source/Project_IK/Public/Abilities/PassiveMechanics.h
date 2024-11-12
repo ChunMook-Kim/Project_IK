@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/ActorComponent.h"
 #include "PassiveMechanics.generated.h"
 
+class APassiveSkill;
 class AGun;
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_IK_API UPassiveMechanics : public UActorComponent
@@ -31,22 +32,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void ActivePassiveSkill();
+	void FinishPassiveSkill();
 	bool IsPassiveAvailable() const;
 	float GetHoldTime() const;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
-	float duration_ = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
-	float cool_down_ = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
-	float hold_time_ = 0;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
-	bool is_activated_ = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
 	UClass* passive_class_ = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
+	APassiveSkill* passive_ref_ = nullptr;
 };

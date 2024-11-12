@@ -15,6 +15,8 @@ APassiveSkill::APassiveSkill()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	left_time_ = cool_time_;
+	left_time_ = duration_;
 }
 
 void APassiveSkill::Initialize(AActor* caster)
@@ -34,7 +36,17 @@ void APassiveSkill::BeginPlay()
 void APassiveSkill::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if(activated_)
+	{
+		if(left_duration_ > 0)
+		{
+			left_duration_ -= DeltaTime;
+		}
+		else
+		{
+			left_time_ -= DeltaTime;
+		}
+	}
 }
 
 float APassiveSkill::GetCoolTime() const
@@ -44,7 +56,7 @@ float APassiveSkill::GetCoolTime() const
 
 void APassiveSkill::SetCoolTime(float Cool_Time)
 {
-	cool_time_ = Cool_Time = Cool_Time;
+	cool_time_ = Cool_Time;
 }
 
 float APassiveSkill::GetHoldTime() const
@@ -54,7 +66,17 @@ float APassiveSkill::GetHoldTime() const
 
 void APassiveSkill::SetHoldTime(float Hold_Time)
 {
-	hold_time_ = Hold_Time = Hold_Time;
+	hold_time_ = Hold_Time;
+}
+
+bool APassiveSkill::IsActivated() const
+{
+	return activated_;
+}
+
+void APassiveSkill::SetActivated(bool bActivated)
+{
+	activated_ = bActivated;
 }
 
 float APassiveSkill::GetDuration() const
@@ -67,4 +89,21 @@ void APassiveSkill::SetDuration(float Duration)
 	duration_ = Duration;
 }
 
+bool APassiveSkill::IsPassiveAvailable() const
+{
+	return left_time_ <= 0;
+}
+
+
+void APassiveSkill::StartPassiveSkill()
+{
+	left_time_ = cool_time_;
+	left_duration_ = duration_;
+	activated_ = true;
+}
+
+void APassiveSkill::FinishPassiveSkill()
+{
+	activated_ = false;
+}
 

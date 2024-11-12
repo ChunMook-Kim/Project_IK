@@ -22,10 +22,11 @@ class PROJECT_IK_API AHealthBurst : public APassiveSkill
 {
 	GENERATED_BODY()
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthBurst", meta = (AllowPrivateAccess = "true"))
-	float heal_amount_ = 10.f;
+	float heal_amount_ = 100.f;
 	
 	AGunner* gunner_caster_ = nullptr;
 };

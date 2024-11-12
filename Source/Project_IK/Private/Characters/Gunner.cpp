@@ -120,5 +120,6 @@ float AGunner::GetReloadDuration() const
 
 float AGunner::GetFireInterval() const
 {
-	return weapon_mechanics_->GetFireInterval();
+	//Fire Interval는 사격 사이 간격을 의미한다. 즉 짧을수록 연사속도가 빨라진다.
+	return weapon_mechanics_->GetFireInterval() * character_stat_component_->GetAttackSpeed();
 }

@@ -16,7 +16,10 @@ class PROJECT_IK_API ADPI_FireRateBurst : public ADronePlugIn
 	GENERATED_BODY()
 public:
 	ADPI_FireRateBurst();
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void StartPassiveSkill() override;
+	virtual void FinishPassiveSkill() override;
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveSkill", meta = (AllowPrivateAccess = "true"))

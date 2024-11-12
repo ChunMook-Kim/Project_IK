@@ -8,9 +8,6 @@
 UDroneMechanics::UDroneMechanics()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	plugin_amount = 0;
-	
-	plugins_.Reserve(max_amount_);
 }
 
 
@@ -18,41 +15,58 @@ UDroneMechanics::UDroneMechanics()
 void UDroneMechanics::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
+	if(plug_in_class_) plugin_ = Cast<ADronePlugIn>(GetWorld()->SpawnActor(plug_in_class_));
 }
 
-void UDroneMechanics::AddPlugIn(int idx, UClass* plugin_type)
+void UDroneMechanics::Initialize(AActor* hero)
 {
-	if(idx < 0 || idx >= plugins_.Num())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Out of index!"));
-	}
-	else if(plugin_type == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Plug_in class is empty!"));
-	}
-	else
-	{
-		auto spawned_plug_in = Cast<ADronePlugIn>(GetWorld()->SpawnActor(plugin_type));
-		if(plugin_amount < max_amount_)
-		{
-			plugins_[idx] = spawned_plug_in;
-		}
-	}
+	hero_ref_ = hero;
+	if(plugin_) plugin_->Initialize(hero_ref_);
 }
 
-void UDroneMechanics::RemovePlugIn(int idx)
+void UDroneMechanics::ActivateDronePlugin()
 {
-	plugins_.RemoveAt(idx);
+	if(plugin_ != nullptr)
+	{
+		plugin_->StartPassiveSkill();
+	}
 }
 
-// Called every frame
+float UDroneMechanics::GetHoldTime() const
+{
+	return plugin_->GetHoldTime();
+}
+
 void UDroneMechanics::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
+bool UDroneMechanics::IsDronePluginAvailable() const
+{
+	return plugin_->IsPassiveAvailable();
+}
+
+// void UDroneMechanics::AddPlugIn(int idx, UClass* plugin_type)
+// {
+// 	if(idx < 0 || idx >= plugins_.Num())
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Out of index!"));
+// 	}
+// 	else if(plugin_type == nullptr)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Plug_in class is empty!"));
+// 	}
+// 	else
+// 	{
+// 		if(plugin_amount_ < max_amount_)
+// 		{
+// 			plugins_[idx] = Cast<ADronePlugIn>(GetWorld()->SpawnActor(plugin_type));
+// 		}
+// 	}
+// }
+//
+// void UDroneMechanics::RemovePlugIn(int idx)
+// {
+// 	plugins_.RemoveAt(idx);
+// }

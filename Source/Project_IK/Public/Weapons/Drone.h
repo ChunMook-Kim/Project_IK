@@ -17,6 +17,7 @@ class PROJECT_IK_API ADrone : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ADrone();
+	virtual void Initialize(AActor* hero);
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,6 +26,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void ActivateDronePlugin();
+	float GetDronePluginHoldTime() const;
+	bool IsPluginAvailable() const;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true"))
@@ -35,4 +39,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true"))
 	UDroneMechanics* drone_mechanics_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true"))
+	AActor* hero_ref_;
 };

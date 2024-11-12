@@ -26,6 +26,8 @@ void AHero::BeginPlay()
 	Super::BeginPlay();
 	//만약 Transform 값을 넘겨주지 않는다면 정상적으로 생성되지 않는다!
 	drone_ = GetWorld()->SpawnActor<AActor>(drone_bp_class_, drone_location_->GetComponentTransform());
+	Cast<ADrone>(drone_)->Initialize(this	);
+	
 	if(drone_ == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed To create Drone!"));
