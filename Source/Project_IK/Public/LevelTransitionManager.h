@@ -19,13 +19,16 @@ public:
 	ULevelTransitionManager();
 
 	UFUNCTION(BlueprintCallable)
-	void OpenLevel(FName LevelName);
+	void OpenLevel(FName LevelName, UWorld* world);
 	
 	// Function be called in GameMode::BeginPlay
 	UFUNCTION(BlueprintCallable)
-	void SpawnEnemy();
+	void PrepareLevel(UWorld* world);
 
 protected:
+	void SpawnHeroes(UWorld* world);
+	void SpawnEnemies(UWorld* world);
+
 	void SaveData();
 
 	UPROPERTY()

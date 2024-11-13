@@ -10,6 +10,8 @@
 #include "Hero.h"
 #include "CharacterStatComponent.h"
 
+#include "EnemyGunner.h"
+
 ULevelTransitionManager::ULevelTransitionManager()
 	: Super::UObject()
 {
@@ -34,16 +36,25 @@ void ULevelTransitionManager::SaveData()
 	}
 }
 
-void ULevelTransitionManager::OpenLevel(FName LevelName)
+void ULevelTransitionManager::OpenLevel(FName LevelName, UWorld* world)
 {
-	if (UWorld* world = GetWorld())
-	{
-		SaveData();
+	SaveData();
 
-		UGameplayStatics::OpenLevel(world, LevelName);
-	}
+	UGameplayStatics::OpenLevel(world, LevelName);
 }
 
-void ULevelTransitionManager::SpawnEnemy()
+void ULevelTransitionManager::PrepareLevel(UWorld* world)
 {
+	SpawnHeroes(world);
+	SpawnEnemies(world);
+}
+
+void ULevelTransitionManager::SpawnHeroes(UWorld* world)
+{
+	world->SpawnActor<AHero>(AHero::StaticClass(), FVector(-960, 0, 90), FRotator::ZeroRotator);
+}
+
+void ULevelTransitionManager::SpawnEnemies(UWorld* world)
+{
+	world->SpawnActor<AEnemyGunner>(AEnemyGunner::StaticClass(), FVector(600, 0, 90), FRotator(0, 0, 180));
 }

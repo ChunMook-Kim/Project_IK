@@ -17,6 +17,7 @@ See LICENSE file in the project root for full license information.
 class UItemInventory;
 class UIKMaps;
 class UCharacterDataManager;
+class ULevelTransitionManager;
 
 /**
  * 
@@ -32,16 +33,19 @@ public:
 	virtual void Init() override;
 
 	UFUNCTION(BlueprintPure)
-	const class UCharacterDataManager* GetCharacterDataManager();
+	const class UCharacterDataManager* GetCharacterDataManager() noexcept;
 	UFUNCTION(BlueprintPure)
 	class UItemInventory* GetItemInventory() const noexcept;
 	UFUNCTION(BlueprintPure)
-	const class UIKMaps* GetMapPtr() const;
+	const class UIKMaps* GetMapPtr() const noexcept;
+	UFUNCTION(BlueprintPure)
+	class ULevelTransitionManager* GetLevelTransitionManager() noexcept;
 
 private:
 	void InitializeCharacterDataManager();
 	void InitializeItemInventory();
 	void InitializeMaps();
+	void InitializeLevelTransitionManager();
 
 	UPROPERTY()
 	class UCharacterDataManager* character_data_manager_;
@@ -50,4 +54,7 @@ private:
 
 	UPROPERTY()
 	class UIKMaps* maps_;
+
+	UPROPERTY()
+	class ULevelTransitionManager* level_transition_manager_;
 };

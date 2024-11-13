@@ -7,12 +7,14 @@
 #include "IKMaps.h"
 #include "MyTestItem.h"
 #include "CharacterDataManager.h"
+#include "LevelTransitionManager.h"
 
 UIKGameInstance::UIKGameInstance()
 {
 	InitializeCharacterDataManager();
 	InitializeItemInventory();
 	InitializeMaps();
+	InitializeLevelTransitionManager();
 }
 
 void UIKGameInstance::Init()
@@ -22,7 +24,7 @@ void UIKGameInstance::Init()
 	item_inventory_->AddItem(UMyTestItem::StaticClass());
 }
 
-const UCharacterDataManager* UIKGameInstance::GetCharacterDataManager()
+const UCharacterDataManager* UIKGameInstance::GetCharacterDataManager() noexcept
 {
 	return character_data_manager_;
 }
@@ -32,9 +34,14 @@ UItemInventory* UIKGameInstance::GetItemInventory() const noexcept
 	return item_inventory_;
 }
 
-const UIKMaps* UIKGameInstance::GetMapPtr() const
+const UIKMaps* UIKGameInstance::GetMapPtr() const noexcept
 {
 	return maps_;
+}
+
+ULevelTransitionManager* UIKGameInstance::GetLevelTransitionManager() noexcept
+{
+	return level_transition_manager_;
 }
 
 void UIKGameInstance::InitializeCharacterDataManager()
@@ -51,4 +58,9 @@ void UIKGameInstance::InitializeMaps()
 {
 	maps_ = NewObject<UIKMaps>();
 	maps_->GenerateMaps(7, 4);
+}
+
+void UIKGameInstance::InitializeLevelTransitionManager()
+{
+	level_transition_manager_ = NewObject<ULevelTransitionManager>();
 }

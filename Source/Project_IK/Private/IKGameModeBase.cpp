@@ -14,6 +14,8 @@ See LICENSE file in the project root for full license information.
 #include "Kismet/GameplayStatics.h"
 
 #include "Project_IK/Public/IKHUD.h"
+#include "IKGameInstance.h"
+#include "LevelTransitionManager.h"
 
 AIKGameModeBase::AIKGameModeBase()
 	: Super::AGameModeBase()
@@ -24,6 +26,16 @@ AIKGameModeBase::AIKGameModeBase()
 void AIKGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (game_instance)
+	{
+		ULevelTransitionManager* level_transition_manager = game_instance->GetLevelTransitionManager();
+		if (level_transition_manager)
+		{
+			level_transition_manager->PrepareLevel(GetWorld());
+		}
+	}
 }
 
 TArray<AActor*> AIKGameModeBase::GetHeroContainers() const noexcept
