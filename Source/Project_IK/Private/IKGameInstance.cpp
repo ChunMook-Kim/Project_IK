@@ -10,16 +10,18 @@
 #include "LevelTransitionManager.h"
 
 UIKGameInstance::UIKGameInstance()
+	:Super::UGameInstance()
 {
-	InitializeCharacterDataManager();
-	InitializeItemInventory();
-	InitializeMaps();
-	InitializeLevelTransitionManager();
 }
 
 void UIKGameInstance::Init()
 {
 	Super::Init();
+
+	InitializeCharacterDataManager();
+	InitializeItemInventory();
+	InitializeMaps();
+	InitializeLevelTransitionManager();
 
 	item_inventory_->AddItem(UMyTestItem::StaticClass());
 }
@@ -63,4 +65,5 @@ void UIKGameInstance::InitializeMaps()
 void UIKGameInstance::InitializeLevelTransitionManager()
 {
 	level_transition_manager_ = NewObject<ULevelTransitionManager>();
+	level_transition_manager_->SetActorBlueprints(hero_blueprint_, enemy_blueprint_);
 }

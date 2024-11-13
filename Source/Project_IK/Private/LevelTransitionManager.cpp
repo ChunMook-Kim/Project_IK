@@ -7,10 +7,8 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "IKGameModeBase.h"
-#include "Hero.h"
 #include "CharacterStatComponent.h"
 
-#include "EnemyGunner.h"
 
 ULevelTransitionManager::ULevelTransitionManager()
 	: Super::UObject()
@@ -49,12 +47,18 @@ void ULevelTransitionManager::PrepareLevel(UWorld* world)
 	SpawnEnemies(world);
 }
 
+void ULevelTransitionManager::SetActorBlueprints(TSubclassOf<AHero> hero_blueprint, TSubclassOf<AEnemyGunner> enemy_blueprint)
+{
+	hero_blueprint_ = hero_blueprint;
+	enemy_blueprint_ = enemy_blueprint;
+}
+
 void ULevelTransitionManager::SpawnHeroes(UWorld* world)
 {
-	world->SpawnActor<AHero>(AHero::StaticClass(), FVector(-960, 0, 90), FRotator::ZeroRotator);
+	world->SpawnActor<AHero>(hero_blueprint_, FVector(-960, 0, 90), FRotator::ZeroRotator);
 }
 
 void ULevelTransitionManager::SpawnEnemies(UWorld* world)
 {
-	world->SpawnActor<AEnemyGunner>(AEnemyGunner::StaticClass(), FVector(600, 0, 90), FRotator(0, 0, 180));
+	world->SpawnActor<AEnemyGunner>(enemy_blueprint_, FVector(600, 0, 90), FRotator(0, 180, 0));
 }

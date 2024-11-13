@@ -12,6 +12,11 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+
+
+#include "Hero.h"
+#include "EnemyGunner.h"
+
 #include "IKGameInstance.generated.h"
 
 class UItemInventory;
@@ -40,6 +45,13 @@ public:
 	const class UIKMaps* GetMapPtr() const noexcept;
 	UFUNCTION(BlueprintPure)
 	class ULevelTransitionManager* GetLevelTransitionManager() noexcept;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelTransition")
+	TSubclassOf<AHero> hero_blueprint_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelTransition")
+	TSubclassOf<AEnemyGunner> enemy_blueprint_;
 
 private:
 	void InitializeCharacterDataManager();
