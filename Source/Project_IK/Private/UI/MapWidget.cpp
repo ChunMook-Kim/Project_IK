@@ -131,9 +131,12 @@ void UMapWidget::InitializeButtons()
 					FSlateBrush new_brush;
 					new_brush.SetResourceObject(enemy_icon_texture);
 					new_brush.DrawAs = ESlateBrushDrawType::Type::Image;
+					new_brush.TintColor = FSlateColor(FLinearColor(0.69f, 0.69f, 0.69f));
 					button->WidgetStyle.SetNormal(new_brush);
+					new_brush.TintColor = FSlateColor(FLinearColor(0.95f, 0.95f, 0.95f));
 					button->WidgetStyle.SetHovered(new_brush);
-					//button->WidgetStyle.SetPressed(new_brush);
+					new_brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f));
+					button->WidgetStyle.SetPressed(new_brush);
 					UCanvasPanelSlot* button_slot = canvas_panel_->AddChildToCanvas(button);
 					if (button_slot)
 					{
