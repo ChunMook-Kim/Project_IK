@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: sinil.kang(rtd99062@gmail.com)
+Creation Date : 09.19.2024
+Summary : Source file for game instance.
+
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 
 #include "WorldSettings/IKGameInstance.h"
@@ -6,11 +14,11 @@
 #include "Abilities/ItemInventory.h"
 #include "UI/IKMaps.h"
 #include "Abilities/MyTestItem.h"
-#include "CharacterDataManager.h"
-#include "LevelTransitionManager.h"
+#include "Managers/CharacterDataManager.h"
+#include "Managers/LevelTransitionManager.h"
 
-#include "Hero.h"
-#include "EnemyGunner.h"
+#include "Characters/Hero.h"
+#include "Characters/EnemyGunner.h"
 
 UIKGameInstance::UIKGameInstance()
 	:Super::UGameInstance()

@@ -14,7 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/TargetingComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "IKHUD.h"
+#include "UI/IKHUD.h"
 
 AIKPlayerController::AIKPlayerController()
 	: Super::APlayerController()

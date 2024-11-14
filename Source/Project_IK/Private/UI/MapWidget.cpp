@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: sinil.kang(rtd99062@gmail.com)
+Creation Date : 11.05.2024
+Summary : Source file for displaying maps.
+
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 
 #include "UI/MapWidget.h"
@@ -14,7 +22,7 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Rendering/DrawElements.h"
-#include "LevelTransitionManager.h"
+#include "Managers/LevelTransitionManager.h"
 
 #include "UI/IKMaps.h"
 

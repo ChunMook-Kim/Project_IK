@@ -1,19 +1,27 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: sinil.kang(rtd99062@gmail.com)
+Creation Date : 11.10.2024
+Summary : Source file for managing trasition between levels.
+
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 
-#include "LevelTransitionManager.h"
+#include "Managers/LevelTransitionManager.h"
 
-#include "CharacterDataManager.h"
+#include "Managers/CharacterDataManager.h"
 
 #include "Kismet/GameplayStatics.h"
-#include "IKGameModeBase.h"
-#include "CharacterStatComponent.h"
+#include "WorldSettings/IKGameModeBase.h"
+#include "Components/CharacterStatComponent.h"
 
-#include "Hero.h"
-#include "EnemyGunner.h"
-#include "SkillContainer.h"
+#include "Characters/Hero.h"
+#include "Characters/EnemyGunner.h"
+#include "Abilities/SkillContainer.h"
 
-#include "MyTestSkill.h"
+#include "Abilities/MyTestSkill.h"
 
 
 ULevelTransitionManager::ULevelTransitionManager()
