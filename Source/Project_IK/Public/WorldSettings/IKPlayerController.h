@@ -14,6 +14,9 @@ See LICENSE file in the project root for full license information.
 #include "GameFramework/PlayerController.h"
 #include "IKPlayerController.generated.h"
 
+class UInputMappingContext;
+class UInputAction;
+
 /**
  * 
  */
@@ -26,10 +29,20 @@ public:
 	AIKPlayerController();
 
 	virtual void BeginPlay();
+	virtual void SetupInputComponent() override;
 
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	class UTargetingComponent* GetTargetingComponent();
 
+protected:
+	void ToggleMap();
+
 	UPROPERTY(VisibleAnywhere, Category = "Targeting")
 	class UTargetingComponent* targeting_component_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputMappingContext> player_input_mapping_context;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> toggle_map_action;
 };

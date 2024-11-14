@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: sinil.kang(rtd99062@gmail.com)
+Creation Date : 11.05.2024
+Summary : Header file for displaying maps.
+
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 #pragma once
 
@@ -31,6 +39,9 @@ protected:
 	void InitializeButtons();
 	inline FVector2D CalculateButtonPosition(int32 row, int32 col, const FVector2D& buttonSize) const;
 	inline FVector2f CalculateButtonCenterPosition(const FVector2D& position, const FVector2D& buttonSize) const;
+
+	UFUNCTION()
+	void OpenLevel();
 
 	UPROPERTY()
 	UCanvasPanel* canvas_panel_;

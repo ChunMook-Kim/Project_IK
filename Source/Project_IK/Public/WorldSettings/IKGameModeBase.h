@@ -51,8 +51,6 @@ public:
 protected:
 	void PopulateContainers();
 
-	TSubclassOf<AActor> hero_class_;
-	TSubclassOf<AActor> enemy_class_;
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> heroes_;
 	UPROPERTY(BlueprintReadWrite)

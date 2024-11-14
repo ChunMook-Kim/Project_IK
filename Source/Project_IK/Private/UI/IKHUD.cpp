@@ -12,14 +12,35 @@ See LICENSE file in the project root for full license information.
 #include "UI/IKHUD.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 
+void AIKHUD::ToggleMapWidget()
+{
+	if (map_widget_)
+	{
+		const bool is_visible = map_widget_->IsVisible();
+		map_widget_->SetVisibility(is_visible ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
+	}
+}
+
 void AIKHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// Create the widget and add it to the viewport
-	HUD_widget_ = CreateWidget<UUserWidget>(GetWorld(), HUD_widget_class_);
-	if (HUD_widget_)
+	if (HUD_widget_class_)
 	{
-		HUD_widget_->AddToViewport();
+		HUD_widget_ = CreateWidget<UUserWidget>(GetWorld(), HUD_widget_class_);
+		if (HUD_widget_)
+		{
+			HUD_widget_->AddToViewport();
+		}
+	}
+
+	if (map_widget_class_)
+	{
+		map_widget_ = CreateWidget<UUserWidget>(GetWorld(), map_widget_class_);
+		if (map_widget_)
+		{
+			map_widget_->AddToViewport();
+		}
 	}
 }

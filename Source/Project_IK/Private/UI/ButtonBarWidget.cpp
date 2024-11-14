@@ -74,13 +74,29 @@ void UButtonBarWidget::NativeConstruct()
 
 	caster_ = -1;
 	selected_item_index_ = -1;
+
+	switch (characters_.Num())
+	{
+	case 0:
+		skill_button_0_->SetVisibility(ESlateVisibility::Hidden);
+	case 1:
+		skill_button_1_->SetVisibility(ESlateVisibility::Hidden);
+	case 2:
+		skill_button_2_->SetVisibility(ESlateVisibility::Hidden);
+	case 3:
+		skill_button_3_->SetVisibility(ESlateVisibility::Hidden);
+		break;
+	default:
+		break;
+	}
 }
 
 void UButtonBarWidget::OnSkillButtonClicked0()
 {
 	caster_ = 0;
 	selected_item_index_ = -1;
-	if (targeting_component_)
+
+	if (targeting_component_ && characters_.IsValidIndex(caster_))
 	{
 		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Direction, 1000, 90);
 	}
@@ -90,7 +106,8 @@ void UButtonBarWidget::OnSkillButtonClicked1()
 {
 	caster_ = 1;
 	selected_item_index_ = -1;
-	if (targeting_component_)
+
+	if (targeting_component_ && characters_.IsValidIndex(caster_))
 	{
 		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Location);
 	}
@@ -100,7 +117,8 @@ void UButtonBarWidget::OnSkillButtonClicked2()
 {
 	caster_ = 2;
 	selected_item_index_ = -1;
-	if (targeting_component_)
+
+	if (targeting_component_ && characters_.IsValidIndex(caster_))
 	{
 		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Location);
 	}
@@ -110,7 +128,8 @@ void UButtonBarWidget::OnSkillButtonClicked3()
 {
 	caster_ = 3;
 	selected_item_index_ = -1;
-	if (targeting_component_)
+
+	if (targeting_component_ && characters_.IsValidIndex(caster_))
 	{
 		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Location);
 	}

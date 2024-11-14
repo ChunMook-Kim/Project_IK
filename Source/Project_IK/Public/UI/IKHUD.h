@@ -21,15 +21,25 @@ UCLASS()
 class PROJECT_IK_API AIKHUD : public AHUD
 {
 	GENERATED_BODY()
+public:
+	void ToggleMapWidget();
 	
 protected:
 	// Reference to the Widget Blueprint class to create
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUserWidget> HUD_widget_class_;
-	
+
 	// Reference to the widget instance
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	UUserWidget* HUD_widget_;
+
+	// Reference to the Widget Blueprint class to create
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidget> map_widget_class_;
+
+	// Reference to the widget instance
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	UUserWidget* map_widget_;
 
 	virtual void BeginPlay() override;
 };

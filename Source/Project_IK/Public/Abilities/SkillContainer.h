@@ -34,6 +34,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InvokeSkills(const FTargetData& TargetData);
 
+	UFUNCTION(BlueprintCallable)
+	void SetSkill(TSubclassOf<class USkillBase> skill);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

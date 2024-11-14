@@ -12,6 +12,7 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Managers/CharacterDataManager.h"
 #include "CharacterStatComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDieDelegate);
@@ -78,6 +79,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetHPRatio() const noexcept;
 
+	UFUNCTION(BlueprintPure)
+	FCharacterData GetCharacterData() const noexcept;
+
+	UFUNCTION(BlueprintCallable)
+	void SetCharacterData(const FCharacterData& character_data) noexcept;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FDieDelegate Die;
 
@@ -94,32 +101,7 @@ protected:
 private:
 	// Scaling powers
 	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
-	float ability_power_;
-	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
-	float attack_;
-	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
-	float attack_speed_;
-	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
-	float hit_point_;
-	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
-	float magazine_;
+	FCharacterData stat_;
 
-	// Fixed powers
-	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
-	float fire_range_;
-	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
-	float move_speed_;
-	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
-	float sight_range_;
-
-
-	float max_ability_power_;
-	float max_attack_;
-	float max_attack_speed_;
-	float max_hit_point_;
-	float max_magazine_;
-
-	float max_fire_range_;
-	float max_move_speed_;
-	float max_sight_range_;
+	FCharacterData max_stat_;
 };

@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: sinil.kang(rtd99062@gmail.com)
+Creation Date : 11.05.2024
+Summary : Source file for displaying maps.
+
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 
 #include "UI/MapWidget.h"
@@ -14,6 +22,7 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Rendering/DrawElements.h"
+#include "Managers/LevelTransitionManager.h"
 
 #include "UI/IKMaps.h"
 
@@ -52,9 +61,7 @@ int32 UMapWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedG
 	FLinearColor LineColor = FLinearColor::Red;
 	float LineThickness = 5.0f;
 
-	// @@ Unrengt TODO:: Is it really safe code? Call a chunk of draw functions takes many performance in classic Computer Graphics.
-	// ,Which means invoking Graphics Pipeline a lot need a lot of performance. Need to check the below loop safe or not.
-	for (size_t i = 0; i < path_points_.Num(); i+=2)
+	for (size_t i = 0; i < path_points_.Num(); i += 2)
 	{
 		TArray<FVector2f>tmp(&path_points_[i], 2);
 		// Draw the line
@@ -83,6 +90,12 @@ void UMapWidget::InitializeButtons()
 	buttons_.Empty();
 	path_points_.Empty();
 
+	UTexture2D* enemy_icon_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/enemy_icon.enemy_icon")));
+	if (!enemy_icon_texture)
+	{
+		return;
+	}
+
 	auto ik_game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	FVector2D button_size(50.f, 50.f);
@@ -91,49 +104,67 @@ void UMapWidget::InitializeButtons()
 	{
 		maps_ = ik_game_instance->GetMapPtr();
 
-		for (int32 i = 0; i < maps_->GetHeight(); i++)
+		if (maps_)
 		{
-			for (int32 j = 0; j < maps_->GetWidth(); j++)
+			for (int32 i = 0; i < maps_->GetHeight(); i++)
 			{
-				const FMapNode& node = maps_->GetNode(i, j);
-				if (node.type == NodeType::None)
+				for (int32 j = 0; j < maps_->GetWidth(); j++)
 				{
-					continue;
-				}
-				// Update node path
-				FVector2D position = CalculateButtonPosition(i, j, button_size);
-				FVector2f path_begin_pos = CalculateButtonCenterPosition(position, button_size);
-				for (int32 t = 0; t < node.next.Num(); t++)
-				{
-					path_points_.Add(path_begin_pos);
-					FVector2f path_end_pos = CalculateButtonCenterPosition(CalculateButtonPosition(i + 1, node.next[t], button_size), button_size);
-					path_points_.Add(path_end_pos);
-				}
+					const FMapNode& node = maps_->GetNode(i, j);
+					if (node.type == NodeType::None)
+					{
+						continue;
+					}
+					// Update node path
+					FVector2D position = CalculateButtonPosition(i, j, button_size);
+					FVector2f path_begin_pos = CalculateButtonCenterPosition(position, button_size);
+					for (int32 t = 0; t < node.next.Num(); t++)
+					{
+						path_points_.Add(path_begin_pos);
+						FVector2f path_end_pos = CalculateButtonCenterPosition(CalculateButtonPosition(i + 1, node.next[t], button_size), button_size);
+						path_points_.Add(path_end_pos);
+					}
 
-				// Init buttons
-				UButton* button = NewObject<UButton>();
-				// @@TODO: Set widget styles properly to look like a image button
-				//button->WidgetStyle.SetNormal()
-				UCanvasPanelSlot* button_slot = canvas_panel_->AddChildToCanvas(button);
-				if (button_slot)
-				{
-					// @@TODO: Set anchors properly
-					//button_slot->SetAnchors()
-					button_slot->SetPosition(position);
-					button_slot->SetSize(button_size);
+					// Init buttons
+					UButton* button = NewObject<UButton>();
+					// @@TODO: Set widget styles properly to be distingushable when normal, hovered, and pressed
+					FSlateBrush new_brush;
+					new_brush.SetResourceObject(enemy_icon_texture);
+					new_brush.DrawAs = ESlateBrushDrawType::Type::Image;
+					button->WidgetStyle.SetNormal(new_brush);
+					button->WidgetStyle.SetHovered(new_brush);
+					//button->WidgetStyle.SetPressed(new_brush);
+					UCanvasPanelSlot* button_slot = canvas_panel_->AddChildToCanvas(button);
+					if (button_slot)
+					{
+						// @@TODO: Set anchors properly
+						//button_slot->SetAnchors()
+						button_slot->SetPosition(position);
+						button_slot->SetSize(button_size);
+					}
+
+					button->OnClicked.AddDynamic(this, &UMapWidget::OpenLevel);
+
+					buttons_.Add(button);
 				}
-				buttons_.Add(button);
 			}
+
 		}
 	}
 }
 
 inline FVector2D UMapWidget::CalculateButtonPosition(int32 row, int32 col, const FVector2D& buttonSize) const
 {
-	return FVector2D(col * buttonSize.X, (maps_->GetHeight() - 1 - row) * buttonSize.Y);
+	return FVector2D(col * buttonSize.X, (maps_->GetHeight() - 1 - row) * buttonSize.Y) + FVector2D(100.f, 400.f);
 }
 
 inline FVector2f UMapWidget::CalculateButtonCenterPosition(const FVector2D& position, const FVector2D& buttonSize) const
 {
 	return FVector2f(position + (buttonSize / 2.f));
+}
+
+void UMapWidget::OpenLevel()
+{
+	UWorld* world = GetWorld();
+	Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(world))->GetLevelTransitionManager()->OpenLevel(FName("CombatLevel"), world);
 }

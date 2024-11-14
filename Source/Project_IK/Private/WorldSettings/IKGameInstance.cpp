@@ -1,4 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: sinil.kang(rtd99062@gmail.com)
+Creation Date : 09.19.2024
+Summary : Source file for game instance.
+
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 
 #include "WorldSettings/IKGameInstance.h"
@@ -6,28 +14,32 @@
 #include "Abilities/ItemInventory.h"
 #include "UI/IKMaps.h"
 #include "Abilities/MyTestItem.h"
+#include "Managers/CharacterDataManager.h"
+#include "Managers/LevelTransitionManager.h"
+
+#include "Characters/Hero.h"
+#include "Characters/EnemyGunner.h"
 
 UIKGameInstance::UIKGameInstance()
+	:Super::UGameInstance()
 {
-	InitializeCharacterData();
-	InitializeItemInventory();
-	InitializeMaps();
-}
-
-FCharacterData* UIKGameInstance::GetCharacterData(int32 char_id) const
-{
-	if(character_table)
-	{
-		return character_table->FindRow<FCharacterData>(*FString::FromInt(char_id), TEXT(""));
-	}
-	return nullptr;
 }
 
 void UIKGameInstance::Init()
 {
 	Super::Init();
 
+	InitializeCharacterDataManager();
+	InitializeItemInventory();
+	InitializeMaps();
+	InitializeLevelTransitionManager();
+
 	item_inventory_->AddItem(UMyTestItem::StaticClass());
+}
+
+const UCharacterDataManager* UIKGameInstance::GetCharacterDataManager() noexcept
+{
+	return character_data_manager_;
 }
 
 UItemInventory* UIKGameInstance::GetItemInventory() const noexcept
@@ -35,20 +47,19 @@ UItemInventory* UIKGameInstance::GetItemInventory() const noexcept
 	return item_inventory_;
 }
 
-const UIKMaps* UIKGameInstance::GetMapPtr() const
+const UIKMaps* UIKGameInstance::GetMapPtr() const noexcept
 {
 	return maps_;
 }
 
-void UIKGameInstance::InitializeCharacterData()
+ULevelTransitionManager* UIKGameInstance::GetLevelTransitionManager() noexcept
 {
-	FString character_data_path = TEXT("/Script/Engine.DataTable'/Game/Resources/IK_Proto_GameData.IK_Proto_GameData'");
-	static ConstructorHelpers::FObjectFinder<UDataTable> dt_character_data(*character_data_path);
-	if (dt_character_data.Succeeded() == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("GameInstance has failed to load a game file data (IK_Proto_GameData)"));
-	}
-	character_table = dt_character_data.Object;
+	return level_transition_manager_;
+}
+
+void UIKGameInstance::InitializeCharacterDataManager()
+{
+	character_data_manager_ = NewObject<UCharacterDataManager>();
 }
 
 void UIKGameInstance::InitializeItemInventory()
@@ -60,4 +71,10 @@ void UIKGameInstance::InitializeMaps()
 {
 	maps_ = NewObject<UIKMaps>();
 	maps_->GenerateMaps(7, 4);
+}
+
+void UIKGameInstance::InitializeLevelTransitionManager()
+{
+	level_transition_manager_ = NewObject<ULevelTransitionManager>();
+	level_transition_manager_->SetActorBlueprints(hero_blueprint_, enemy_blueprint_);
 }

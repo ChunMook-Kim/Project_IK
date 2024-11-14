@@ -12,6 +12,9 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKPlayerController.h"
 
 #include "Components/TargetingComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "UI/IKHUD.h"
 
 AIKPlayerController::AIKPlayerController()
 	: Super::APlayerController()
@@ -26,9 +29,35 @@ void AIKPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
+
+	if (UEnhancedInputLocalPlayerSubsystem* subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		subsystem->AddMappingContext(player_input_mapping_context, 0);
+	}
+	
+}
+
+void AIKPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	if (UEnhancedInputComponent* enhanced_input_component = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		enhanced_input_component->BindAction(toggle_map_action, ETriggerEvent::Triggered, this, &AIKPlayerController::ToggleMap);
+	}
 }
 
 UTargetingComponent* AIKPlayerController::GetTargetingComponent()
 {
 	return targeting_component_;
+}
+
+void AIKPlayerController::ToggleMap()
+{
+	AIKHUD* HUD = Cast<AIKHUD>(GetHUD());
+
+	if (HUD)
+	{
+		HUD->ToggleMapWidget();
+	}
 }
