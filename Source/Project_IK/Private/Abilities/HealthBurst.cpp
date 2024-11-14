@@ -12,6 +12,12 @@ See LICENSE file in the project root for full license information.
 #include "Components/CharacterStatComponent.h"
 #include "Characters/Gunner.h"
 
+AHealthBurst::AHealthBurst()
+{
+	duration_ = 2.f;
+	cool_time_ = 5.f;
+}
+
 void AHealthBurst::BeginPlay()
 {
 	Super::BeginPlay();

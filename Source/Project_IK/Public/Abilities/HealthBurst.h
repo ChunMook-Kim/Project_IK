@@ -14,13 +14,12 @@ See LICENSE file in the project root for full license information.
 #include "HealthBurst.generated.h"
 
 class AGunner;
-/**
- * 
- */
 UCLASS()
 class PROJECT_IK_API AHealthBurst : public APassiveSkill
 {
 	GENERATED_BODY()
+public:
+	AHealthBurst();
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
 

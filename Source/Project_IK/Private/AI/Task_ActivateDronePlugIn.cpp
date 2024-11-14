@@ -1,5 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.12.2024
+Summary : Source file for activate drone plugin by AI Task node. 
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 
 #include "AI/Task_ActivateDronePlugIn.h"
 #include "Weapons/Drone.h"

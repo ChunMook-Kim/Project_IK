@@ -1,13 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/******************************************************************************
+Copyright(C) 2024
+Author: chunmook.kim(chunmook.kim97@gmail.com)
+Creation Date : 11.12.2024
+Summary : Header file for Drone Mechanics component.
 
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
 #pragma once
 
 #include "Abilities/DronePlugIn.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "DroneMechanics.generated.h"
-
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_IK_API UDroneMechanics : public UActorComponent
 {
