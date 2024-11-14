@@ -182,3 +182,8 @@ FCharacterData UCharacterStatComponent::GetCharacterData() const noexcept
 {
 	return stat_;
 }
+
+void UCharacterStatComponent::SetCharacterData(const FCharacterData& character_data) noexcept
+{
+	stat_ = character_data;
+}

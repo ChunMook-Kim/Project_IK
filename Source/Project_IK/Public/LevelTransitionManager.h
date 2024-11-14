@@ -5,9 +5,6 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
-#include "Hero.h"
-#include "EnemyGunner.h"
-
 
 #include "LevelTransitionManager.generated.h"
 
@@ -32,19 +29,19 @@ public:
 	void PrepareLevel(UWorld* world);
 
 	UFUNCTION(BlueprintCallable)
-	void SetActorBlueprints(TSubclassOf<AHero> hero_blueprint, TSubclassOf<AEnemyGunner> enemy_blueprint);
+	void SetActorBlueprints(TSubclassOf<AActor> hero_blueprint, TSubclassOf<AActor> enemy_blueprint);
 
 protected:
 	void SpawnHeroes(UWorld* world);
 	void SpawnEnemies(UWorld* world);
 
-	void SaveData();
+	void SaveData(UWorld* world);
 
 	UPROPERTY()
 	TArray<FCharacterData> data_;
 
 	UPROPERTY()
-	TSubclassOf<AHero> hero_blueprint_;
+	TSubclassOf<AActor> hero_blueprint_;
 	UPROPERTY()
-	TSubclassOf<AEnemyGunner> enemy_blueprint_;
+	TSubclassOf<AActor> enemy_blueprint_;
 };

@@ -20,7 +20,6 @@ See LICENSE file in the project root for full license information.
 AIKGameModeBase::AIKGameModeBase()
 	: Super::AGameModeBase()
 {
-	PopulateContainers();
 }
 
 void AIKGameModeBase::BeginPlay()
@@ -36,6 +35,7 @@ void AIKGameModeBase::BeginPlay()
 			level_transition_manager->PrepareLevel(GetWorld());
 		}
 	}
+	PopulateContainers();
 }
 
 TArray<AActor*> AIKGameModeBase::GetHeroContainers() const noexcept
@@ -80,19 +80,14 @@ void AIKGameModeBase::CheckWinLoseCondition()
 
 void AIKGameModeBase::PopulateContainers()
 {
-	// Populate a hero container
-	ConstructorHelpers::FClassFinder<AActor> BP_Hero_Finder(TEXT("/Game/__BluePrints/HeroBP"));
-	if (BP_Hero_Finder.Succeeded())
+	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(this));
+	
+	if (game_instance)
 	{
-		hero_class_ = BP_Hero_Finder.Class;
-	}
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), hero_class_, heroes_);
+		// Populate a hero container
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), game_instance->hero_blueprint_, heroes_);
 
-	// Populate an enemy container
-	ConstructorHelpers::FClassFinder<AActor> BP_Enemy_Finder(TEXT("/Game/__BluePrints/EnemyGunnerBP"));
-	if (BP_Enemy_Finder.Succeeded())
-	{
-		enemy_class_ = BP_Enemy_Finder.Class;
+		// Populate an enemy container
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), game_instance->enemy_blueprint_, enemies_);
 	}
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), enemy_class_, enemies_);
 }

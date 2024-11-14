@@ -9,6 +9,9 @@
 #include "CharacterDataManager.h"
 #include "LevelTransitionManager.h"
 
+#include "Hero.h"
+#include "EnemyGunner.h"
+
 UIKGameInstance::UIKGameInstance()
 	:Super::UGameInstance()
 {

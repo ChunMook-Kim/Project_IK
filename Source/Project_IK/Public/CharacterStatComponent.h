@@ -82,6 +82,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	FCharacterData GetCharacterData() const noexcept;
 
+	UFUNCTION(BlueprintCallable)
+	void SetCharacterData(const FCharacterData& character_data) noexcept;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FDieDelegate Die;
 

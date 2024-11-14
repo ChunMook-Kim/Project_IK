@@ -32,6 +32,9 @@ protected:
 	inline FVector2D CalculateButtonPosition(int32 row, int32 col, const FVector2D& buttonSize) const;
 	inline FVector2f CalculateButtonCenterPosition(const FVector2D& position, const FVector2D& buttonSize) const;
 
+	UFUNCTION()
+	void OpenLevel();
+
 	UPROPERTY()
 	UCanvasPanel* canvas_panel_;
 	TArray<UButton*> buttons_;

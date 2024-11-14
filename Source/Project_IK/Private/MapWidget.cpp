@@ -14,6 +14,7 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Rendering/DrawElements.h"
+#include "LevelTransitionManager.h"
 
 #include "IKMaps.h"
 
@@ -133,6 +134,9 @@ void UMapWidget::InitializeButtons()
 						button_slot->SetPosition(position);
 						button_slot->SetSize(button_size);
 					}
+
+					button->OnClicked.AddDynamic(this, &UMapWidget::OpenLevel);
+
 					buttons_.Add(button);
 				}
 			}
@@ -149,4 +153,10 @@ inline FVector2D UMapWidget::CalculateButtonPosition(int32 row, int32 col, const
 inline FVector2f UMapWidget::CalculateButtonCenterPosition(const FVector2D& position, const FVector2D& buttonSize) const
 {
 	return FVector2f(position + (buttonSize / 2.f));
+}
+
+void UMapWidget::OpenLevel()
+{
+	UWorld* world = GetWorld();
+	Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(world))->GetLevelTransitionManager()->OpenLevel(FName("CombatLevel"), world);
 }

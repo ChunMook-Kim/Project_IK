@@ -14,9 +14,6 @@ See LICENSE file in the project root for full license information.
 #include "Engine/GameInstance.h"
 
 
-#include "Hero.h"
-#include "EnemyGunner.h"
-
 #include "IKGameInstance.generated.h"
 
 class UItemInventory;
@@ -48,10 +45,10 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelTransition")
-	TSubclassOf<AHero> hero_blueprint_;
+	TSubclassOf<AActor> hero_blueprint_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelTransition")
-	TSubclassOf<AEnemyGunner> enemy_blueprint_;
+	TSubclassOf<AActor> enemy_blueprint_;
 
 private:
 	void InitializeCharacterDataManager();

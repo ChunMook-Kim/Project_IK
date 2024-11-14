@@ -39,6 +39,13 @@ void USkillContainer::InvokeSkills(const FTargetData& TargetData)
 	}
 }
 
+void USkillContainer::SetSkill(TSubclassOf<class USkillBase> skill)
+{
+	skill_class_ = skill;
+
+	InitializeComponent();
+}
+
 
 // Called when the game starts
 void USkillContainer::BeginPlay()
