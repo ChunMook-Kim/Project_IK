@@ -89,3 +89,8 @@ float UWeaponMechanics::GetReloadDuration() const
 {
 	return weapon_ref_->GetReloadDuration();
 }
+
+void UWeaponMechanics::SetWeaponOwner(TWeakObjectPtr<AActor> gun_owner)
+{
+	weapon_ref_->SetGunOwner(gun_owner);
+}

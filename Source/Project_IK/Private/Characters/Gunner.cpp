@@ -15,6 +15,11 @@ See LICENSE file in the project root for full license information.
 #include "Components/WeaponMechanics.h"
 #include "UI/HitPointsUI.h"
 #include "Components/WidgetComponent.h"
+
+// To report damagings
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameModeBase.h"
+
 // Sets default values
 AGunner::AGunner()
 {
@@ -43,11 +48,15 @@ void AGunner::BeginPlay()
 {
 	Super::BeginPlay();
 	Cast<UHitPointsUI>(hp_UI_->GetWidget())->BindCharacterStat(character_stat_component_);
+	weapon_mechanics_->SetWeaponOwner(this);
 }
 
-void AGunner::GetDamage(float damage)
+void AGunner::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 {
 	character_stat_component_->GetDamage(damage);
+
+	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	game_mode->RecordDamage(damage, attacker);
 }
 
 // Called every frame
@@ -55,11 +64,6 @@ void AGunner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-void AGunner::GetDamage(int damage_amount)
-{
-	character_stat_component_->GetDamage(damage_amount);
 }
 
 UCharacterStatComponent* AGunner::GetCharacterStatComponent() const

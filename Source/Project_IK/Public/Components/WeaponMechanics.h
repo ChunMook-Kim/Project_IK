@@ -34,6 +34,8 @@ public:
 	bool IsMegazineEmpty() const;
 	float GetFireInterval() const;
 	float GetReloadDuration() const;
+	UFUNCTION()
+	void SetWeaponOwner(TWeakObjectPtr<AActor> gun_owner);
 	
 	
 private:

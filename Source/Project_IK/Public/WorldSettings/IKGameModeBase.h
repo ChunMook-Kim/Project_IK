@@ -48,6 +48,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnGameLose();
 
+	UFUNCTION()
+	void RecordDamage(float damage, TWeakObjectPtr<AActor> attacker);
+
 protected:
 	void PopulateContainers();
 
@@ -55,4 +58,7 @@ protected:
 	TArray<AActor*> heroes_;
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> enemies_;
+
+	UPROPERTY()
+	TMap<TWeakObjectPtr<AActor>, float> gunner_damage_map_;
 };

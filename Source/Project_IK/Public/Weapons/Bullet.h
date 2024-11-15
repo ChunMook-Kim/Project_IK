@@ -27,6 +27,9 @@ public:
 	UFUNCTION()
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void SetShooter(TWeakObjectPtr<AActor> shooter);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -40,6 +43,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Bullet", meta = (AllowPrivateAccess = "true", BindWidget))
 	UStaticMeshComponent* bullet_mesh_;
+
+	UPROPERTY(VisibleAnywhere, Category = "Bullet")
+	TWeakObjectPtr<AActor> shooter_;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Bullet", meta = (AllowPrivateAccess = "true"))
 	float damage_;

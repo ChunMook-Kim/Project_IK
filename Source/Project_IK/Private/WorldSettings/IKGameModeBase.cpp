@@ -17,6 +17,9 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameInstance.h"
 #include "Managers/LevelTransitionManager.h"
 
+
+#include "Characters/Hero.h"
+
 AIKGameModeBase::AIKGameModeBase()
 	: Super::AGameModeBase()
 {
@@ -75,6 +78,21 @@ void AIKGameModeBase::CheckWinLoseCondition()
 	else if (heroes_.Num() <= 0)
 	{
 		OnGameLose();
+	}
+}
+
+void AIKGameModeBase::RecordDamage(float damage, TWeakObjectPtr<AActor> attacker)
+{
+	if (Cast<AHero>(attacker))
+	{
+		if (gunner_damage_map_.Contains(attacker))
+		{
+			gunner_damage_map_[attacker] += damage;
+		}
+		else
+		{
+			gunner_damage_map_.Add(attacker, damage);
+		}
 	}
 }
 
