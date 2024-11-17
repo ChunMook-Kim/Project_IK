@@ -81,7 +81,7 @@ void UMapWidget::NativeConstruct()
 
 void UMapWidget::InitializeWidgetTree()
 {
-	canvas_panel_ = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("TestPanel"));
+	canvas_panel_ = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("MapWidgetRootCanvas"));
 	WidgetTree->RootWidget = canvas_panel_;
 }
 

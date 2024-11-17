@@ -14,6 +14,8 @@ See LICENSE file in the project root for full license information.
 #include "GameFramework/HUD.h"
 #include "IKHUD.generated.h"
 
+class UCombatResultUI;
+
 /**
  * 
  */
@@ -24,6 +26,9 @@ class PROJECT_IK_API AIKHUD : public AHUD
 public:
 	void ToggleMapWidget();
 	
+	UFUNCTION(BlueprintCallable)
+	void DisplayCombatResult();
+
 protected:
 	// Reference to the Widget Blueprint class to create
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
@@ -40,6 +45,12 @@ protected:
 	// Reference to the widget instance
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	UUserWidget* map_widget_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UCombatResultUI> combat_result_widget_class_;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	UCombatResultUI* combat_result_widget_;
 
 	virtual void BeginPlay() override;
 };
