@@ -53,6 +53,7 @@ public:
 
 protected:
 	void PopulateContainers();
+	void DisplayCombatResult();
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> heroes_;

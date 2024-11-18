@@ -34,7 +34,16 @@ public:
 	virtual bool Initialize() override;
 
 	UFUNCTION(BlueprintCallable)
-	void SetPercent(float ratio);
+	void SetHPPercent(float ratio);
+
+	UFUNCTION(BlueprintPure)
+	float GetHPPercent();
+
+	UFUNCTION(BlueprintCallable)
+	void SetHPOpacity(float opacity);
+
+	UFUNCTION(BlueprintCallable)
+	void SetDamageDealt(float damage);
 
 protected:
 	virtual void NativeConstruct() override;

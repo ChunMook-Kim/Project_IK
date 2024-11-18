@@ -53,10 +53,10 @@ void AGunner::BeginPlay()
 
 void AGunner::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 {
-	character_stat_component_->GetDamage(damage);
-
 	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	game_mode->RecordDamage(damage, attacker);
+
+	character_stat_component_->GetDamage(damage);
 }
 
 // Called every frame

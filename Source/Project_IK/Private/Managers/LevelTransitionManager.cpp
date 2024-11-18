@@ -67,6 +67,11 @@ void ULevelTransitionManager::SetActorBlueprints(TSubclassOf<AActor> hero_bluepr
 	enemy_blueprint_ = enemy_blueprint;
 }
 
+const TArray<FCharacterData>& ULevelTransitionManager::GetSavedData() const
+{
+	return data_;
+}
+
 void ULevelTransitionManager::SpawnHeroes(UWorld* world)
 {
 	for (int32 i = 0; i < data_.Num(); ++i)

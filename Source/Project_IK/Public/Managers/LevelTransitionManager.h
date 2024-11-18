@@ -39,6 +39,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetActorBlueprints(TSubclassOf<AActor> hero_blueprint, TSubclassOf<AActor> enemy_blueprint);
 
+	const TArray<FCharacterData>& GetSavedData() const;
+
 protected:
 	void SpawnHeroes(UWorld* world);
 	void SpawnEnemies(UWorld* world);

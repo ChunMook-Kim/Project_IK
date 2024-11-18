@@ -26,8 +26,8 @@ class PROJECT_IK_API AIKHUD : public AHUD
 public:
 	void ToggleMapWidget();
 	
-	UFUNCTION(BlueprintCallable)
-	void DisplayCombatResult();
+	UFUNCTION()
+	void DisplayCombatResult(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map);
 
 protected:
 	// Reference to the Widget Blueprint class to create

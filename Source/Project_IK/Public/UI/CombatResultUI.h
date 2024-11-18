@@ -32,12 +32,18 @@ public:
 
 	void SetHeroNumbers(int32 num);
 
+	void UpdateResults(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map);
+
 protected:
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 	virtual void NativeConstruct() override;
 
 	void InitializeRootWidget();
 	void InitializeChildWidgets();
 
+	void UpdateHPBars(float InDeltaTime);
+
+	// Widget pointers
 	UPROPERTY()
 	TWeakObjectPtr<UCanvasPanel> root_canvas_panel_;
 
@@ -58,4 +64,11 @@ protected:
 
 	UPROPERTY()
 	TArray<TWeakObjectPtr<UCombatResultBlock>> blocks_;
+
+	// End of widget pointers
+
+	TArray<float> hp_ratio_before_;
+	TArray<float> hp_ratio_after_;
+
+	float HP_timer_;
 };

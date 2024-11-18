@@ -11,6 +11,7 @@ See LICENSE file in the project root for full license information.
 
 #include "UI/CombatResultUI.h"
 
+// UI widget components
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -22,6 +23,13 @@ See LICENSE file in the project root for full license information.
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "UI/CombatResultBlock.h"
+
+#include "Characters/Hero.h"
+#include "Components/CharacterStatComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameModeBase.h"
+#include "Managers/LevelTransitionManager.h"
+
 
 bool UCombatResultUI::Initialize()
 {
@@ -52,7 +60,35 @@ void UCombatResultUI::SetHeroNumbers(int32 num)
 		block->Rename(*block_unique_name);
 		UHorizontalBoxSlot* block_slot = blocks_holder_->AddChildToHorizontalBox(block);
 		block_slot->SetPadding(FMargin(32.f));
+
+		blocks_.Add(block);
 	}
+}
+
+void UCombatResultUI::UpdateResults(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map)
+{
+	const int32 hero_num = heroes.Num();
+	for (int32 i = 0; i < hero_num; ++i)
+	{
+		AHero* hero = Cast<AHero>(heroes[i]);
+		UCharacterStatComponent* hero_stat = hero->GetCharacterStatComponent();
+		hp_ratio_after_.Add(hero_stat->GetHPRatio());
+		blocks_[i]->SetDamageDealt(damage_map[hero]);
+	}
+
+	HP_timer_ = 0;
+}
+
+void UCombatResultUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (!IsVisible())
+	{
+		return;
+	}
+
+	UpdateHPBars(InDeltaTime);
 }
 
 void UCombatResultUI::NativeConstruct()
@@ -60,6 +96,20 @@ void UCombatResultUI::NativeConstruct()
 	Super::NativeConstruct();
 
 	InitializeChildWidgets();
+
+
+	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (game_mode)
+	{
+		TArray<AActor*> hero_containers = game_mode->GetHeroContainers();
+		for (int32 i = 0; i < hero_containers.Num(); i++)
+		{
+			AHero* hero = Cast<AHero>(hero_containers[i]);
+			// It is not ratio at this point. It contains initial hit points.
+			hp_ratio_before_.Add(hero->GetCharacterStatComponent()->GetHPRatio());
+		}
+	}
+
 }
 
 void UCombatResultUI::InitializeRootWidget()
@@ -102,7 +152,7 @@ void UCombatResultUI::InitializeChildWidgets()
 	{
 		title_holder_slot->SetPadding(FMargin(0.0, 64.0, 0.0, -64.0));
 	}
-	
+
 	title_ = NewObject<UTextBlock>();
 	title_->SetText(FText::FromString("Combat Result"));
 	UBorderSlot* title_slot = Cast<UBorderSlot>(title_holder_->AddChild(title_.Get()));
@@ -112,7 +162,7 @@ void UCombatResultUI::InitializeChildWidgets()
 		title_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 		title_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
 	}
-	
+
 	// Initialize a block holder
 	blocks_holder_ = NewObject<UHorizontalBox>();
 	UVerticalBoxSlot* blocks_holder_slot = widgets_holder_->AddChildToVerticalBox(blocks_holder_.Get());
@@ -121,5 +171,49 @@ void UCombatResultUI::InitializeChildWidgets()
 		blocks_holder_slot->SetSize(FSlateChildSize());
 		blocks_holder_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 		blocks_holder_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
+	}
+}
+
+
+// Diminishes HP slowly (0s ~ 1s), Stops for 2 seconds (1s ~ 3s)
+// Blink it if in low when stopped.
+void UCombatResultUI::UpdateHPBars(float InDeltaTime)
+{
+	HP_timer_ += InDeltaTime;
+
+	if (HP_timer_ >= 3.f)
+	{
+		HP_timer_ = 0.f;
+	}
+
+	if (HP_timer_ <= 1.f)
+	{
+		for (int32 i = 0; i < blocks_.Num(); i++)
+		{
+			float hp = FMath::Lerp(hp_ratio_before_[i], hp_ratio_after_[i], HP_timer_);
+			blocks_[i]->SetHPPercent(hp);
+		}
+	}
+	else if (HP_timer_ >= 1.25f && HP_timer_ <= 1.75)
+	{
+		float opacity = FMath::Abs((HP_timer_ - 1.5f) * 4);
+		for (int32 i = 0; i < blocks_.Num(); i++)
+		{
+			if (blocks_[i]->GetHPPercent() < 0.25f)
+			{
+				blocks_[i]->SetHPOpacity(opacity);
+			}
+		}
+	}
+	else if(HP_timer_ >= 2.25f && HP_timer_ <= 2.75f)
+	{
+		float opacity = FMath::Abs((HP_timer_ - 2.5f) * 4);
+		for (int32 i = 0; i < blocks_.Num(); i++)
+		{
+			if (blocks_[i]->GetHPPercent() < 0.25f)
+			{
+				blocks_[i]->SetHPOpacity(opacity);
+			}
+		}
 	}
 }

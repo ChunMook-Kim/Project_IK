@@ -36,9 +36,33 @@ bool UCombatResultBlock::Initialize()
 	return true;
 }
 
-void UCombatResultBlock::SetPercent(float ratio)
+void UCombatResultBlock::SetHPPercent(float ratio)
 {
+	// @@ TODO: Make it function
+	// 10% Red, 90% Green
 	hp_->SetPercent(ratio);
+	ratio -= 0.5f;
+	ratio *= 5.f / 4.f;
+	ratio = FMath::Clamp(ratio, -0.5f, 0.5f);
+	ratio += 0.5f;
+
+	FLinearColor hp_color = FMath::Lerp(FLinearColor(1.f, 0.f, 0.f), FLinearColor(0.f, 1.f, 0.f), ratio);
+	hp_->SetFillColorAndOpacity(hp_color);
+}
+
+float UCombatResultBlock::GetHPPercent()
+{
+	return hp_->GetPercent();
+}
+
+void UCombatResultBlock::SetHPOpacity(float opacity)
+{
+	hp_->SetRenderOpacity(opacity);
+}
+
+void UCombatResultBlock::SetDamageDealt(float damage)
+{
+	deal_text_->SetText(FText::AsNumber(damage));
 }
 
 void UCombatResultBlock::NativeConstruct()

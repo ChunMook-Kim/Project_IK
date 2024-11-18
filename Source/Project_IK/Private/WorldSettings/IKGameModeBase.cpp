@@ -17,6 +17,8 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameInstance.h"
 #include "Managers/LevelTransitionManager.h"
 
+#include "UI/IKHUD.h"
+
 
 #include "Characters/Hero.h"
 
@@ -73,10 +75,12 @@ void AIKGameModeBase::CheckWinLoseCondition()
 {
 	if (enemies_.Num() <= 0)
 	{
+		DisplayCombatResult();
 		OnGameWin();
 	}
 	else if (heroes_.Num() <= 0)
 	{
+		DisplayCombatResult();
 		OnGameLose();
 	}
 }
@@ -107,5 +111,19 @@ void AIKGameModeBase::PopulateContainers()
 
 		// Populate an enemy container
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), game_instance->enemy_blueprint_, enemies_);
+	}
+}
+
+void AIKGameModeBase::DisplayCombatResult()
+{
+	APlayerController* player_controller = GetWorld()->GetFirstPlayerController();
+	
+	if (player_controller)
+	{
+		AIKHUD* hud = Cast<AIKHUD>(player_controller->GetHUD());
+		if (hud)
+		{
+			hud->DisplayCombatResult(heroes_, gunner_damage_map_);
+		}
 	}
 }

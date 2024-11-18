@@ -80,6 +80,9 @@ public:
 	float GetHPRatio() const noexcept;
 
 	UFUNCTION(BlueprintPure)
+	float GetMaxHitPoint() const noexcept;
+
+	UFUNCTION(BlueprintPure)
 	FCharacterData GetCharacterData() const noexcept;
 
 	UFUNCTION(BlueprintCallable)
