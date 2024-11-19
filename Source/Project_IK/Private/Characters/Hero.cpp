@@ -50,8 +50,8 @@ AActor* AHero::GetDrone()
 
 void AHero::Die()
 {
-	auto test = UGameplayStatics::GetGameMode(this);
+	drone_->Destroy();
 	AIKGameModeBase* casted_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if(casted_mode) casted_mode->RemoveEnemy(this);
+	if(casted_mode) casted_mode->RemoveHero(this);
 	Super::Die();
 }
