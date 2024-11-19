@@ -70,10 +70,27 @@ void UCombatResultUI::UpdateResults(const TArray<AActor*>& heroes, const TMap<TW
 	const int32 hero_num = heroes.Num();
 	for (int32 i = 0; i < hero_num; ++i)
 	{
+		// Nullptr check
 		AHero* hero = Cast<AHero>(heroes[i]);
-		UCharacterStatComponent* hero_stat = hero->GetCharacterStatComponent();
-		hp_ratio_after_.Add(hero_stat->GetHPRatio());
-		blocks_[i]->SetDamageDealt(damage_map[hero]);
+		if (hero)
+		{
+			blocks_[i]->SetVisibility(ESlateVisibility::Visible);
+			UCharacterStatComponent* hero_stat = hero->GetCharacterStatComponent();
+			hp_ratio_after_.Add(hero_stat->GetHPRatio());
+			if (damage_map.Contains(hero))
+			{
+				blocks_[i]->SetDamageDealt(damage_map[hero]);
+			}
+			else
+			{
+				blocks_[i]->SetDamageDealt(0.f);
+			}
+		}
+		else
+		{
+			// Consider the hero has dead
+			blocks_[i]->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 
 	HP_timer_ = 0;
