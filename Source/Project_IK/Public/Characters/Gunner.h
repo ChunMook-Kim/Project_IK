@@ -39,13 +39,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void GetDamage(float damage) override;
+	virtual void GetDamage(float damage, TWeakObjectPtr<AActor> attacker) override;
 
 	virtual void Reload();
 	virtual void Fire(AActor* target);
 	
-	virtual void GetDamage(int damage_amount);
-
 	UFUNCTION()
 	virtual void Die() override;
 

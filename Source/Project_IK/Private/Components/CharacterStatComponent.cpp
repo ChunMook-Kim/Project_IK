@@ -178,6 +178,11 @@ float UCharacterStatComponent::GetHPRatio() const noexcept
 	}
 }
 
+float UCharacterStatComponent::GetMaxHitPoint() const noexcept
+{
+	return max_stat_.hit_point_;
+}
+
 FCharacterData UCharacterStatComponent::GetCharacterData() const noexcept
 {
 	return stat_;

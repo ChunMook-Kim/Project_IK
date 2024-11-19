@@ -40,6 +40,8 @@ public:
 	void SetFireInterval(float Fire_Interval);
 	float GetReloadDuration() const;
 	void SetReloadDuration(float Reload_Duration);
+	UFUNCTION()
+	void SetGunOwner(TWeakObjectPtr<AActor> gun_owner);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gun", meta = (AllowPrivateAccess = "true", BindWidget))
@@ -47,6 +49,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gun", meta = (AllowPrivateAccess = "true", BindWidget))
 	USphereComponent* muzzle_;
+
+	UPROPERTY(VisibleAnywhere, Category = "Gun")
+	TWeakObjectPtr<AActor> gun_owner_;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gun", meta = (AllowPrivateAccess = "true"))
 	int max_megazine_ = 0;

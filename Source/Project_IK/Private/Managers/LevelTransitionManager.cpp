@@ -17,6 +17,7 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameModeBase.h"
 #include "Components/CharacterStatComponent.h"
 
+#include "Environments/SpawnMarker.h"
 #include "Characters/Hero.h"
 #include "Characters/EnemyGunner.h"
 #include "Abilities/SkillContainer.h"
@@ -67,11 +68,26 @@ void ULevelTransitionManager::SetActorBlueprints(TSubclassOf<AActor> hero_bluepr
 	enemy_blueprint_ = enemy_blueprint;
 }
 
+const TArray<FCharacterData>& ULevelTransitionManager::GetSavedData() const
+{
+	return data_;
+}
+
 void ULevelTransitionManager::SpawnHeroes(UWorld* world)
 {
+	TArray<AActor*> marker;
+	UGameplayStatics::GetAllActorsOfClass(world, ASpawnMarker::StaticClass(), marker);
+	FVector spawn_position = FVector();
+	FRotator spawn_rotation = FRotator();
+	if (marker.Num() > 0)
+	{
+		spawn_position = marker[0]->GetActorLocation();
+		spawn_rotation = marker[0]->GetActorRotation();
+	}
+
 	for (int32 i = 0; i < data_.Num(); ++i)
 	{
-		AHero* hero = world->SpawnActor<AHero>(hero_blueprint_, FVector(-960, 0, 90), FRotator::ZeroRotator);
+		AHero* hero = world->SpawnActor<AHero>(hero_blueprint_, spawn_position + FVector(0, (300.f * (data_.Num() - 1) / -2.f ) + (i * 300), 90), spawn_rotation);
 		hero->SpawnDefaultController();
 		hero->GetComponentByClass<USkillContainer>()->SetSkill(UMyTestSkill::StaticClass());
 		hero->GetComponentByClass<UCharacterStatComponent>()->SetCharacterData(data_[0]);

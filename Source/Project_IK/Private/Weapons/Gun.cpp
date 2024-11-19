@@ -72,3 +72,8 @@ void AGun::SetReloadDuration(float Reload_Duration)
 {
 	reload_duration_ = Reload_Duration;
 }
+
+void AGun::SetGunOwner(TWeakObjectPtr<AActor> gun_owner)
+{
+	gun_owner_ = gun_owner;
+}

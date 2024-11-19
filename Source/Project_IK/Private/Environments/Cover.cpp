@@ -42,9 +42,11 @@ void ACover::BeginPlay()
 	
 }
 
-void ACover::GetDamage(float damage)
+void ACover::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 {
 	character_stat_component_->GetDamage(damage);
+
+	// Do not record damages worked on covers...
 }
 
 void ACover::Die()

@@ -29,6 +29,6 @@ class PROJECT_IK_API IDamageable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void GetDamage(float damage) = 0;
+	virtual void GetDamage(float damage, TWeakObjectPtr<AActor> attacker) = 0;
 	virtual void Die() = 0;
 };

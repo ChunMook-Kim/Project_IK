@@ -28,7 +28,8 @@ void ARifle::FireWeapon(FVector target_pos)
 	if(cur_megazine_ > 0)
 	{
 		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(muzzle_->GetComponentLocation(), target_pos);
-		GetWorld()->SpawnActor<AActor>(bullet_class_, muzzle_->GetComponentLocation(), rotation);
+		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bullet_class_, muzzle_->GetComponentLocation(), rotation);
+		bullet->SetShooter(gun_owner_);
 		cur_megazine_--;	
 	}
 }

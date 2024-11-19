@@ -36,6 +36,11 @@ void ABullet::BeginPlay()
 void ABullet::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	IDamageable* casted_damage_logic = Cast<IDamageable>(OtherActor);
-	if(casted_damage_logic) casted_damage_logic->GetDamage(damage_);
+	if(casted_damage_logic) casted_damage_logic->GetDamage(damage_, shooter_);
 	Destroy();
+}
+
+void ABullet::SetShooter(TWeakObjectPtr<AActor> shooter)
+{
+	shooter_ = shooter;
 }
