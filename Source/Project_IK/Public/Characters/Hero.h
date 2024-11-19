@@ -26,6 +26,8 @@ public:
 	AActor* GetDrone();
 	
 protected:
+	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 	void Die() override;
 
 private:

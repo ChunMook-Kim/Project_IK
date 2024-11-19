@@ -17,7 +17,6 @@ UDroneMechanics::UDroneMechanics()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-
 // Called when the game starts
 void UDroneMechanics::BeginPlay()
 {
@@ -36,6 +35,19 @@ void UDroneMechanics::ActivateDronePlugin()
 	if(plugin_ != nullptr)
 	{
 		plugin_->StartPassiveSkill();
+	}
+}
+
+//만약 패시브를 사용 중 사망, 혹은 레벨 클리어 시 강제로 DP를 끝낼 때 사용된다.
+void UDroneMechanics::ForceDeactivatePlugin()
+{
+	if(plugin_ != nullptr)
+	{
+		if(plugin_->IsActivated() == true)
+		{
+			plugin_->FinishPassiveSkill();
+			plugin_->SetActivated(false);
+		}
 	}
 }
 

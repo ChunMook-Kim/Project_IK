@@ -31,6 +31,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void ActivateDronePlugin();
+	void ForceDeactivatePlugin();
 	float GetHoldTime() const;
 	bool IsDronePluginAvailable() const;
 	

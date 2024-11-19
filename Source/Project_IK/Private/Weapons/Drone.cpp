@@ -48,7 +48,6 @@ void ADrone::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
 void ADrone::ActivateDronePlugin()
 {
 	drone_mechanics_->ActivateDronePlugin();
@@ -62,4 +61,10 @@ float ADrone::GetDronePluginHoldTime() const
 bool ADrone::IsPluginAvailable() const
 {
 	return drone_mechanics_->IsDronePluginAvailable();
+}
+
+void ADrone::Die()
+{
+	drone_mechanics_->ForceDeactivatePlugin();
+	Destroy();
 }

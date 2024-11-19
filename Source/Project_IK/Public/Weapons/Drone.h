@@ -36,6 +36,7 @@ public:
 	virtual void ActivateDronePlugin();
 	float GetDronePluginHoldTime() const;
 	bool IsPluginAvailable() const;
+	void Die();
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true", BindWidget))

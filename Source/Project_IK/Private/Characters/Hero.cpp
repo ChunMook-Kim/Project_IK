@@ -48,9 +48,21 @@ AActor* AHero::GetDrone()
 	return drone_;
 }
 
+void AHero::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	if(auto casted_drone = Cast<ADrone>(drone_))
+	{
+		casted_drone->Die();
+	}
+}
+
 void AHero::Die()
 {
-	drone_->Destroy();
+	if(auto casted_drone = Cast<ADrone>(drone_))
+	{
+		casted_drone->Die();
+	}
 	AIKGameModeBase* casted_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if(casted_mode) casted_mode->RemoveHero(this);
 	Super::Die();

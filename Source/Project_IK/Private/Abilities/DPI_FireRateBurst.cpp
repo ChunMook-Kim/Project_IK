@@ -32,19 +32,18 @@ void ADPI_FireRateBurst::Tick(float DeltaSeconds)
 	if(activated_ && left_duration_ <= 0)
 	{
 		FinishPassiveSkill();
-		UE_LOG(LogTemp, Warning, TEXT("Buff Finished"));
 	}
 }
 
 void ADPI_FireRateBurst::StartPassiveSkill()
 {
 	Super::StartPassiveSkill();
-	UE_LOG(LogTemp, Warning, TEXT("Buff Activated"));
 	gunner_caster_ = Cast<AGunner>(caster_);
 	if(gunner_caster_)
 	{
 		gunner_caster_->GetCharacterStatComponent()->
 		SetAttackSpeed(gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed() / accelerate_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("Buff Activated, cur speed: %f, divided: %f"), gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed(), accelerate_amount_);
 	}
 }
 
@@ -56,5 +55,6 @@ void ADPI_FireRateBurst::FinishPassiveSkill()
 	{
 		gunner_caster_->GetCharacterStatComponent()->
 		SetAttackSpeed(gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed() * accelerate_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("Buff Finished, cur speed: %f, divided: %f"), gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed(), accelerate_amount_);
 	}
 }
