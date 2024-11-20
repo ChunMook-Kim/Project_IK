@@ -10,13 +10,12 @@ See LICENSE file in the project root for full license information.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interfaces/GunInterface.h"
 #include "GameFramework/Actor.h"
 #include "Gun.generated.h"
 
 class USphereComponent;
 UCLASS()
-class PROJECT_IK_API AGun : public AActor, public IGunInterface
+class PROJECT_IK_API AGun : public AActor
 {
 	GENERATED_BODY()
 	
@@ -32,10 +31,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 		
-	virtual void Reload() override;
-	virtual void FireWeapon(FVector target_pos) override;
+	virtual void Reload();
+	virtual void FireWeapon(FVector target_pos);
 
-	bool IsMegazineEmpty() const;
+	bool IsMagazineEmpty() const;
 	float GetFireInterval() const;
 	void SetFireInterval(float Fire_Interval);
 	float GetReloadDuration() const;

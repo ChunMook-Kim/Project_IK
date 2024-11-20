@@ -14,9 +14,11 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Weapons/Drone.h"
+#include "Abilities/SkillContainer.h"
 
 AHero::AHero()
 {
+	skill_container_ = CreateDefaultSubobject<USkillContainer>(TEXT("SkillContainer"));
 	drone_location_ = CreateDefaultSubobject<USphereComponent>("Drone Location");
 	drone_location_->SetupAttachment(RootComponent);
 }

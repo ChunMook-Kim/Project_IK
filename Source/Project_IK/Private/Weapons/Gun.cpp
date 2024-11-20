@@ -48,7 +48,7 @@ void AGun::FireWeapon(FVector target_pos)
 {
 }
 
-bool AGun::IsMegazineEmpty() const
+bool AGun::IsMagazineEmpty() const
 {
 	return cur_megazine_ <= 0;
 }

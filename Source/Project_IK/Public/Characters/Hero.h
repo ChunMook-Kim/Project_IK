@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "Hero.generated.h"
 class USphereComponent;
 class ADrone;
+class USkillContainer;
 
 UCLASS()
 class PROJECT_IK_API AHero : public APassiveSkillGunner
@@ -29,6 +30,10 @@ protected:
 	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	void Die() override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
+	USkillContainer* skill_container_;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero", meta = (AllowPrivateAccess = "true"))

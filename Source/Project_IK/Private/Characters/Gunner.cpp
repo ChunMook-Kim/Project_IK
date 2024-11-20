@@ -11,7 +11,6 @@ See LICENSE file in the project root for full license information.
 #include "Characters/Gunner.h"
 #include "AI/GunnerAIController.h"
 #include "Components/CharacterStatComponent.h"
-#include "Abilities/SkillContainer.h"
 #include "Components/WeaponMechanics.h"
 #include "UI/HitPointsUI.h"
 #include "Components/WidgetComponent.h"
@@ -26,7 +25,6 @@ AGunner::AGunner()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	character_stat_component_ = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("CharacterStatComponent"));
-	skill_container_ = CreateDefaultSubobject<USkillContainer>(TEXT("SkillContainer"));
 	weapon_mechanics_ = CreateDefaultSubobject<UWeaponMechanics>(TEXT("WeaponMechanics"));
 	hp_UI_ = CreateDefaultSubobject<UWidgetComponent>(TEXT("HP UI"));
 	
@@ -59,13 +57,6 @@ void AGunner::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 	character_stat_component_->GetDamage(damage);
 }
 
-// Called every frame
-void AGunner::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 UCharacterStatComponent* AGunner::GetCharacterStatComponent() const
 {
 	return character_stat_component_;
@@ -85,14 +76,6 @@ void AGunner::SetForwardDir(const FVector& Forward_Dir)
 {
 	forward_dir_ = Forward_Dir;
 }
-
-// Called to bind functionality to input
-void AGunner::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
 void AGunner::Die()
 {
 	weapon_mechanics_->OnDestroy();
@@ -112,9 +95,9 @@ void AGunner::Reload()
 	PlayAnimMontage(reload_montage_);
 }
 
-bool AGunner::IsMegazineEmpty() const
+bool AGunner::IsMagazineEmpty() const
 {
-	return weapon_mechanics_->IsMegazineEmpty();
+	return weapon_mechanics_->IsMagazineEmpty();
 }
 
 float AGunner::GetReloadDuration() const

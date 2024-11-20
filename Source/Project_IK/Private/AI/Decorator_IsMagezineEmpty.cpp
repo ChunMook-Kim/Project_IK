@@ -21,5 +21,5 @@ UDecorator_IsMagezineEmpty::UDecorator_IsMagezineEmpty()
 bool UDecorator_IsMagezineEmpty::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	AGunner* casted_gunner = Cast<AGunner>(OwnerComp.GetAIOwner()->GetPawn());
-	return casted_gunner->IsMegazineEmpty();
+	return casted_gunner->IsMagazineEmpty();
 }
