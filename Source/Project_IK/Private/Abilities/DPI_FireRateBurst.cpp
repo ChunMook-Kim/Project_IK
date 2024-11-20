@@ -14,8 +14,9 @@ See LICENSE file in the project root for full license information.
 
 ADPI_FireRateBurst::ADPI_FireRateBurst()
 {
+	is_periodic_ = true;
 	cool_time_ = 5.f;
-	duration_ = 2.f;
+	duration_ = 5.f;
 	hold_time_ = 0.f;
 	accelerate_amount_ = 2.f;
 }
@@ -23,7 +24,6 @@ ADPI_FireRateBurst::ADPI_FireRateBurst()
 void ADPI_FireRateBurst::BeginPlay()
 {
 	Super::BeginPlay();
-	gunner_caster_ = Cast<AGunner>(caster_);
 }
 
 void ADPI_FireRateBurst::Tick(float DeltaSeconds)
@@ -43,7 +43,7 @@ void ADPI_FireRateBurst::StartPassiveSkill()
 	{
 		gunner_caster_->GetCharacterStatComponent()->
 		SetAttackSpeed(gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed() / accelerate_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Buff Activated, cur speed: %f, divided: %f"), gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed(), accelerate_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f, divided: %f"), gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed(), accelerate_amount_);
 	}
 }
 
@@ -55,6 +55,6 @@ void ADPI_FireRateBurst::FinishPassiveSkill()
 	{
 		gunner_caster_->GetCharacterStatComponent()->
 		SetAttackSpeed(gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed() * accelerate_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Buff Finished, cur speed: %f, divided: %f"), gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed(), accelerate_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Finished, cur speed: %f, divided: %f"), gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed(), accelerate_amount_);
 	}
 }

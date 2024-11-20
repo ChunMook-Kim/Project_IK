@@ -30,20 +30,25 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void ActivateDronePlugin();
-	void ForceDeactivatePlugin();
-	float GetHoldTime() const;
-	bool IsDronePluginAvailable() const;
+
+	//AI에서 Periodic plugin을 control하기 위한 함수들.
+	void ActivatePeriodicDronePlugin();
+	void ForceDeactivatePeriodicPlugin();
+	float GetPeriodicPluginHoldTime() const;
+	bool IsPeriodicPluginAvailable() const;
 	
-	// void AddPlugIn(int idx, UClass* plugin_type);
-	// void RemovePlugIn(int idx);
+	void AddPeriodicPlugIn(UClass* plugin_type);
+	void RemovePeriodicPlugIn();
+
+	void AddGeneralPlugIn(UClass* plugin_type);
+	void RemoveGeneralPlugIn();
 
 private:
 	AActor* hero_ref_;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DroneMechanics", meta = (AllowPrivateAccess = "true"))
-	ADronePlugIn* plugin_;
-	
+	ADronePlugIn* periodic_plugin_;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DroneMechanics", meta = (AllowPrivateAccess = "true"))
-	UClass* plug_in_class_;
+	ADronePlugIn* general_plugin_;
 };
