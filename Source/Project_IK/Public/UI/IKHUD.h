@@ -15,6 +15,7 @@ See LICENSE file in the project root for full license information.
 #include "IKHUD.generated.h"
 
 class UCombatResultUI;
+class ULevelEndUIManager;
 
 /**
  * 
@@ -36,21 +37,16 @@ protected:
 
 	// Reference to the widget instance
 	UPROPERTY(VisibleAnywhere, Category = "UI")
-	UUserWidget* HUD_widget_;
-
-	// Reference to the Widget Blueprint class to create
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<class UUserWidget> map_widget_class_;
-
-	// Reference to the widget instance
-	UPROPERTY(VisibleAnywhere, Category = "UI")
-	UUserWidget* map_widget_;
+	TWeakObjectPtr<UUserWidget> HUD_widget_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UCombatResultUI> combat_result_widget_class_;
 
-	UPROPERTY(VisibleAnywhere, Category = "UI")
-	UCombatResultUI* combat_result_widget_;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidget> map_widget_class_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	TWeakObjectPtr<class ULevelEndUIManager> level_end_ui_manager_;
 
 	virtual void BeginPlay() override;
 };

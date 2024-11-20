@@ -13,23 +13,24 @@ See LICENSE file in the project root for full license information.
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 
 #include "Kismet/GameplayStatics.h"
-#include "WorldSettings/IKGameModeBase.h"
 
 #include "UI/CombatResultUI.h"
+#include "Managers/LevelEndUIManager.h"
 
 void AIKHUD::ToggleMapWidget()
 {
-	if (map_widget_)
+	if (level_end_ui_manager_.IsValid())
 	{
-		const bool is_visible = map_widget_->IsVisible();
-		map_widget_->SetVisibility(is_visible ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
+		level_end_ui_manager_->ToggleMapWidget();
 	}
 }
 
 void AIKHUD::DisplayCombatResult(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map)
 {
-	combat_result_widget_->SetVisibility(ESlateVisibility::Visible);
-	combat_result_widget_->UpdateResults(heroes, damage_map);
+	if (level_end_ui_manager_.IsValid())
+	{
+		level_end_ui_manager_->DisplayCombatResult(heroes, damage_map);
+	}
 }
 
 void AIKHUD::BeginPlay()
@@ -42,30 +43,15 @@ void AIKHUD::BeginPlay()
 	if (HUD_widget_class_)
 	{
 		HUD_widget_ = CreateWidget<UUserWidget>(world, HUD_widget_class_);
-		if (HUD_widget_)
+		if (HUD_widget_.IsValid())
 		{
 			HUD_widget_->AddToViewport();
 		}
 	}
 
-	if (combat_result_widget_class_)
+	level_end_ui_manager_ = NewObject<ULevelEndUIManager>();
+	if (level_end_ui_manager_.IsValid())
 	{
-		combat_result_widget_ = CreateWidget<UCombatResultUI>(world, combat_result_widget_class_);
-		if (combat_result_widget_)
-		{
-			combat_result_widget_->AddToViewport();
-			int32 hero_size = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(this))->GetHeroContainers().Num();
-			combat_result_widget_->SetHeroNumbers(hero_size);
-			combat_result_widget_->SetVisibility(ESlateVisibility::Hidden);
-		}
-	}
-
-	if (map_widget_class_)
-	{
-		map_widget_ = CreateWidget<UUserWidget>(world, map_widget_class_);
-		if (map_widget_)
-		{
-			map_widget_->AddToViewport();
-		}
+		level_end_ui_manager_->InitializeUI(combat_result_widget_class_, map_widget_class_, world);
 	}
 }

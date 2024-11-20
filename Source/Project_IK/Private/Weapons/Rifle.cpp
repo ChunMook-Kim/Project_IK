@@ -29,8 +29,17 @@ void ARifle::FireWeapon(FVector target_pos)
 	{
 		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(muzzle_->GetComponentLocation(), target_pos);
 		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bullet_class_, muzzle_->GetComponentLocation(), rotation);
-		bullet->SetShooter(gun_owner_);
-		cur_megazine_--;	
+
+		// @@ TODO: Don't know why exact reason why SpawnActor has failed.
+		if (bullet)
+		{
+			bullet->SetShooter(gun_owner_);
+			cur_megazine_--;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Spawning a bullet has failed!"));
+		}
 	}
 }
 
