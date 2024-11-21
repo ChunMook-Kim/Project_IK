@@ -75,9 +75,9 @@ void UWeaponMechanics::Reload()
 	if(weapon_ref_) weapon_ref_->Reload();
 }
 
-bool UWeaponMechanics::IsMegazineEmpty() const
+bool UWeaponMechanics::IsMagazineEmpty() const
 {
-	return weapon_ref_->IsMegazineEmpty();
+	return weapon_ref_->IsMagazineEmpty();
 }
 
 float UWeaponMechanics::GetFireInterval() const

@@ -1,23 +1,15 @@
 /******************************************************************************
 Copyright(C) 2024
 Author: chunmook.kim(chunmook.kim97@gmail.com)
-Creation Date : 11.06.2024
-Summary : Header file for enemy gunner.
+Creation Date : 11.20.2024
+Summary : Source file for default hero.
 
 Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
-#pragma once
+#include "Characters/Hero_Default.h"
 
-#include "CoreMinimal.h"
-#include "Gunner.h"
-#include "EnemyGunner.generated.h"
-UCLASS()
-class PROJECT_IK_API AEnemyGunner : public AGunner
+AHero_Default::AHero_Default()
 {
-	GENERATED_BODY()
-
-protected:
-	void Die() override;
-};
+}

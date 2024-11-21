@@ -9,13 +9,14 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 #include "Abilities/DPI_FireRateBurst.h"
-#include "Characters/Gunner.h"
+#include "Characters/Unit.h"
 #include "Components/CharacterStatComponent.h"
 
 ADPI_FireRateBurst::ADPI_FireRateBurst()
 {
+	is_periodic_ = true;
 	cool_time_ = 5.f;
-	duration_ = 2.f;
+	duration_ = 5.f;
 	hold_time_ = 0.f;
 	accelerate_amount_ = 2.f;
 }
@@ -23,7 +24,6 @@ ADPI_FireRateBurst::ADPI_FireRateBurst()
 void ADPI_FireRateBurst::BeginPlay()
 {
 	Super::BeginPlay();
-	gunner_caster_ = Cast<AGunner>(caster_);
 }
 
 void ADPI_FireRateBurst::Tick(float DeltaSeconds)
@@ -32,29 +32,29 @@ void ADPI_FireRateBurst::Tick(float DeltaSeconds)
 	if(activated_ && left_duration_ <= 0)
 	{
 		FinishPassiveSkill();
-		UE_LOG(LogTemp, Warning, TEXT("Buff Finished"));
 	}
 }
 
 void ADPI_FireRateBurst::StartPassiveSkill()
 {
 	Super::StartPassiveSkill();
-	UE_LOG(LogTemp, Warning, TEXT("Buff Activated"));
-	gunner_caster_ = Cast<AGunner>(caster_);
-	if(gunner_caster_)
+	unit_caster_ = Cast<AUnit>(caster_);
+	if(unit_caster_)
 	{
-		gunner_caster_->GetCharacterStatComponent()->
-		SetAttackSpeed(gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed() / accelerate_amount_);
+		unit_caster_->GetCharacterStat()->
+		SetAttackSpeed(unit_caster_->GetCharacterStat()->GetAttackSpeed() / accelerate_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f, divided: %f"), unit_caster_->GetCharacterStat()->GetAttackSpeed(), accelerate_amount_);
 	}
 }
 
 void ADPI_FireRateBurst::FinishPassiveSkill()
 {
 	Super::FinishPassiveSkill();
-	gunner_caster_ = Cast<AGunner>(caster_);
-	if(gunner_caster_)
+	unit_caster_ = Cast<AUnit>(caster_);
+	if(unit_caster_)
 	{
-		gunner_caster_->GetCharacterStatComponent()->
-		SetAttackSpeed(gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed() * accelerate_amount_);
+		unit_caster_->GetCharacterStat()->
+		SetAttackSpeed(unit_caster_->GetCharacterStat()->GetAttackSpeed() * accelerate_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Finished, cur speed: %f, divided: %f"), unit_caster_->GetCharacterStat()->GetAttackSpeed(), accelerate_amount_);
 	}
 }

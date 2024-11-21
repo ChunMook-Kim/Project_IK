@@ -25,9 +25,9 @@ bool UDecorator_IsAimmed::CalculateRawConditionValue(UBehaviorTreeComponent& Own
 	APawn* casted_pawn = controller->GetPawn();
 	AActor* attack_target = Cast<AActor>(blackboard->GetValueAsObject(attack_target_key_.SelectedKeyName));
 
-	//이동사격이 가능하지 않는 한, 조준 시에는 반드시 MoveTo가 멈춰야 한다.
 	if(attack_target)
 	{
+		//이동사격이 가능하지 않는 한, 조준 시에는 반드시 MoveTo가 멈춰야 한다.
 		controller->StopMovement();
 		FVector owner_to_target = attack_target->GetActorLocation() - casted_pawn->GetActorLocation();
 		owner_to_target.Normalize();

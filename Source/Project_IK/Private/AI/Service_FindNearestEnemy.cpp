@@ -14,7 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/CharacterStatComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
-#include "Characters/Gunner.h"
+#include "Characters/Unit.h"
 #include "Engine/OverlapResult.h"
 
 UService_FindNearestEnemy::UService_FindNearestEnemy()
@@ -31,7 +31,7 @@ void UService_FindNearestEnemy::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
-	AGunner* casted_gunner = Cast<AGunner>(OwnerComp.GetAIOwner()->GetPawn());
+	AUnit* casted_gunner = Cast<AUnit>(OwnerComp.GetAIOwner()->GetPawn());
 	UWorld* world = GetWorld();
 
 	float min_distance = TNumericLimits<float>::Max();
@@ -50,7 +50,7 @@ void UService_FindNearestEnemy::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 			casted_gunner->GetActorLocation(),
 			FQuat::Identity,
 			channel,
-			FCollisionShape::MakeSphere(casted_gunner->GetCharacterStatComponent()->GetSightRange()),
+			FCollisionShape::MakeSphere(casted_gunner->GetCharacterStat()->GetSightRange()),
 			CollisionQueryParam
 				);
 			}

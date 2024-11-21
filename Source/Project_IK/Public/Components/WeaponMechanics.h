@@ -31,7 +31,7 @@ public:
 	void OnDestroy();
 	void FireWeapon(AActor* target);
 	void Reload();
-	bool IsMegazineEmpty() const;
+	bool IsMagazineEmpty() const;
 	float GetFireInterval() const;
 	float GetReloadDuration() const;
 	UFUNCTION()
@@ -42,7 +42,8 @@ private:
 	void EquipWeapon();
 	
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponMechanics", meta = (AllowPrivateAccess = "true"))
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponMechanics", meta = (AllowPrivateAccess = "true", AllowedClasses = "Gun"))
 	UClass* weapon_class_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponMechanics", meta = (AllowPrivateAccess = "true"))

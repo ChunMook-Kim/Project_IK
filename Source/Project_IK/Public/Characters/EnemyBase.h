@@ -1,8 +1,8 @@
 /******************************************************************************
 Copyright(C) 2024
 Author: chunmook.kim(chunmook.kim97@gmail.com)
-Creation Date : 11.03.2024
-Summary : Header file for Rifle.
+Creation Date : 11.20.2024
+Summary : Header file for enemy base. All enemy should inherit this class.
 
 Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
@@ -10,21 +10,15 @@ See LICENSE file in the project root for full license information.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Gun.h"
-#include "Rifle.generated.h"
+#include "Characters/Unit.h"
+#include "EnemyBase.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class PROJECT_IK_API ARifle : public AGun
+class PROJECT_IK_API AEnemyBase : public AUnit
 {
 	GENERATED_BODY()
 public:
-	ARifle();
-	virtual void FireWeapon(FVector target_pos) override;
-
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet", meta = (AllowPrivateAccess = "true", AllowedClass = "Bullet"))
-	UClass* bullet_class_;
+	AEnemyBase();
+protected:
+	virtual void Die() override;
 };

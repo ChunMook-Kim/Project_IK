@@ -9,7 +9,7 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 #include "AI/Task_Fire.h"
 
-#include "Characters/Gunner.h"
+#include "Interfaces/GunnerInterface.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -23,13 +23,12 @@ UTask_Fire::UTask_Fire(const FObjectInitializer& ObjectInitializer) : Super(Obje
 EBTNodeResult::Type UTask_Fire::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
-	AGunner* casted_gunner = Cast<AGunner>(OwnerComp.GetAIOwner()->GetPawn());
+	IGunnerInterface* casted_gunner = Cast<IGunnerInterface>(OwnerComp.GetAIOwner()->GetPawn());
 	if(	AActor* casted_target = Cast<AActor>(blackboard->GetValueAsObject(attack_target_key_.SelectedKeyName)))
 	{
 		casted_gunner->Fire(casted_target);
+		SetNextTickTime(NodeMemory, casted_gunner->GetFireInterval());
 	}
-	
-	SetNextTickTime(NodeMemory, casted_gunner->GetFireInterval());
 	
 	return EBTNodeResult::InProgress;
 }

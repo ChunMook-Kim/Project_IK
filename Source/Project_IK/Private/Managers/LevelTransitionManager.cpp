@@ -18,8 +18,8 @@ See LICENSE file in the project root for full license information.
 #include "Components/CharacterStatComponent.h"
 
 #include "Environments/SpawnMarker.h"
-#include "Characters/Hero.h"
-#include "Characters/EnemyGunner.h"
+#include "Characters/HeroBase.h"
+#include "Characters/EnemyBase.h"
 #include "Abilities/SkillContainer.h"
 
 #include "Abilities/MyTestSkill.h"
@@ -40,8 +40,8 @@ void ULevelTransitionManager::SaveData(UWorld* world)
 		TArray<AActor*> heroes = game_mode->GetHeroContainers();
 		for (int32 i = 0; i < heroes.Num(); i++)
 		{
-			AHero* hero = Cast<AHero>(heroes[i]);
-			UCharacterStatComponent* stat_component = hero->GetCharacterStatComponent();
+			AHeroBase* hero = Cast<AHeroBase>(heroes[i]);
+			UCharacterStatComponent* stat_component = hero->GetCharacterStat();
 
 			// @@ TODO: Need to save proper data.
 			data_.Add(stat_component->GetCharacterData());
@@ -87,7 +87,7 @@ void ULevelTransitionManager::SpawnHeroes(UWorld* world)
 
 	for (int32 i = 0; i < data_.Num(); ++i)
 	{
-		AHero* hero = world->SpawnActor<AHero>(hero_blueprint_, spawn_position + FVector(0, (300.f * (data_.Num() - 1) / -2.f ) + (i * 300), 90), spawn_rotation);
+		AHeroBase* hero = world->SpawnActor<AHeroBase>(hero_blueprint_, spawn_position + FVector(0, (300.f * (data_.Num() - 1) / -2.f ) + (i * 300), 90), spawn_rotation);
 		hero->SpawnDefaultController();
 		hero->GetComponentByClass<USkillContainer>()->SetSkill(UMyTestSkill::StaticClass());
 		hero->GetComponentByClass<UCharacterStatComponent>()->SetCharacterData(data_[0]);
@@ -96,6 +96,6 @@ void ULevelTransitionManager::SpawnHeroes(UWorld* world)
 
 void ULevelTransitionManager::SpawnEnemies(UWorld* world)
 {
-	AEnemyGunner* enemy = world->SpawnActor<AEnemyGunner>(enemy_blueprint_, FVector(600, 0, 90), FRotator(0, 180, 0));
+	AEnemyBase* enemy = world->SpawnActor<AEnemyBase>(enemy_blueprint_, FVector(600, 0, 90), FRotator(0, 180, 0));
 	enemy->SpawnDefaultController();
 }

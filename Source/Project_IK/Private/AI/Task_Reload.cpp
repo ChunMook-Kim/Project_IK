@@ -11,7 +11,7 @@ See LICENSE file in the project root for full license information.
 #include "AI/Task_Reload.h"
 
 #include "AIController.h"
-#include "Characters/Gunner.h"
+#include "Interfaces/GunnerInterface.h"
 
 UTask_Reload::UTask_Reload(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -22,7 +22,7 @@ UTask_Reload::UTask_Reload(const FObjectInitializer& ObjectInitializer) : Super(
 
 EBTNodeResult::Type UTask_Reload::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AGunner* casted_gunner = Cast<AGunner>(OwnerComp.GetAIOwner()->GetPawn());
+	IGunnerInterface* casted_gunner = Cast<IGunnerInterface>(OwnerComp.GetAIOwner()->GetPawn());
 	casted_gunner->Reload();
 
 	SetNextTickTime(NodeMemory, casted_gunner->GetReloadDuration());

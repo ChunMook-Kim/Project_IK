@@ -24,7 +24,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/HorizontalBoxSlot.h"
 #include "UI/CombatResultBlock.h"
 
-#include "Characters/Hero.h"
+#include "Characters/HeroBase.h"
 #include "Components/CharacterStatComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "WorldSettings/IKGameModeBase.h"
@@ -71,11 +71,11 @@ void UCombatResultUI::UpdateResults(const TArray<AActor*>& heroes, const TMap<TW
 	for (int32 i = 0; i < hero_num; ++i)
 	{
 		// Nullptr check
-		AHero* hero = Cast<AHero>(heroes[i]);
+		AHeroBase* hero = Cast<AHeroBase>(heroes[i]);
 		if (hero)
 		{
 			blocks_[i]->SetVisibility(ESlateVisibility::Visible);
-			UCharacterStatComponent* hero_stat = hero->GetCharacterStatComponent();
+			UCharacterStatComponent* hero_stat = hero->GetCharacterStat();
 			hp_ratio_after_.Add(hero_stat->GetHPRatio());
 			if (damage_map.Contains(hero))
 			{
@@ -121,9 +121,9 @@ void UCombatResultUI::NativeConstruct()
 		TArray<AActor*> hero_containers = game_mode->GetHeroContainers();
 		for (int32 i = 0; i < hero_containers.Num(); i++)
 		{
-			AHero* hero = Cast<AHero>(hero_containers[i]);
+			AHeroBase* hero = Cast<AHeroBase>(hero_containers[i]);
 			// It is not ratio at this point. It contains initial hit points.
-			hp_ratio_before_.Add(hero->GetCharacterStatComponent()->GetHPRatio());
+			hp_ratio_before_.Add(hero->GetCharacterStat()->GetHPRatio());
 		}
 	}
 

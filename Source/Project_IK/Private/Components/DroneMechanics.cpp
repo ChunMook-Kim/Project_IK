@@ -10,6 +10,8 @@ See LICENSE file in the project root for full license information.
 
 #include "Components/DroneMechanics.h"
 #include "Abilities/PassiveSkill.h"
+#include "Abilities/DPI_FireRange.h"
+#include "Abilities/DPI_FireRateBurst.h"
 
 // Sets default values for this component's properties
 UDroneMechanics::UDroneMechanics()
@@ -17,31 +19,43 @@ UDroneMechanics::UDroneMechanics()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-
 // Called when the game starts
 void UDroneMechanics::BeginPlay()
 {
 	Super::BeginPlay();
-	if(plug_in_class_) plugin_ = Cast<ADronePlugIn>(GetWorld()->SpawnActor(plug_in_class_));
 }
 
 void UDroneMechanics::Initialize(AActor* hero)
 {
 	hero_ref_ = hero;
-	if(plugin_) plugin_->Initialize(hero_ref_);
+	AddPeriodicPlugIn(ADPI_FireRateBurst::StaticClass());
+	AddGeneralPlugIn(ADPI_FireRange::StaticClass());
 }
 
-void UDroneMechanics::ActivateDronePlugin()
+void UDroneMechanics::ActivatePeriodicDronePlugin()
 {
-	if(plugin_ != nullptr)
+	if(periodic_plugin_ != nullptr)
 	{
-		plugin_->StartPassiveSkill();
+		periodic_plugin_->StartPassiveSkill();
 	}
 }
 
-float UDroneMechanics::GetHoldTime() const
+//만약 패시브를 사용 중 사망, 혹은 레벨 클리어 시 강제로 DP를 끝낼 때 사용된다.
+void UDroneMechanics::ForceDeactivatePeriodicPlugin()
 {
-	return plugin_->GetHoldTime();
+	if(periodic_plugin_ != nullptr)
+	{
+		if(periodic_plugin_->IsActivated() == true)
+		{
+			periodic_plugin_->FinishPassiveSkill();
+			periodic_plugin_->SetActivated(false);
+		}
+	}
+}
+
+float UDroneMechanics::GetPeriodicPluginHoldTime() const
+{
+	return periodic_plugin_->GetHoldTime();
 }
 
 void UDroneMechanics::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -49,31 +63,68 @@ void UDroneMechanics::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-bool UDroneMechanics::IsDronePluginAvailable() const
+bool UDroneMechanics::IsPeriodicPluginAvailable() const
 {
-	return plugin_->IsPassiveAvailable();
+	if(periodic_plugin_ != nullptr)
+	{
+		return periodic_plugin_->IsPassiveAvailable();
+	}
+	else
+	{
+		return false;
+	}
 }
 
-// void UDroneMechanics::AddPlugIn(int idx, UClass* plugin_type)
-// {
-// 	if(idx < 0 || idx >= plugins_.Num())
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("Out of index!"));
-// 	}
-// 	else if(plugin_type == nullptr)
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("Plug_in class is empty!"));
-// 	}
-// 	else
-// 	{
-// 		if(plugin_amount_ < max_amount_)
-// 		{
-// 			plugins_[idx] = Cast<ADronePlugIn>(GetWorld()->SpawnActor(plugin_type));
-// 		}
-// 	}
-// }
-//
-// void UDroneMechanics::RemovePlugIn(int idx)
-// {
-// 	plugins_.RemoveAt(idx);
-// }
+void UDroneMechanics::AddPeriodicPlugIn(UClass* plugin_type)
+{
+	if(plugin_type)
+	{
+		auto spawned_dp = Cast<ADronePlugIn>(GetWorld()->SpawnActor(plugin_type));
+		if(spawned_dp->IsPeriodic() == false)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Assign General DP to Periodic!!"));
+		}
+		else
+		{
+			periodic_plugin_ = spawned_dp;
+			periodic_plugin_->Initialize(hero_ref_);
+		}
+	}
+}
+
+void UDroneMechanics::RemovePeriodicPlugIn()
+{
+	if(periodic_plugin_ != nullptr)
+	{
+		periodic_plugin_->Destroy();
+	}
+	periodic_plugin_ = nullptr;
+}
+
+void UDroneMechanics::AddGeneralPlugIn(UClass* plugin_type)
+{
+	if(plugin_type)
+	{
+		auto spawned_dp = Cast<ADronePlugIn>(GetWorld()->SpawnActor(plugin_type));
+		if(spawned_dp->IsPeriodic() == true)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Assign Periodic DP to General!!"));
+		}
+		else
+		{
+			general_plugin_ = spawned_dp;
+			general_plugin_->Initialize(hero_ref_);
+			general_plugin_->StartPassiveSkill();
+		}
+	}
+}
+
+void UDroneMechanics::RemoveGeneralPlugIn()
+{
+	if(general_plugin_ != nullptr)
+	{
+		general_plugin_->FinishPassiveSkill();
+		general_plugin_->Destroy();
+	}
+	general_plugin_ = nullptr;
+}

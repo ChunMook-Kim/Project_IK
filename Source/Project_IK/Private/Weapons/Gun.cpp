@@ -18,6 +18,9 @@ AGun::AGun()
 	PrimaryActorTick.bCanEverTick = true;
 	gun_mesh_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	muzzle_ = CreateDefaultSubobject<USphereComponent>(TEXT("Muzzle"));
+	
+	gun_mesh_->SetCollisionProfileName(TEXT("NoCollision"));
+	muzzle_->SetCollisionProfileName(TEXT("NoCollision"));
 
 	muzzle_->SetupAttachment(gun_mesh_);
 	muzzle_->SetVisibility(false);
@@ -48,7 +51,7 @@ void AGun::FireWeapon(FVector target_pos)
 {
 }
 
-bool AGun::IsMegazineEmpty() const
+bool AGun::IsMagazineEmpty() const
 {
 	return cur_megazine_ <= 0;
 }
