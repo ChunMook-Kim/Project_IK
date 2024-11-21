@@ -16,6 +16,12 @@ AEnemy_RifleMan::AEnemy_RifleMan()
 	weapon_mechanics_ = CreateDefaultSubobject<UWeaponMechanics>(TEXT("WeaponMechanics"));
 }
 
+void AEnemy_RifleMan::Die()
+{
+	weapon_mechanics_->OnDestroy();
+	Super::Die();
+}
+
 void AEnemy_RifleMan::Reload()
 {
 	weapon_mechanics_->Reload();
@@ -26,4 +32,19 @@ void AEnemy_RifleMan::Fire(AActor* target)
 {
 	weapon_mechanics_->FireWeapon(target);
 	PlayAnimMontage(fire_montage_);
+}
+
+bool AEnemy_RifleMan::IsMagazineEmpty() const
+{
+	return weapon_mechanics_->IsMagazineEmpty();
+}
+
+float AEnemy_RifleMan::GetFireInterval() const
+{
+	return weapon_mechanics_->GetFireInterval();
+}
+
+float AEnemy_RifleMan::GetReloadDuration() const
+{
+	return weapon_mechanics_->GetReloadDuration();
 }

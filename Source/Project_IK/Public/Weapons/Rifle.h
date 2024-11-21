@@ -25,6 +25,6 @@ public:
 	virtual void FireWeapon(FVector target_pos) override;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet", meta = (AllowPrivateAccess = "true", AllowedClass = "Bullet"))
 	UClass* bullet_class_;
 };

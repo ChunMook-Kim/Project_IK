@@ -17,7 +17,8 @@ UCLASS()
 class PROJECT_IK_API AEnemyBase : public AUnit
 {
 	GENERATED_BODY()
-
+public:
+	AEnemyBase();
 protected:
 	virtual void Die() override;
 };

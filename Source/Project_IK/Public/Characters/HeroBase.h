@@ -26,13 +26,16 @@ class PROJECT_IK_API AHeroBase : public AUnit, public IGunnerInterface, public I
 	GENERATED_BODY()
 public:
 	AHeroBase();
-
+	virtual void BeginPlay() override;
 public:
 	virtual void Die() override;
 	
 	virtual void Reload() override;
 	virtual void Fire(AActor* target) override;
-	
+	virtual bool IsMagazineEmpty() const override;
+	virtual float GetFireInterval() const override;
+	virtual float GetReloadDuration() const override;
+
 	virtual void ActivatePassive() override;
 	virtual bool IsPassiveAvailable() override;
 	virtual float GetPassiveHoldTime() override;
@@ -44,7 +47,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UWeaponMechanics* weapon_mechanics_;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveSkillGunner", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UPassiveMechanics* passive_mechanics_;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
@@ -53,7 +56,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UAnimMontage* reload_montage_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero", meta = (AllowPrivateAccess = "true", BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero", meta = (AllowPrivateAccess = "true", AllowedClass = "Drone", BindWidget))
 	UClass* drone_bp_class_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero", meta = (AllowPrivateAccess = "true"))

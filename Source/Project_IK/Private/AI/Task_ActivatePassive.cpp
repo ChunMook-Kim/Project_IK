@@ -10,8 +10,8 @@ See LICENSE file in the project root for full license information.
 
 #include "AI/Task_ActivatePassive.h"
 
-#include "Characters/PassiveSkillGunner.h"
 #include "AIController.h"
+#include "Interfaces/PassiveCaster.h"
 
 UTask_ActivatePassive::UTask_ActivatePassive(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -22,9 +22,16 @@ UTask_ActivatePassive::UTask_ActivatePassive(const FObjectInitializer& ObjectIni
 
 EBTNodeResult::Type UTask_ActivatePassive::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	APassiveSkillGunner* casted_p_gunner = Cast<APassiveSkillGunner>(OwnerComp.GetAIOwner()->GetPawn());
-	casted_p_gunner->ActivatePassive();
-	SetNextTickTime(NodeMemory, casted_p_gunner->GetPassiveHoldTime());
+	IPassiveCaster* casted_passive_caster = Cast<IPassiveCaster>(OwnerComp.GetAIOwner()->GetPawn());
+	if(casted_passive_caster)
+	{
+		casted_passive_caster->ActivatePassive();
+		SetNextTickTime(NodeMemory, casted_passive_caster->GetPassiveHoldTime());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s node can't find passive caster!"), *NodeName);
+	}
 
 	return EBTNodeResult::InProgress;
 }

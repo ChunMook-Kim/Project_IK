@@ -11,7 +11,7 @@ See LICENSE file in the project root for full license information.
 #include "AI/Service_FindBestCover.h"
 
 #include "AIController.h"
-#include "Characters/Gunner.h"
+#include "Characters/Unit.h"
 #include "Components/CharacterStatComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Engine/OverlapResult.h"
@@ -41,7 +41,7 @@ void UService_FindBestCover::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 		//cover의 계산에는 적의 위치가 필요함.
 		if(attack_target)
 		{
-			AGunner* casted_gunner = Cast<AGunner>(OwnerComp.GetAIOwner()->GetPawn());
+			AUnit* casted_gunner = Cast<AUnit>(OwnerComp.GetAIOwner()->GetPawn());
 			FVector attack_target_pos = attack_target->GetActorLocation();
 			
 			TArray<FOverlapResult> overlap_results;
@@ -52,7 +52,7 @@ void UService_FindBestCover::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 			casted_gunner->GetActorLocation(),
 			FQuat::Identity,
 			ECollisionChannel::ECC_WorldStatic,
-			FCollisionShape::MakeSphere(casted_gunner->GetCharacterStatComponent()->GetSightRange()),
+			FCollisionShape::MakeSphere(casted_gunner->GetCharacterStat()->GetSightRange()),
 			CollisionQueryParam
 			);
 			
@@ -67,7 +67,7 @@ void UService_FindBestCover::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 					FVector cover_pos = elem.GetActor()->GetActorLocation();
 					//만약 엄폐물에서의 위치와 가장 가까운 적의 거리가 사거리 보다 길다면 넘어간다.
 					if(FVector::Dist2D(cover_pos, attack_target_pos) >
-						casted_gunner->GetCharacterStatComponent()->GetFireRange()) continue;
+						casted_gunner->GetCharacterStat()->GetFireRange()) continue;
 
 					FVector cover_to_target = attack_target_pos - cover_pos;
 					cover_to_target.Normalize();

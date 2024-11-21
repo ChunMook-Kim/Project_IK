@@ -12,13 +12,12 @@ See LICENSE file in the project root for full license information.
 #include "AI/Decorator_IsGunnerArrivedCover.h"
 
 #include "AIController.h"
-#include "Characters/Gunner.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 bool UDecorator_IsGunnerArrivedCover::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
-	AGunner* casted_gunner = Cast<AGunner>(OwnerComp.GetAIOwner()->GetPawn());
+	APawn* casted_gunner = OwnerComp.GetAIOwner()->GetPawn();
 	AActor* cover_actor = Cast<AActor>(blackboard->GetValueAsObject(owned_cover_key_.SelectedKeyName));
 	float cover_owner_dist = FVector::Dist2D(cover_actor->GetActorLocation(), casted_gunner->GetActorLocation());
 	if(cover_owner_dist <= 50.0)

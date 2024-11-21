@@ -28,4 +28,7 @@ class PROJECT_IK_API IGunnerInterface
 public:
 	virtual void Reload() = 0;
 	virtual void Fire(AActor* target) = 0;
+	virtual bool IsMagazineEmpty() const = 0;
+	virtual float GetFireInterval() const = 0;
+	virtual float GetReloadDuration() const = 0;
 };

@@ -26,6 +26,9 @@ class PROJECT_IK_API AUnit : public ACharacter, public IDamageable
 public:
 	// Sets default values for this character's properties
 	AUnit();
+	UCharacterStatComponent* GetCharacterStat() const;
+	FVector GetForwardDir() const;
+	void SetForwardDir(const FVector& Forward_Dir);
 
 protected:
 	// Called when the game starts or when spawned

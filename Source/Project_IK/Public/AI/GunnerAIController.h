@@ -25,15 +25,15 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
 	UBehaviorTree* behavior_tree_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true", AllowedClass = "HeroBase, EnemyBase"))
 	UClass* target_class_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
 	FName target_class_key_name_;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
 	FName owned_cover_key_name_;
 };

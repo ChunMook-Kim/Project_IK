@@ -37,6 +37,21 @@ AUnit::AUnit()
 	}
 }
 
+UCharacterStatComponent* AUnit::GetCharacterStat() const
+{
+	return character_stat_component_;
+}
+
+FVector AUnit::GetForwardDir() const
+{
+	return forward_dir_;
+}
+
+void AUnit::SetForwardDir(const FVector& Forward_Dir)
+{
+	forward_dir_ = Forward_Dir;
+}
+
 // Called when the game starts or when spawned
 void AUnit::BeginPlay()
 {
@@ -54,4 +69,5 @@ void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 
 void AUnit::Die()
 {
+	Destroy();
 }

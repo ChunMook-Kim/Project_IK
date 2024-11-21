@@ -22,14 +22,15 @@ UPassiveMechanics::UPassiveMechanics()
 void UPassiveMechanics::BeginPlay()
 {
 	Super::BeginPlay();
-	passive_ref_ = Cast<APassiveSkill>(GetWorld()->SpawnActor(passive_class_));
-	passive_ref_->Initialize(GetOwner());
-}
-
-// Called every frame
-void UPassiveMechanics::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if(passive_class_)
+	{
+		passive_ref_ = Cast<APassiveSkill>(GetWorld()->SpawnActor(passive_class_));
+		passive_ref_->Initialize(GetOwner());
+	}else
+	{
+		UE_LOG(LogTemp, Error, TEXT("PassiveMechanics::BeginPlay Error. Passive class should be setted"));
+	}
+	
 }
 
 void UPassiveMechanics::ActivePassiveSkill()

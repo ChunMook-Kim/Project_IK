@@ -21,9 +21,15 @@ class PROJECT_IK_API AEnemy_RifleMan : public AEnemyBase, public IGunnerInterfac
 	GENERATED_BODY()
 public:
 	AEnemy_RifleMan();
+
+	virtual void Die() override;
+	
 	virtual void Reload() override;
 	virtual void Fire(AActor* target) override;
-	
+	virtual bool IsMagazineEmpty() const override;
+	virtual float GetFireInterval() const override;
+	virtual float GetReloadDuration() const override;
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UWeaponMechanics* weapon_mechanics_;

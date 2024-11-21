@@ -11,15 +11,20 @@ See LICENSE file in the project root for full license information.
 #include "AI/Decorator_IsMagezineEmpty.h"
 
 #include "AIController.h"
-#include "Characters/Gunner.h"
+#include "Interfaces/GunnerInterface.h"
 
 UDecorator_IsMagezineEmpty::UDecorator_IsMagezineEmpty()
 {
-	NodeName = "IsMagezineEmpty";
+	NodeName = "IsMagazineEmpty";
 }
 
 bool UDecorator_IsMagezineEmpty::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	AGunner* casted_gunner = Cast<AGunner>(OwnerComp.GetAIOwner()->GetPawn());
-	return casted_gunner->IsMagazineEmpty();
+	IGunnerInterface* casted_gunner = Cast<IGunnerInterface>(OwnerComp.GetAIOwner()->GetPawn());
+	if(casted_gunner)
+	{
+		return casted_gunner->IsMagazineEmpty();
+	}
+	UE_LOG(LogTemp, Error, TEXT("%s node can't find gunner!"), *NodeName);
+	return false;
 }

@@ -23,23 +23,19 @@ class PROJECT_IK_API UPassiveMechanics : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UPassiveMechanics();
-
-protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	// Called when the game starts
+	
 	void ActivePassiveSkill();
 	void FinishPassiveSkill();
 	bool IsPassiveAvailable() const;
 	float GetHoldTime() const;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true", AllowedClass = "PassiveSkill"))
 	UClass* passive_class_ = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true"))
 	APassiveSkill* passive_ref_ = nullptr;
 };
