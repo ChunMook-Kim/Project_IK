@@ -13,7 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "PassiveSkill.h"
 #include "HealthBurst.generated.h"
 
-class AGunner;
+class AUnit;
 UCLASS()
 class PROJECT_IK_API AHealthBurst : public APassiveSkill
 {
@@ -27,5 +27,5 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthBurst", meta = (AllowPrivateAccess = "true"))
 	float heal_amount_ = 100.f;
 	
-	AGunner* gunner_caster_ = nullptr;
+	AUnit* unit_caster_ = nullptr;
 };

@@ -9,7 +9,7 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 #include "Abilities/DPI_FireRateBurst.h"
-#include "Characters/Gunner.h"
+#include "Characters/Unit.h"
 #include "Components/CharacterStatComponent.h"
 
 ADPI_FireRateBurst::ADPI_FireRateBurst()
@@ -38,23 +38,23 @@ void ADPI_FireRateBurst::Tick(float DeltaSeconds)
 void ADPI_FireRateBurst::StartPassiveSkill()
 {
 	Super::StartPassiveSkill();
-	gunner_caster_ = Cast<AGunner>(caster_);
-	if(gunner_caster_)
+	unit_caster_ = Cast<AUnit>(caster_);
+	if(unit_caster_)
 	{
-		gunner_caster_->GetCharacterStatComponent()->
-		SetAttackSpeed(gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed() / accelerate_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f, divided: %f"), gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed(), accelerate_amount_);
+		unit_caster_->GetCharacterStat()->
+		SetAttackSpeed(unit_caster_->GetCharacterStat()->GetAttackSpeed() / accelerate_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f, divided: %f"), unit_caster_->GetCharacterStat()->GetAttackSpeed(), accelerate_amount_);
 	}
 }
 
 void ADPI_FireRateBurst::FinishPassiveSkill()
 {
 	Super::FinishPassiveSkill();
-	gunner_caster_ = Cast<AGunner>(caster_);
-	if(gunner_caster_)
+	unit_caster_ = Cast<AUnit>(caster_);
+	if(unit_caster_)
 	{
-		gunner_caster_->GetCharacterStatComponent()->
-		SetAttackSpeed(gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed() * accelerate_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Finished, cur speed: %f, divided: %f"), gunner_caster_->GetCharacterStatComponent()->GetAttackSpeed(), accelerate_amount_);
+		unit_caster_->GetCharacterStat()->
+		SetAttackSpeed(unit_caster_->GetCharacterStat()->GetAttackSpeed() * accelerate_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Finished, cur speed: %f, divided: %f"), unit_caster_->GetCharacterStat()->GetAttackSpeed(), accelerate_amount_);
 	}
 }

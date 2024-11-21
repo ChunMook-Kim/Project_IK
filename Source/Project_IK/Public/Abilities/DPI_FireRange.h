@@ -14,7 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/DronePlugIn.h"
 #include "DPI_FireRange.generated.h"
 
-class AGunner;
+class AUnit;
 UCLASS()
 class PROJECT_IK_API ADPI_FireRange : public ADronePlugIn
 {
@@ -28,5 +28,5 @@ public:
 	
 private:
 	float buff_amount_;
-	AGunner* gunner_caster_;
+	AUnit* unit_caster_;
 };

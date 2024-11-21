@@ -9,7 +9,7 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 #include "Abilities/DPI_FireRange.h"
-#include "Characters/Gunner.h"
+#include "Characters/Unit.h"
 #include "Components/CharacterStatComponent.h"
 
 ADPI_FireRange::ADPI_FireRange()
@@ -31,23 +31,23 @@ void ADPI_FireRange::Tick(float DeltaSeconds)
 void ADPI_FireRange::StartPassiveSkill()
 {
 	Super::StartPassiveSkill();
-	gunner_caster_ = Cast<AGunner>(caster_);
-	if(gunner_caster_)
+	unit_caster_ = Cast<AUnit>(caster_);
+	if(unit_caster_)
 	{
-		gunner_caster_->GetCharacterStatComponent()->
-		SetFireRange(gunner_caster_->GetCharacterStatComponent()->GetFireRange() + buff_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("General Buff Activated, cur fire range: %f"), gunner_caster_->GetCharacterStatComponent()->GetFireRange());
+		unit_caster_->GetCharacterStat()->
+		SetFireRange(unit_caster_->GetCharacterStat()->GetFireRange() + buff_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("General Buff Activated, cur fire range: %f"), unit_caster_->GetCharacterStat()->GetFireRange());
 	}
 }
 
 void ADPI_FireRange::FinishPassiveSkill()
 {
 	Super::FinishPassiveSkill();
-	gunner_caster_ = Cast<AGunner>(caster_);
-	if(gunner_caster_)
+	unit_caster_ = Cast<AUnit>(caster_);
+	if(unit_caster_)
 	{
-		gunner_caster_->GetCharacterStatComponent()->
-		SetFireRange(gunner_caster_->GetCharacterStatComponent()->GetFireRange() - buff_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f"), gunner_caster_->GetCharacterStatComponent()->GetFireRange());
+		unit_caster_->GetCharacterStat()->
+		SetFireRange(unit_caster_->GetCharacterStat()->GetFireRange() - buff_amount_);
+		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f"), unit_caster_->GetCharacterStat()->GetFireRange());
 	}
 }

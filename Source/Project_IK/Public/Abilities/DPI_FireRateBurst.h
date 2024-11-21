@@ -13,7 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/DronePlugIn.h"
 #include "DPI_FireRateBurst.generated.h"
 
-class AGunner;
+class AUnit;
 UCLASS()
 class PROJECT_IK_API ADPI_FireRateBurst : public ADronePlugIn
 {
@@ -29,5 +29,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "PassiveSkill", meta = (AllowPrivateAccess = "true"))
 	float accelerate_amount_;
 
-	AGunner* gunner_caster_;
+	AUnit* unit_caster_;
 };

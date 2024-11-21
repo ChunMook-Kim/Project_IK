@@ -17,8 +17,8 @@ See LICENSE file in the project root for full license information.
 #include "Managers/CharacterDataManager.h"
 #include "Managers/LevelTransitionManager.h"
 
-#include "Characters/Hero.h"
-#include "Characters/EnemyGunner.h"
+#include "Characters/HeroBase.h"
+#include "Characters/EnemyBase.h"
 
 UIKGameInstance::UIKGameInstance()
 	:Super::UGameInstance()

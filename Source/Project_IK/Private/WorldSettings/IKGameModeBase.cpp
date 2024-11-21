@@ -20,7 +20,7 @@ See LICENSE file in the project root for full license information.
 #include "UI/IKHUD.h"
 
 
-#include "Characters/Hero.h"
+#include "Characters/HeroBase.h"
 
 AIKGameModeBase::AIKGameModeBase()
 	: Super::AGameModeBase()
@@ -87,7 +87,7 @@ void AIKGameModeBase::CheckWinLoseCondition()
 
 void AIKGameModeBase::RecordDamage(float damage, TWeakObjectPtr<AActor> attacker)
 {
-	if (Cast<AHero>(attacker))
+	if (Cast<AHeroBase>(attacker))
 	{
 		if (gunner_damage_map_.Contains(attacker))
 		{

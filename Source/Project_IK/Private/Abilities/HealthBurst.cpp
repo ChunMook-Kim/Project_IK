@@ -10,7 +10,7 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/HealthBurst.h"
 
 #include "Components/CharacterStatComponent.h"
-#include "Characters/Gunner.h"
+#include "Characters/Unit.h"
 
 AHealthBurst::AHealthBurst()
 {
@@ -28,10 +28,10 @@ void AHealthBurst::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	if(activated_ && left_duration_ > 0)
 	{
-		gunner_caster_ = Cast<AGunner>(caster_);
-		if(gunner_caster_)
+		unit_caster_ = Cast<AUnit>(caster_);
+		if(unit_caster_)
 		{
-			gunner_caster_->GetCharacterStatComponent()->SetHitPoint(gunner_caster_->GetCharacterStatComponent()->GetHitPoint() + DeltaSeconds * heal_amount_);
+			unit_caster_->GetCharacterStat()->SetHitPoint(unit_caster_->GetCharacterStat()->GetHitPoint() + DeltaSeconds * heal_amount_);
 		}
 	}
 
