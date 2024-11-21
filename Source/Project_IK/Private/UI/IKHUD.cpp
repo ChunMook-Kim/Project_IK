@@ -17,19 +17,19 @@ See LICENSE file in the project root for full license information.
 #include "UI/CombatResultUI.h"
 #include "Managers/LevelEndUIManager.h"
 
-void AIKHUD::ToggleMapWidget()
-{
-	if (level_end_ui_manager_.IsValid())
-	{
-		level_end_ui_manager_->ToggleMapWidget();
-	}
-}
-
 void AIKHUD::DisplayCombatResult(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map)
 {
 	if (level_end_ui_manager_.IsValid())
 	{
 		level_end_ui_manager_->DisplayCombatResult(heroes, damage_map);
+	}
+}
+
+void AIKHUD::SwitchUIByState(ELevelEndState state)
+{
+	if (level_end_ui_manager_.IsValid())
+	{
+		level_end_ui_manager_->SwitchUIByState(state);
 	}
 }
 

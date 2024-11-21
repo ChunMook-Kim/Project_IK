@@ -28,7 +28,9 @@ See LICENSE file in the project root for full license information.
 #include "Components/CharacterStatComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "WorldSettings/IKGameModeBase.h"
+#include "UI/IKHUD.h"
 #include "Managers/LevelTransitionManager.h"
+#include "Managers/LevelEndUIManager.h"
 
 
 bool UCombatResultUI::Initialize()
@@ -233,4 +235,21 @@ void UCombatResultUI::UpdateHPBars(float InDeltaTime)
 			}
 		}
 	}
+}
+
+FReply UCombatResultUI::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		AIKHUD* hud = Cast<AIKHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+		if (hud)
+		{
+			hud->SwitchUIByState(ELevelEndState::ShowingMapUI);
+
+			return FReply::Handled();
+		}
+
+	}
+
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }

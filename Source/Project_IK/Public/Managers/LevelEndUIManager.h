@@ -6,6 +6,13 @@
 #include "UObject/NoExportTypes.h"
 #include "LevelEndUIManager.generated.h"
 
+UENUM(BlueprintType)
+enum class ELevelEndState : uint8
+{
+	ShowingCombatResultUI UMETA(DisplayName = "ShowingCombatResultUI"),
+	ShowingMapUI UMETA(DisplayName = "ShowingMapUI"),
+};
+
 /**
  * 
  */
@@ -18,12 +25,12 @@ public:
 	void InitializeUI(TSubclassOf<class UCombatResultUI> combat_result_widget_class, TSubclassOf<class UUserWidget> map_widget_class, UWorld* world);
 
 	UFUNCTION()
-	void ToggleMapWidget();
-
-	UFUNCTION()
 	void DisplayCombatResult(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map);
 
-//protected:
+	UFUNCTION()
+	void SwitchUIByState(ELevelEndState state);
+
+protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TWeakObjectPtr<UCombatResultUI> combat_result_widget_;

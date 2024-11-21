@@ -29,16 +29,8 @@ void ULevelEndUIManager::InitializeUI(TSubclassOf<class UCombatResultUI> combat_
 		if (map_widget_.IsValid())
 		{
 			map_widget_->AddToViewport();
+			map_widget_->SetVisibility(ESlateVisibility::Hidden);
 		}
-	}
-}
-
-void ULevelEndUIManager::ToggleMapWidget()
-{
-	if (map_widget_.IsValid())
-	{
-		const bool is_visible = map_widget_->IsVisible();
-		map_widget_->SetVisibility(is_visible ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
 	}
 }
 
@@ -46,4 +38,21 @@ void ULevelEndUIManager::DisplayCombatResult(const TArray<AActor*>& heroes, cons
 {
 	combat_result_widget_->SetVisibility(ESlateVisibility::Visible);
 	combat_result_widget_->UpdateResults(heroes, damage_map);
+}
+
+void ULevelEndUIManager::SwitchUIByState(ELevelEndState state)
+{
+	switch (state)
+	{
+	case ELevelEndState::ShowingCombatResultUI:
+		combat_result_widget_->SetVisibility(ESlateVisibility::Visible);
+		map_widget_->SetVisibility(ESlateVisibility::Hidden);
+		break;
+	case ELevelEndState::ShowingMapUI:
+		combat_result_widget_->SetVisibility(ESlateVisibility::Hidden);
+		map_widget_->SetVisibility(ESlateVisibility::Visible);
+		break;
+	default:
+		break;
+	}
 }

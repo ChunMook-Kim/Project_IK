@@ -17,6 +17,9 @@ See LICENSE file in the project root for full license information.
 class UCombatResultUI;
 class ULevelEndUIManager;
 
+
+enum class ELevelEndState : uint8;
+
 /**
  * 
  */
@@ -25,10 +28,11 @@ class PROJECT_IK_API AIKHUD : public AHUD
 {
 	GENERATED_BODY()
 public:
-	void ToggleMapWidget();
-	
 	UFUNCTION()
 	void DisplayCombatResult(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map);
+
+	UFUNCTION()
+	void SwitchUIByState(ELevelEndState state);
 
 protected:
 	// Reference to the Widget Blueprint class to create
