@@ -13,15 +13,19 @@ See LICENSE file in the project root for full license information.
 
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Project_IK/Public/WorldSettings/IKGameInstance.h"
-#include "Components/Button.h"
-#include "Components/ButtonSlot.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/Border.h"
+#include "Components/BorderSlot.h"
+#include "Components/ScrollBox.h"
+#include "Components/GridPanel.h"
+#include "Components/GridSlot.h"
+#include "Components/Button.h"
+
 #include "Blueprint/WidgetTree.h"
-#include "Blueprint/WidgetLayoutLibrary.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Rendering/DrawElements.h"
+
 #include "Managers/LevelTransitionManager.h"
 
 #include "UI/IKMaps.h"
@@ -29,7 +33,7 @@ See LICENSE file in the project root for full license information.
 UMapWidget::UMapWidget(const FObjectInitializer& object_initializer)
 	: Super::UUserWidget(object_initializer)
 {
-	canvas_panel_ = nullptr;
+	root_canvas_panel_ = nullptr;
 	maps_ = nullptr;
 }
 
@@ -61,11 +65,24 @@ int32 UMapWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedG
 	FLinearColor LineColor = FLinearColor::Red;
 	float LineThickness = 5.0f;
 
-	for (size_t i = 0; i < path_points_.Num(); i += 2)
+	for (int32 i = 0; i < maps_->GetHeight(); ++i)
 	{
-		TArray<FVector2f>tmp(&path_points_[i], 2);
-		// Draw the line
-		FSlateDrawElement::MakeLines(OutDrawElements, CurrentLayer, AllottedGeometry.ToPaintGeometry(), tmp, ESlateDrawEffect::None, LineColor, true, LineThickness);
+		for (int32 j = 0; j < maps_->GetWidth(); ++j)
+		{
+
+			const FMapNode& node = maps_->GetNode(i, j);
+			for (int32 k = 0; k < node.next.Num(); k++)
+			{
+				TArray<FVector2D> line;
+				
+				TWeakObjectPtr<UButton> departures = buttons_[FIntPoint(i, j)];
+				line.Add(GetButtonPosition(departures));
+				TWeakObjectPtr<UButton> arrivals = buttons_[FIntPoint(i + 1, node.next[k])];
+				line.Add(GetButtonPosition(arrivals));
+
+				FSlateDrawElement::MakeLines(OutDrawElements, CurrentLayer, AllottedGeometry.ToPaintGeometry(), line, ESlateDrawEffect::None, LineColor, true, LineThickness);
+			}
+		}
 	}
 
 	// Increase the layer ID if you plan to add more elements later
@@ -76,19 +93,18 @@ void UMapWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	InitializeButtons();
+	InitializeWidgets();
 }
 
 void UMapWidget::InitializeWidgetTree()
 {
-	canvas_panel_ = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("MapWidgetRootCanvas"));
-	WidgetTree->RootWidget = canvas_panel_;
+	root_canvas_panel_ = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("MapWidgetRootCanvas"));
+	WidgetTree->RootWidget = root_canvas_panel_.Get();
 }
 
 void UMapWidget::InitializeButtons()
 {
 	buttons_.Empty();
-	path_points_.Empty();
 
 	UTexture2D* enemy_icon_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/enemy_icon.enemy_icon")));
 	if (!enemy_icon_texture)
@@ -104,51 +120,51 @@ void UMapWidget::InitializeButtons()
 	{
 		maps_ = ik_game_instance->GetMapPtr();
 
-		if (maps_)
+		if (maps_.Get())
 		{
 			for (int32 i = 0; i < maps_->GetHeight(); i++)
 			{
 				for (int32 j = 0; j < maps_->GetWidth(); j++)
 				{
 					const FMapNode& node = maps_->GetNode(i, j);
+					
 					if (node.type == NodeType::None)
 					{
 						continue;
 					}
-					// Update node path
-					FVector2D position = CalculateButtonPosition(i, j, button_size);
-					FVector2f path_begin_pos = CalculateButtonCenterPosition(position, button_size);
-					for (int32 t = 0; t < node.next.Num(); t++)
-					{
-						path_points_.Add(path_begin_pos);
-						FVector2f path_end_pos = CalculateButtonCenterPosition(CalculateButtonPosition(i + 1, node.next[t], button_size), button_size);
-						path_points_.Add(path_end_pos);
-					}
+					//// Update node path
+					//FVector2D position = CalculateButtonPosition(i, j, button_size);
+					//FVector2f path_begin_pos = CalculateButtonCenterPosition(position, button_size);
+					//for (int32 t = 0; t < node.next.Num(); t++)
+					//{
+					//	path_points_.Add(path_begin_pos);
+					//	FVector2f path_end_pos = CalculateButtonCenterPosition(CalculateButtonPosition(i + 1, node.next[t], button_size), button_size);
+					//	path_points_.Add(path_end_pos);
+					//}
 
 					// Init buttons
 					UButton* button = NewObject<UButton>();
-					// @@TODO: Set widget styles properly to be distingushable when normal, hovered, and pressed
 					FSlateBrush new_brush;
 					new_brush.SetResourceObject(enemy_icon_texture);
 					new_brush.DrawAs = ESlateBrushDrawType::Type::Image;
 					new_brush.TintColor = FSlateColor(FLinearColor(0.69f, 0.69f, 0.69f));
+					new_brush.SetImageSize(FDeprecateSlateVector2D(128.f, 128.f));
 					button->WidgetStyle.SetNormal(new_brush);
 					new_brush.TintColor = FSlateColor(FLinearColor(0.95f, 0.95f, 0.95f));
 					button->WidgetStyle.SetHovered(new_brush);
 					new_brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f));
 					button->WidgetStyle.SetPressed(new_brush);
-					UCanvasPanelSlot* button_slot = canvas_panel_->AddChildToCanvas(button);
+					UGridSlot* button_slot = buttons_holder_->AddChildToGrid(button);
 					if (button_slot)
 					{
-						// @@TODO: Set anchors properly
-						//button_slot->SetAnchors()
-						button_slot->SetPosition(position);
-						button_slot->SetSize(button_size);
+						button_slot->SetPadding(FMargin(32.f));
+						button_slot->SetColumn(j);
+						button_slot->SetRow(maps_->GetHeight() - 1 - i);
 					}
 
 					button->OnClicked.AddDynamic(this, &UMapWidget::OpenLevel);
 
-					buttons_.Add(button);
+					buttons_.Add(FIntPoint(i, j), button);
 				}
 			}
 
@@ -156,14 +172,34 @@ void UMapWidget::InitializeButtons()
 	}
 }
 
-inline FVector2D UMapWidget::CalculateButtonPosition(int32 row, int32 col, const FVector2D& buttonSize) const
+void UMapWidget::InitializeWidgets()
 {
-	return FVector2D(col * buttonSize.X, (maps_->GetHeight() - 1 - row) * buttonSize.Y) + FVector2D(100.f, 400.f);
+	background_border_ = NewObject<UBorder>();
+	background_border_->Rename(*MakeUniqueObjectName(GetOuter(), background_border_->GetClass(), TEXT("Background")).ToString());
+	background_border_->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
+	background_border_->SetBrushColor(FLinearColor(0.f, 0.f, 0.f, 0.4f));
+	UCanvasPanelSlot* background_border_slot = root_canvas_panel_->AddChildToCanvas(background_border_.Get());
+	background_border_slot->SetAnchors(FAnchors(0.5f, 0.5f));
+	background_border_slot->SetPosition(FVector2D(-800.0, -400.0));
+	background_border_slot->SetSize(FVector2D(1600.0, 800.0));
+
+	scroll_box_ = NewObject<UScrollBox>();
+	scroll_box_->Rename(*MakeUniqueObjectName(GetOuter(), scroll_box_->GetClass(), TEXT("ScrollBox")).ToString());
+	UBorderSlot* scroll_box_slot = Cast<UBorderSlot>(background_border_->AddChild(scroll_box_.Get()));
+	scroll_box_slot->SetPadding(FMargin(0.f, 32.f));
+	scroll_box_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
+	scroll_box_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
+
+	buttons_holder_ = NewObject<UGridPanel>();
+	buttons_holder_->Rename(*MakeUniqueObjectName(GetOuter(), scroll_box_->GetClass(), TEXT("Buttons Holder")).ToString());
+	scroll_box_->AddChild(buttons_holder_.Get());
+
+	InitializeButtons();
 }
 
-inline FVector2f UMapWidget::CalculateButtonCenterPosition(const FVector2D& position, const FVector2D& buttonSize) const
-{
-	return FVector2f(position + (buttonSize / 2.f));
+FVector2D UMapWidget::GetButtonPosition(TWeakObjectPtr<UButton> button) const
+{	
+	return background_border_->GetCachedGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + scroll_box_->GetCachedGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + button->GetCachedGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0)) - FVector2D(0.0, scroll_box_->GetScrollOffset()) + (button->GetCachedGeometry().GetLocalSize() / 2.f);
 }
 
 void UMapWidget::OpenLevel()
