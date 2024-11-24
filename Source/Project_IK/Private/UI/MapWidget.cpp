@@ -64,6 +64,9 @@ int32 UMapWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedG
 	// Define color and thickness
 	FLinearColor LineColor = FLinearColor::Red;
 	float LineThickness = 5.0f;
+	
+	FSlateClippingZone clipping_zone(scroll_box_->GetPaintSpaceGeometry());
+	OutDrawElements.PushClip(clipping_zone);
 
 	for (int32 i = 0; i < maps_->GetHeight(); ++i)
 	{
@@ -80,10 +83,14 @@ int32 UMapWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedG
 				TWeakObjectPtr<UButton> arrivals = buttons_[FIntPoint(i + 1, node.next[k])];
 				line.Add(GetButtonPosition(arrivals));
 
-				FSlateDrawElement::MakeLines(OutDrawElements, CurrentLayer, AllottedGeometry.ToPaintGeometry(), line, ESlateDrawEffect::None, LineColor, true, LineThickness);
+				if (!departures->GetPaintSpaceGeometry().GetLocalSize().IsNearlyZero() && !arrivals->GetPaintSpaceGeometry().GetLocalSize().IsNearlyZero())
+				{
+					FSlateDrawElement::MakeLines(OutDrawElements, CurrentLayer, AllottedGeometry.ToPaintGeometry(), line, ESlateDrawEffect::None, LineColor, true, LineThickness);
+				}
 			}
 		}
 	}
+	OutDrawElements.PopClip();
 
 	// Increase the layer ID if you plan to add more elements later
 	return CurrentLayer + 1;
@@ -198,8 +205,8 @@ void UMapWidget::InitializeWidgets()
 }
 
 FVector2D UMapWidget::GetButtonPosition(TWeakObjectPtr<UButton> button) const
-{	
-	return background_border_->GetCachedGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + scroll_box_->GetCachedGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + button->GetCachedGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0)) - FVector2D(0.0, scroll_box_->GetScrollOffset()) + (button->GetCachedGeometry().GetLocalSize() / 2.f);
+{
+	return background_border_->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + scroll_box_->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + button->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0)) - FVector2D(0.0, scroll_box_->GetScrollOffset()) + (button->GetPaintSpaceGeometry().GetLocalSize() / 2.f);
 }
 
 void UMapWidget::OpenLevel()
