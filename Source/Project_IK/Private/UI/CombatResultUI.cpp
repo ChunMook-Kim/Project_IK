@@ -134,7 +134,7 @@ void UCombatResultUI::NativeConstruct()
 void UCombatResultUI::InitializeRootWidget()
 {
 	root_canvas_panel_ = WidgetTree->ConstructWidget<UCanvasPanel>();
-	root_canvas_panel_->Rename(TEXT("Root canvas panel"));
+	root_canvas_panel_->Rename(*MakeUniqueObjectName(GetOuter(), root_canvas_panel_->GetClass(), TEXT("Root canvas panel")).ToString());
 	WidgetTree->RootWidget = root_canvas_panel_.Get();
 }
 
@@ -142,7 +142,7 @@ void UCombatResultUI::InitializeChildWidgets()
 {
 	// Initialize outlines
 	UI_background_ = NewObject<UBorder>();
-	UI_background_->Rename(TEXT("UI Background"));
+	UI_background_->Rename(*MakeUniqueObjectName(GetOuter(), UI_background_->GetClass(), TEXT("UI Background")).ToString());
 	UI_background_->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 	UI_background_->SetBrushColor(FLinearColor(0.f, 0.f, 0.f, 0.4f));
 	UCanvasPanelSlot* UI_background_slot = root_canvas_panel_->AddChildToCanvas(UI_background_.Get());
@@ -152,7 +152,7 @@ void UCombatResultUI::InitializeChildWidgets()
 	}
 
 	widgets_holder_ = NewObject<UVerticalBox>();
-	widgets_holder_->Rename(TEXT("Widgets holder"));
+	widgets_holder_->Rename(*MakeUniqueObjectName(GetOuter(), widgets_holder_->GetClass(), TEXT("Widgets holder")).ToString());
 	UBorderSlot* widgets_holder_slot = Cast<UBorderSlot>(UI_background_->AddChild(widgets_holder_.Get()));
 	if (widgets_holder_slot)
 	{

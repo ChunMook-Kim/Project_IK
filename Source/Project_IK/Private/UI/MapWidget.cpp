@@ -139,15 +139,6 @@ void UMapWidget::InitializeButtons()
 					{
 						continue;
 					}
-					//// Update node path
-					//FVector2D position = CalculateButtonPosition(i, j, button_size);
-					//FVector2f path_begin_pos = CalculateButtonCenterPosition(position, button_size);
-					//for (int32 t = 0; t < node.next.Num(); t++)
-					//{
-					//	path_points_.Add(path_begin_pos);
-					//	FVector2f path_end_pos = CalculateButtonCenterPosition(CalculateButtonPosition(i + 1, node.next[t], button_size), button_size);
-					//	path_points_.Add(path_end_pos);
-					//}
 
 					// Init buttons
 					UButton* button = NewObject<UButton>();
