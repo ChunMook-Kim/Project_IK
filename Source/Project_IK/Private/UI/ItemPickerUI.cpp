@@ -24,6 +24,13 @@ See LICENSE file in the project root for full license information.
 #include "Components/Button.h"
 #include "Components/Image.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
+#include "Abilities/ItemInventory.h"
+#include "Abilities/MyTestItem.h"
+#include "UI/IKHUD.h"
+#include "Managers/LevelEndUIManager.h"
+
 
 bool UItemPickerUI::Initialize()
 {
@@ -49,6 +56,8 @@ void UItemPickerUI::NativeConstruct()
 	Super::NativeConstruct();
 
 	InitializeChildWidgets();
+	
+	selected_button_index_ = -1;
 }
 
 void UItemPickerUI::InitializeRootWidget()
@@ -110,7 +119,7 @@ void UItemPickerUI::InitializeChildWidgets()
 		buttons_holder_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
 	}
 
-	UTexture2D* item_texture_placeholder = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/enemy_icon.enemy_icon")));
+	UTexture2D* item_texture_placeholder = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/HP_potion.HP_potion")));
 	if (!item_texture_placeholder)
 	{
 		return;
@@ -129,6 +138,7 @@ void UItemPickerUI::InitializeChildWidgets()
 		button->WidgetStyle.SetHovered(new_brush);
 		new_brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f));
 		button->WidgetStyle.SetPressed(new_brush);
+		button->OnClicked.AddDynamic(this, & UItemPickerUI::ItemButtonOnClicked);
 		UHorizontalBoxSlot* button_slot = buttons_holder_->AddChildToHorizontalBox(button.Get());
 
 		if (button_slot)
@@ -139,7 +149,7 @@ void UItemPickerUI::InitializeChildWidgets()
 	}
 
 
-	UTexture2D* select_texture_placeholder = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/enemy_icon.enemy_icon")));
+	UTexture2D* select_texture_placeholder = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/take_it_button.take_it_button")));
 	select_button_ = NewObject<UButton>();
 	FSlateBrush select_brush;
 	select_brush.SetResourceObject(select_texture_placeholder);
@@ -151,11 +161,38 @@ void UItemPickerUI::InitializeChildWidgets()
 	select_button_->WidgetStyle.SetHovered(select_brush);
 	select_brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f));
 	select_button_->WidgetStyle.SetPressed(select_brush);
+	select_button_->OnClicked.AddDynamic(this, &UItemPickerUI::SelectButtonBindingFunc);
 	UVerticalBoxSlot* select_button_slot = widgets_holder_->AddChildToVerticalBox(select_button_.Get());
 	if (select_button_slot)
 	{
 		select_button_slot->SetPadding(FMargin(0.0, 0.0, 0.0, 32.0));
 		select_button_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 		select_button_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
+	}
+}
+
+void UItemPickerUI::SelectButtonBindingFunc()
+{
+	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (game_instance)
+	{
+		game_instance->GetItemInventory()->AddItem(UMyTestItem::StaticClass());
+	}
+	AIKHUD* hud = Cast<AIKHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+	if (hud)
+	{
+		hud->SynchroItemButtons();
+		hud->SwitchUIByState(ELevelEndState::ShowingMapUI);
+	}
+}
+
+void UItemPickerUI::ItemButtonOnClicked()
+{
+	for (int32 i = 0; i < buttons_.Num(); i++)
+	{
+		if (buttons_[i]->IsPressed())
+		{
+			selected_button_index_ = i;
+		}
 	}
 }

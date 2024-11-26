@@ -18,6 +18,7 @@ UENUM(BlueprintType)
 enum class ELevelEndState : uint8
 {
 	ShowingCombatResultUI UMETA(DisplayName = "ShowingCombatResultUI"),
+	ShowingItemPickerUI UMETA(DisplayName = "ShowingItemPickerUI"),
 	ShowingMapUI UMETA(DisplayName = "ShowingMapUI"),
 };
 
@@ -30,7 +31,7 @@ class PROJECT_IK_API ULevelEndUIManager : public UObject
 	GENERATED_BODY()
 public:
 	UFUNCTION()
-	void InitializeUI(TSubclassOf<class UCombatResultUI> combat_result_widget_class, TSubclassOf<class UUserWidget> map_widget_class, UWorld* world);
+	void InitializeUI(TSubclassOf<class UCombatResultUI> combat_result_widget_class, TSubclassOf<class UItemPickerUI> item_picker_widget_class, TSubclassOf<class UUserWidget> map_widget_class, UWorld* world);
 
 	UFUNCTION()
 	void DisplayCombatResult(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map);
@@ -42,6 +43,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TWeakObjectPtr<UCombatResultUI> combat_result_widget_;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TWeakObjectPtr<UItemPickerUI> item_picker_widget_;
 
 	UPROPERTY(VisibleAnywhere, Category = "UI")
 	TWeakObjectPtr<UUserWidget> map_widget_;

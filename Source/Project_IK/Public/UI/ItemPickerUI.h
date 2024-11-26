@@ -40,6 +40,11 @@ protected:
 	void InitializeRootWidget();
 	void InitializeChildWidgets();
 
+	UFUNCTION()
+	void SelectButtonBindingFunc();
+	UFUNCTION()
+	void ItemButtonOnClicked();
+
 	TWeakObjectPtr<UCanvasPanel> root_canvas_panel_;
 	TWeakObjectPtr<UBorder> background_;
 	TWeakObjectPtr<UVerticalBox> widgets_holder_;
@@ -48,4 +53,6 @@ protected:
 	TWeakObjectPtr<UHorizontalBox> buttons_holder_;
 	TArray<TWeakObjectPtr<UButton>> buttons_;
 	TWeakObjectPtr<UButton> select_button_;
+
+	int32 selected_button_index_;
 };

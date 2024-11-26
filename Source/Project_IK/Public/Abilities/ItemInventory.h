@@ -24,12 +24,17 @@ class PROJECT_IK_API UItemInventory : public UObject
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(VisibleAnywhere)
-	TArray<TWeakObjectPtr<USkillBase>> item_inventory_;
 
 	UFUNCTION(BlueprintCallable)
 	void AddItem(TSubclassOf<USkillBase> item_class);
 
 	UFUNCTION(BlueprintPure)
 	USkillBase* GetItem(int32 index);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveItem(int32 index);
+
+protected:
+	UPROPERTY(VisibleAnywhere)
+	TArray<USkillBase*> item_inventory_;
 };
