@@ -21,6 +21,7 @@ class UTextBlock;
 class UHorizontalBox;
 class UButton;
 class UImage;
+struct FItemData;
 
 /**
  * 
@@ -53,6 +54,8 @@ protected:
 	TWeakObjectPtr<UHorizontalBox> buttons_holder_;
 	TArray<TWeakObjectPtr<UButton>> buttons_;
 	TWeakObjectPtr<UButton> select_button_;
+
+	TArray<FItemData*> item_candidates_;
 
 	int32 selected_button_index_;
 };

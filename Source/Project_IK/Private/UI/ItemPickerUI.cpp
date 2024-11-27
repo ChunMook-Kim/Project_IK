@@ -27,9 +27,9 @@ See LICENSE file in the project root for full license information.
 #include "Kismet/GameplayStatics.h"
 #include "WorldSettings/IKGameInstance.h"
 #include "Abilities/ItemInventory.h"
-#include "Abilities/MyTestItem.h"
 #include "UI/IKHUD.h"
 #include "Managers/LevelEndUIManager.h"
+#include "Managers/ItemDataManager.h"
 
 
 bool UItemPickerUI::Initialize()
@@ -119,17 +119,17 @@ void UItemPickerUI::InitializeChildWidgets()
 		buttons_holder_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
 	}
 
-	UTexture2D* item_texture_placeholder = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/HP_potion.HP_potion")));
-	if (!item_texture_placeholder)
+	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	for (int32 i = 0; i < 3; i++)
 	{
-		return;
+		item_candidates_.Add(game_instance->GetItemDataManager()->GetItemDataRandomly());
 	}
 
 	for (int32 i = 0; i < 3; i++)
 	{
 		TWeakObjectPtr<UButton> button = NewObject<UButton>();
 		FSlateBrush new_brush;
-		new_brush.SetResourceObject(item_texture_placeholder);
+		new_brush.SetResourceObject(item_candidates_[i]->item_icon_.Get());
 		new_brush.DrawAs = ESlateBrushDrawType::Type::Image;
 		new_brush.TintColor = FSlateColor(FLinearColor(0.69f, 0.69f, 0.69f));
 		new_brush.SetImageSize(FVector2D(128.0, 128.0));
@@ -149,10 +149,10 @@ void UItemPickerUI::InitializeChildWidgets()
 	}
 
 
-	UTexture2D* select_texture_placeholder = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/take_it_button.take_it_button")));
+	UTexture2D* select_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/take_it_button.take_it_button")));
 	select_button_ = NewObject<UButton>();
 	FSlateBrush select_brush;
-	select_brush.SetResourceObject(select_texture_placeholder);
+	select_brush.SetResourceObject(select_texture);
 	select_brush.DrawAs = ESlateBrushDrawType::Type::Image;
 	select_brush.TintColor = FSlateColor(FLinearColor(0.69f, 0.69f, 0.69f));
 	select_brush.SetImageSize(FVector2D(256.0, 64.0));
@@ -173,11 +173,17 @@ void UItemPickerUI::InitializeChildWidgets()
 
 void UItemPickerUI::SelectButtonBindingFunc()
 {
+	// Add selected item to inventory
 	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (game_instance)
 	{
-		game_instance->GetItemInventory()->AddItem(UMyTestItem::StaticClass());
+		// @@ TODO: Currently added item temporarily by 0
+		if (selected_button_index_ >= 0 && selected_button_index_ < item_candidates_.Num())
+		{
+			game_instance->GetItemInventory()->AddItem(*item_candidates_[selected_button_index_]);
+		}
 	}
+	// Update HUD status
 	AIKHUD* hud = Cast<AIKHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
 	if (hud)
 	{
@@ -190,7 +196,7 @@ void UItemPickerUI::ItemButtonOnClicked()
 {
 	for (int32 i = 0; i < buttons_.Num(); i++)
 	{
-		if (buttons_[i]->IsPressed())
+		if (buttons_[i]->IsHovered())
 		{
 			selected_button_index_ = i;
 		}

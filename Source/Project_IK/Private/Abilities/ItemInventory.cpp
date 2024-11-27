@@ -11,24 +11,34 @@ See LICENSE file in the project root for full license information.
 
 
 #include "Abilities/ItemInventory.h"
+#include "Managers/ItemDataManager.h"
+#include "Abilities/Item.h"
 
-#include "Abilities/SkillBase.h"
-
-// Usage:
-// TSubclassOf<AItem> WeaponClass = AWeapon::StaticClass();
-
-void UItemInventory::AddItem(TSubclassOf<USkillBase> item_class)
+void UItemInventory::AddItem(TWeakObjectPtr<UItem> item)
 {
-	if (item_inventory_.Num() <= 3)
+	if (item_inventory_.Num() < 3)
 	{
-		if (*item_class)
+		if (item.IsValid())
 		{
-			item_inventory_.Add(NewObject<USkillBase>(this, item_class));
+			item_inventory_.Add(item.Get());
 		}
 	}
 }
 
-USkillBase* UItemInventory::GetItem(int32 index)
+void UItemInventory::AddItem(FItemData item_data)
+{
+
+	if (item_inventory_.Num() < 3)
+	{
+		UItem* item = NewObject<UItem>();
+		item->InitializeItemUsingData(item_data);
+
+		item_inventory_.Add(item);
+	}
+
+}
+
+TWeakObjectPtr<UItem> UItemInventory::GetItem(int32 index)
 {
 	if (item_inventory_.IsValidIndex(index))
 	{

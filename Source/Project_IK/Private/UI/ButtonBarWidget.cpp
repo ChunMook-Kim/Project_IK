@@ -20,6 +20,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/TargetingComponent.h"
 #include "WorldSettings/IKPlayerController.h"
 #include "Abilities/ItemInventory.h"
+#include "Abilities/Item.h"
 #include "WorldSettings/IKGameInstance.h"
 
 void UButtonBarWidget::NativeConstruct()
@@ -139,7 +140,7 @@ void UButtonBarWidget::OnSkillButtonClicked3()
 
 void UButtonBarWidget::OnItemButtonClicked0()
 {
-	if (item_inventory_->GetItem(0))
+	if (item_inventory_->GetItem(0).IsValid())
 	{
 		caster_ = -1;
 		selected_item_index_ = 0;
@@ -149,7 +150,7 @@ void UButtonBarWidget::OnItemButtonClicked0()
 
 void UButtonBarWidget::OnItemButtonClicked1()
 {
-	if (item_inventory_->GetItem(1))
+	if (item_inventory_->GetItem(1).IsValid())
 	{
 		caster_ = -1;
 		selected_item_index_ = 1;
@@ -159,7 +160,7 @@ void UButtonBarWidget::OnItemButtonClicked1()
 
 void UButtonBarWidget::OnItemButtonClicked2()
 {
-	if (item_inventory_->GetItem(2))
+	if (item_inventory_->GetItem(2).IsValid())
 	{
 		caster_ = -1;
 		selected_item_index_ = 2;
@@ -218,7 +219,7 @@ void UButtonBarWidget::InvokeSkills(const FTargetData& TargetData)
 {
 	if (caster_ < 0)
 	{
-		item_inventory_->GetItem(selected_item_index_)->ActivateSkill(TargetData);
+		item_inventory_->GetItem(selected_item_index_)->UseItem(TargetData);
 		item_inventory_->RemoveItem(selected_item_index_);
 
 		switch (selected_item_index_)

@@ -15,6 +15,9 @@ See LICENSE file in the project root for full license information.
 #include "UObject/NoExportTypes.h"
 #include "ItemInventory.generated.h"
 
+class UItem;
+struct FItemData;
+
 /**
  * 
  */
@@ -25,16 +28,15 @@ class PROJECT_IK_API UItemInventory : public UObject
 	
 public:
 
-	UFUNCTION(BlueprintCallable)
-	void AddItem(TSubclassOf<USkillBase> item_class);
+	void AddItem(TWeakObjectPtr<UItem> item);
+	void AddItem(FItemData item_data);
 
-	UFUNCTION(BlueprintPure)
-	USkillBase* GetItem(int32 index);
+	TWeakObjectPtr<UItem> GetItem(int32 index);
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveItem(int32 index);
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-	TArray<USkillBase*> item_inventory_;
+	TArray<UItem*> item_inventory_;
 };

@@ -1,0 +1,2 @@
+CharID,item_name_,item_icon_,item_description_,item_logic_
+0,HP Potion,/Game/Images/HP_potion.HP_potion,Restores N HP,RestoreHP

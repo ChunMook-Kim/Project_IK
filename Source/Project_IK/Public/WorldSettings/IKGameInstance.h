@@ -19,6 +19,7 @@ See LICENSE file in the project root for full license information.
 class UItemInventory;
 class UIKMaps;
 class UCharacterDataManager;
+class UItemDataManager;
 class ULevelTransitionManager;
 
 /**
@@ -34,6 +35,8 @@ public:
 
 	virtual void Init() override;
 
+	UFUNCTION(BlueprintPure)
+	const class UItemDataManager* GetItemDataManager() noexcept;
 	UFUNCTION(BlueprintPure)
 	const class UCharacterDataManager* GetCharacterDataManager() noexcept;
 	UFUNCTION(BlueprintPure)
@@ -51,11 +54,14 @@ public:
 	TSubclassOf<AActor> enemy_blueprint_;
 
 private:
+	void InitializeItemDataManager();
 	void InitializeCharacterDataManager();
 	void InitializeItemInventory();
 	void InitializeMaps();
 	void InitializeLevelTransitionManager();
 
+	UPROPERTY()
+	class UItemDataManager* item_data_manager_;
 	UPROPERTY()
 	class UCharacterDataManager* character_data_manager_;
 	UPROPERTY()
