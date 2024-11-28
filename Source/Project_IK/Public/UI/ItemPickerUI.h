@@ -45,6 +45,8 @@ protected:
 	void SelectButtonBindingFunc();
 	UFUNCTION()
 	void ItemButtonOnClicked();
+	UFUNCTION()
+	FVector2D GetButtonPosition(int32 ButtonIndex) const;
 
 	TWeakObjectPtr<UCanvasPanel> root_canvas_panel_;
 	TWeakObjectPtr<UBorder> background_;
@@ -54,6 +56,7 @@ protected:
 	TWeakObjectPtr<UHorizontalBox> buttons_holder_;
 	TArray<TWeakObjectPtr<UButton>> buttons_;
 	TWeakObjectPtr<UButton> select_button_;
+	TWeakObjectPtr<UImage> highlight_image_;
 
 	TArray<FItemData*> item_candidates_;
 

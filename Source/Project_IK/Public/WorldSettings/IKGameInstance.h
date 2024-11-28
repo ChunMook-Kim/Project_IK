@@ -42,7 +42,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	class UItemInventory* GetItemInventory() const noexcept;
 	UFUNCTION(BlueprintPure)
-	const class UIKMaps* GetMapPtr() const noexcept;
+	class UIKMaps* GetMapPtr() const noexcept;
 	UFUNCTION(BlueprintPure)
 	class ULevelTransitionManager* GetLevelTransitionManager() noexcept;
 

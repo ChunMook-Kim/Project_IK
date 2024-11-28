@@ -54,7 +54,7 @@ UItemInventory* UIKGameInstance::GetItemInventory() const noexcept
 	return item_inventory_;
 }
 
-const UIKMaps* UIKGameInstance::GetMapPtr() const noexcept
+UIKMaps* UIKGameInstance::GetMapPtr() const noexcept
 {
 	return maps_;
 }

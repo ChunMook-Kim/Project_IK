@@ -30,7 +30,7 @@ public:
 	ULevelTransitionManager();
 
 	UFUNCTION(BlueprintCallable)
-	void OpenLevel(FName LevelName, UWorld* world);
+	void OpenLevel(UWorld* world, FIntPoint map_position);
 	
 	// Function be called in GameMode::BeginPlay
 	UFUNCTION(BlueprintCallable)

@@ -169,6 +169,18 @@ void UItemPickerUI::InitializeChildWidgets()
 		select_button_slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 		select_button_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
 	}
+
+	UTexture2D* highlight_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/highlight_image.highlight_image")));
+	highlight_image_ = NewObject<UImage>();
+	FSlateBrush highlight_brush;
+	highlight_brush.SetResourceObject(highlight_texture);
+	highlight_brush.DrawAs = ESlateBrushDrawType::Type::Image;
+	highlight_brush.SetImageSize(FVector2D(128.0, 128.0));
+	highlight_image_->SetBrush(highlight_brush);
+	UCanvasPanelSlot* highlight_image_slot = root_canvas_panel_->AddChildToCanvas(highlight_image_.Get());
+	// @@ TODO: Fixed size data is may not appropriate for the all environments.
+	highlight_image_slot->SetSize(FVector2D(125.0));
+	highlight_image_->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UItemPickerUI::SelectButtonBindingFunc()
@@ -199,6 +211,20 @@ void UItemPickerUI::ItemButtonOnClicked()
 		if (buttons_[i]->IsHovered())
 		{
 			selected_button_index_ = i;
+
+
+			UCanvasPanelSlot* slot = Cast<UCanvasPanelSlot>(highlight_image_->Slot);
+			slot->SetPosition(GetButtonPosition(selected_button_index_));
+			if (highlight_image_->GetVisibility() == ESlateVisibility::Hidden)
+			{
+				highlight_image_->SetVisibility(ESlateVisibility::Visible);
+			}
 		}
 	}
+}
+
+FVector2D UItemPickerUI::GetButtonPosition(int32 ButtonIndex) const
+{
+	// Border -> VerticalBox -> HorizontalBox -> Button
+	return background_->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0)) + widgets_holder_->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0)) + buttons_holder_->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0)) + buttons_[ButtonIndex]->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0));
 }

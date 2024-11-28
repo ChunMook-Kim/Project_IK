@@ -160,6 +160,8 @@ void UMapWidget::InitializeButtons()
 						button_slot->SetRow(maps_->GetHeight() - 1 - i);
 					}
 
+					button->SetIsEnabled(false);
+
 					button->OnClicked.AddDynamic(this, &UMapWidget::OpenLevel);
 
 					buttons_.Add(FIntPoint(i, j), button);
@@ -168,6 +170,16 @@ void UMapWidget::InitializeButtons()
 
 		}
 	}
+
+	// Disable Not-reachable buttons
+	FIntPoint player_grid_position = maps_->GetPlayerGridPosition();
+	FMapNode node = maps_->GetNode(player_grid_position.X, player_grid_position.Y);
+	for (int32 i = 0; i < node.next.Num(); i++)
+	{
+		buttons_[FIntPoint(player_grid_position.X + 1, node.next[i])]->SetIsEnabled(true);
+	}
+	// Update scroll bar
+	scroll_box_->ScrollWidgetIntoView(buttons_[player_grid_position].Get());
 }
 
 void UMapWidget::InitializeWidgets()
@@ -203,5 +215,13 @@ FVector2D UMapWidget::GetButtonPosition(TWeakObjectPtr<UButton> button) const
 void UMapWidget::OpenLevel()
 {
 	UWorld* world = GetWorld();
-	Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(world))->GetLevelTransitionManager()->OpenLevel(FName("CombatLevel"), world);
+
+	for (const auto& pair : buttons_)
+	{
+		if (pair.Value->IsHovered())
+		{
+			Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(world))->GetLevelTransitionManager()->OpenLevel(world, pair.Key);
+		}
+	}
+
 }
