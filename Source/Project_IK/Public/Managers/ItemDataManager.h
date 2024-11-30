@@ -14,11 +14,14 @@ See LICENSE file in the project root for full license information.
 #include "UObject/NoExportTypes.h"
 #include "ItemDataManager.generated.h"
 
+enum class ETargetingMode : uint8;
+
 UENUM(BlueprintType)
 enum class EItemLogicType : uint8
 {
 	None UMETA(DisplayName = "None"),
 	RestoreHP UMETA(DisplayName = "RestoreHP"),
+	LaunchMissile UMETA(DisplayName = "LaunchMissile"),
 };
 
 USTRUCT(BlueprintType)
@@ -31,13 +34,22 @@ public:
 	FString item_name_;
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
-	TSoftObjectPtr<UTexture2D> item_icon_;
+	UTexture2D* item_icon_;
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	FString item_description_;
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	EItemLogicType item_logic_;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	ETargetingMode targeting_mode_;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	float range_;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	float radius_;
 };
 
 /**

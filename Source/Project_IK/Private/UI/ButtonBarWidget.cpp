@@ -64,7 +64,7 @@ void UButtonBarWidget::NativeConstruct()
 		targeting_component_ = PC->GetTargetingComponent();
 		if (targeting_component_)
 		{
-			targeting_component_->OnTargetDataSelected.AddDynamic(this, &UButtonBarWidget::InvokeSkills);
+			targeting_component_->OnTargetResultSelected.AddDynamic(this, &UButtonBarWidget::InvokeSkills);
 		}
 	}
 
@@ -101,7 +101,8 @@ void UButtonBarWidget::OnSkillButtonClicked0()
 
 	if (targeting_component_ && characters_.IsValidIndex(caster_))
 	{
-		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Direction, 1000, 90);
+		FTargetParameters target_params(ETargetingMode::Direction, 1000.f, 90.f);
+		targeting_component_->StartSkillTargeting(characters_[caster_], target_params);
 	}
 }
 
@@ -112,7 +113,8 @@ void UButtonBarWidget::OnSkillButtonClicked1()
 
 	if (targeting_component_ && characters_.IsValidIndex(caster_))
 	{
-		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Location);
+		FTargetParameters target_params(ETargetingMode::Location);
+		targeting_component_->StartSkillTargeting(characters_[caster_], target_params);
 	}
 }
 
@@ -123,7 +125,8 @@ void UButtonBarWidget::OnSkillButtonClicked2()
 
 	if (targeting_component_ && characters_.IsValidIndex(caster_))
 	{
-		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Location);
+		FTargetParameters target_params(ETargetingMode::Location);
+		targeting_component_->StartSkillTargeting(characters_[caster_], target_params);
 	}
 }
 
@@ -134,7 +137,8 @@ void UButtonBarWidget::OnSkillButtonClicked3()
 
 	if (targeting_component_ && characters_.IsValidIndex(caster_))
 	{
-		targeting_component_->StartSkillTargeting(characters_[caster_], ETargetingMode::Location);
+		FTargetParameters target_params(ETargetingMode::Location);
+		targeting_component_->StartSkillTargeting(characters_[caster_], target_params);
 	}
 }
 
@@ -144,7 +148,7 @@ void UButtonBarWidget::OnItemButtonClicked0()
 	{
 		caster_ = -1;
 		selected_item_index_ = 0;
-		targeting_component_->StartItemTargeting(ETargetingMode::Actor);
+		targeting_component_->StartItemTargeting(item_inventory_->GetItem(0)->GetTargetParameters());
 	}
 }
 
@@ -154,7 +158,7 @@ void UButtonBarWidget::OnItemButtonClicked1()
 	{
 		caster_ = -1;
 		selected_item_index_ = 1;
-		targeting_component_->StartItemTargeting(ETargetingMode::Actor);
+		targeting_component_->StartItemTargeting(item_inventory_->GetItem(1)->GetTargetParameters());
 	}
 }
 
@@ -164,15 +168,13 @@ void UButtonBarWidget::OnItemButtonClicked2()
 	{
 		caster_ = -1;
 		selected_item_index_ = 2;
-		targeting_component_->StartItemTargeting(ETargetingMode::Actor);
+		targeting_component_->StartItemTargeting(item_inventory_->GetItem(2)->GetTargetParameters());
 	}
 }
 
 void UButtonBarWidget::SynchroItemButtons()
 {
-	UTexture2D* item_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/HP_potion.HP_potion")));
 	FSlateBrush normal_brush;
-	normal_brush.SetResourceObject(item_texture);
 	normal_brush.DrawAs = ESlateBrushDrawType::Type::Image;
 	normal_brush.SetImageSize(FVector2D(128.0, 128.0));
 	normal_brush.TintColor = FSlateColor(FLinearColor(0.69f, 0.69f, 0.69f));
@@ -180,8 +182,14 @@ void UButtonBarWidget::SynchroItemButtons()
 	hovered_brush.TintColor = FSlateColor(FLinearColor(0.95f, 0.95f, 0.95f));
 	FSlateBrush pressed_brush = normal_brush;
 	pressed_brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f));
+
 	if (item_inventory_->GetItem(0) != nullptr)
 	{
+		UTexture2D* item_icon = item_inventory_->GetItem(0)->GetData().item_icon_;
+		normal_brush.SetResourceObject(item_icon);
+		hovered_brush.SetResourceObject(item_icon);
+		pressed_brush.SetResourceObject(item_icon);
+
 		item_button_0_->SetIsEnabled(true);
 		item_button_0_->WidgetStyle.SetNormal(normal_brush);
 		item_button_0_->WidgetStyle.SetHovered(hovered_brush);
@@ -193,6 +201,11 @@ void UButtonBarWidget::SynchroItemButtons()
 	}
 	if (item_inventory_->GetItem(1) != nullptr)
 	{
+		UTexture2D* item_icon = item_inventory_->GetItem(1)->GetData().item_icon_;
+		normal_brush.SetResourceObject(item_icon);
+		hovered_brush.SetResourceObject(item_icon);
+		pressed_brush.SetResourceObject(item_icon);
+
 		item_button_1_->SetIsEnabled(true);
 		item_button_1_->WidgetStyle.SetNormal(normal_brush);
 		item_button_1_->WidgetStyle.SetHovered(hovered_brush);
@@ -204,6 +217,11 @@ void UButtonBarWidget::SynchroItemButtons()
 	}
 	if (item_inventory_->GetItem(2) != nullptr)
 	{
+		UTexture2D* item_icon = item_inventory_->GetItem(1)->GetData().item_icon_;
+		normal_brush.SetResourceObject(item_icon);
+		hovered_brush.SetResourceObject(item_icon);
+		pressed_brush.SetResourceObject(item_icon);
+
 		item_button_2_->SetIsEnabled(true);
 		item_button_2_->WidgetStyle.SetNormal(normal_brush);
 		item_button_2_->WidgetStyle.SetHovered(hovered_brush);
@@ -215,11 +233,11 @@ void UButtonBarWidget::SynchroItemButtons()
 	}
 }
 
-void UButtonBarWidget::InvokeSkills(const FTargetData& TargetData)
+void UButtonBarWidget::InvokeSkills(const FTargetResult& TargetResult)
 {
 	if (caster_ < 0)
 	{
-		item_inventory_->GetItem(selected_item_index_)->UseItem(TargetData);
+		item_inventory_->GetItem(selected_item_index_)->UseItem(TargetResult);
 		item_inventory_->RemoveItem(selected_item_index_);
 
 		switch (selected_item_index_)
@@ -239,7 +257,7 @@ void UButtonBarWidget::InvokeSkills(const FTargetData& TargetData)
 	}
 	else
 	{
-		skill_containers_[caster_]->InvokeSkills(TargetData);
+		skill_containers_[caster_]->InvokeSkills(TargetResult);
 	}
 }
 

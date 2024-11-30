@@ -54,7 +54,7 @@ protected:
 	TWeakObjectPtr<UTextBlock> title_;
 	TWeakObjectPtr<UTextBlock> description_;
 	TWeakObjectPtr<UHorizontalBox> buttons_holder_;
-	TArray<TWeakObjectPtr<UButton>> buttons_;
+	TArray<UButton*> buttons_;
 	TWeakObjectPtr<UButton> select_button_;
 	TWeakObjectPtr<UImage> highlight_image_;
 

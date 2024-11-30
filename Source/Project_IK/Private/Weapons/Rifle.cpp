@@ -40,7 +40,6 @@ void ARifle::FireWeapon(FVector target_pos)
 		spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bullet_class_, muzzle_->GetComponentLocation(), rotation, spawn_params);
 
-		// @@ TODO: Don't know why exact reason why SpawnActor has failed.
 		if (bullet)
 		{
 			bullet->SetShooter(gun_owner_);

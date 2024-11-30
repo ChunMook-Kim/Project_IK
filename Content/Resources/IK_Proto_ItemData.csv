@@ -1,2 +1,3 @@
-CharID,item_name_,item_icon_,item_description_,item_logic_
-0,HP Potion,/Game/Images/HP_potion.HP_potion,Restores N HP,RestoreHP
+RowName,item_name_,item_icon_,item_description_,item_logic_,targeting_mode_,range_,radius_
+0,HP Potion,/Game/Images/HP_potion.HP_potion,Restores N HP,RestoreHP,Actor,0,0
+1,Missile,/Game/Images/missile_item.missile_item,Attack an area using missile,LaunchMissile,Location,500,150

@@ -126,10 +126,10 @@ void UItemPickerUI::InitializeChildWidgets()
 	}
 
 	for (int32 i = 0; i < 3; i++)
-	{
+	{	
 		TWeakObjectPtr<UButton> button = NewObject<UButton>();
 		FSlateBrush new_brush;
-		new_brush.SetResourceObject(item_candidates_[i]->item_icon_.Get());
+		new_brush.SetResourceObject(item_candidates_[i]->item_icon_);
 		new_brush.DrawAs = ESlateBrushDrawType::Type::Image;
 		new_brush.TintColor = FSlateColor(FLinearColor(0.69f, 0.69f, 0.69f));
 		new_brush.SetImageSize(FVector2D(128.0, 128.0));
@@ -145,7 +145,7 @@ void UItemPickerUI::InitializeChildWidgets()
 		{
 			button_slot->SetPadding(FMargin(64.0, 0.0));
 		}
-		buttons_.Add(button);
+		buttons_.Add(button.Get());
 	}
 
 

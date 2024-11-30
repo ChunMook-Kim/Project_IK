@@ -21,14 +21,17 @@ void UItem::InitializeItemUsingData(FItemData item_data)
 	item_data_ = item_data;
 }
 
-void UItem::UseItem(const FTargetData& TargetData)
+void UItem::UseItem(const FTargetResult& TargetResult)
 {
 	switch (item_data_.item_logic_)
 	{
 	case EItemLogicType::None:
 		break;
 	case EItemLogicType::RestoreHP:
-		RestoreHP(TargetData.target_actors_[0]);
+		RestoreHP(TargetResult.target_actors_[0]);
+		break;
+	case EItemLogicType::LaunchMissile:
+		LaunchMissile(TargetResult.target_actors_);
 		break;
 	default:
 		break;
@@ -38,6 +41,11 @@ void UItem::UseItem(const FTargetData& TargetData)
 FItemData UItem::GetData() const
 {
 	return item_data_;
+}
+
+FTargetParameters UItem::GetTargetParameters() const
+{
+	return FTargetParameters(item_data_.targeting_mode_, item_data_.range_, item_data_.radius_);
 }
 
 void UItem::RestoreHP(AActor* actor)
@@ -51,7 +59,21 @@ void UItem::RestoreHP(AActor* actor)
 	if (stat)
 	{
 		// @@ TODO: Change fixed data into some variable.
-		stat->SetHitPoint(stat->GetHitPoint() + 10.f);
-		UE_LOG(LogTemp, Warning, TEXT("Use Item (RestoreHP) has been used successfully!"));
+		stat->SetHitPoint(stat->GetHitPoint() + 50.f);
+	}
+}
+
+void UItem::LaunchMissile(TArray<AActor*> actors)
+{
+	for (int32 i = 0; i < actors.Num(); i++)
+	{
+		if (actors[i])
+		{
+			UCharacterStatComponent* stat = actors[i]->GetComponentByClass<UCharacterStatComponent>();
+			if (stat)
+			{
+				stat->SetHitPoint(stat->GetHitPoint() - 50.f);
+			}
+		}
 	}
 }
