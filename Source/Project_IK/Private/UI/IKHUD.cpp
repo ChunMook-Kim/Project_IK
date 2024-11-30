@@ -13,23 +13,33 @@ See LICENSE file in the project root for full license information.
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 
 #include "Kismet/GameplayStatics.h"
-#include "WorldSettings/IKGameModeBase.h"
 
 #include "UI/CombatResultUI.h"
-
-void AIKHUD::ToggleMapWidget()
-{
-	if (map_widget_)
-	{
-		const bool is_visible = map_widget_->IsVisible();
-		map_widget_->SetVisibility(is_visible ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
-	}
-}
+#include "Managers/LevelEndUIManager.h"
+#include "UI/ButtonBarWidget.h"
 
 void AIKHUD::DisplayCombatResult(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map)
 {
-	combat_result_widget_->SetVisibility(ESlateVisibility::Visible);
-	combat_result_widget_->UpdateResults(heroes, damage_map);
+	if (level_end_ui_manager_)
+	{
+		level_end_ui_manager_->DisplayCombatResult(heroes, damage_map);
+	}
+}
+
+void AIKHUD::SwitchUIByState(ELevelEndState state)
+{
+	if (level_end_ui_manager_)
+	{
+		level_end_ui_manager_->SwitchUIByState(state);
+	}
+}
+
+void AIKHUD::SynchroItemButtons()
+{
+	if (button_widget_)
+	{
+		button_widget_->SynchroItemButtons();
+	}
 }
 
 void AIKHUD::BeginPlay()
@@ -39,33 +49,18 @@ void AIKHUD::BeginPlay()
 	UWorld* world = GetWorld();
 
 	// Create the widget and add it to the viewport
-	if (HUD_widget_class_)
+	if (button_widget_class_)
 	{
-		HUD_widget_ = CreateWidget<UUserWidget>(world, HUD_widget_class_);
-		if (HUD_widget_)
+		button_widget_ = CreateWidget<UButtonBarWidget>(world, button_widget_class_);
+		if (button_widget_)
 		{
-			HUD_widget_->AddToViewport();
+			button_widget_->AddToViewport();
 		}
 	}
 
-	if (combat_result_widget_class_)
+	level_end_ui_manager_ = NewObject<ULevelEndUIManager>();
+	if (level_end_ui_manager_)
 	{
-		combat_result_widget_ = CreateWidget<UCombatResultUI>(world, combat_result_widget_class_);
-		if (combat_result_widget_)
-		{
-			combat_result_widget_->AddToViewport();
-			int32 hero_size = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(this))->GetHeroContainers().Num();
-			combat_result_widget_->SetHeroNumbers(hero_size);
-			combat_result_widget_->SetVisibility(ESlateVisibility::Hidden);
-		}
-	}
-
-	if (map_widget_class_)
-	{
-		map_widget_ = CreateWidget<UUserWidget>(world, map_widget_class_);
-		if (map_widget_)
-		{
-			map_widget_->AddToViewport();
-		}
+		level_end_ui_manager_->InitializeUI(combat_result_widget_class_, item_picker_widget_class_, map_widget_class_, world);
 	}
 }

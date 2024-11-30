@@ -25,6 +25,10 @@ UCLASS()
 class PROJECT_IK_API UButtonBarWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION()
+	void SynchroItemButtons();
 	
 protected:
 

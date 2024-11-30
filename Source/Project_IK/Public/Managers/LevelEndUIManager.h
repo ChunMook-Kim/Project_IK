@@ -1,0 +1,52 @@
+/******************************************************************************
+Copyright(C) 2024
+Author: sinil.kang(rtd99062@gmail.com)
+Creation Date : 11.20.2024
+Summary : Header file of a manager that handles UI controls after combats.
+
+Licensed under the MIT License.
+See LICENSE file in the project root for full license information.
+******************************************************************************/
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "UObject/NoExportTypes.h"
+#include "LevelEndUIManager.generated.h"
+
+UENUM(BlueprintType)
+enum class ELevelEndState : uint8
+{
+	ShowingCombatResultUI UMETA(DisplayName = "ShowingCombatResultUI"),
+	ShowingItemPickerUI UMETA(DisplayName = "ShowingItemPickerUI"),
+	ShowingMapUI UMETA(DisplayName = "ShowingMapUI"),
+};
+
+/**
+ * 
+ */
+UCLASS()
+class PROJECT_IK_API ULevelEndUIManager : public UObject
+{
+	GENERATED_BODY()
+public:
+	UFUNCTION()
+	void InitializeUI(TSubclassOf<class UCombatResultUI> combat_result_widget_class, TSubclassOf<class UItemPickerUI> item_picker_widget_class, TSubclassOf<class UUserWidget> map_widget_class, UWorld* world);
+
+	UFUNCTION()
+	void DisplayCombatResult(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map);
+
+	UFUNCTION()
+	void SwitchUIByState(ELevelEndState state);
+
+protected:
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TWeakObjectPtr<UCombatResultUI> combat_result_widget_;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TWeakObjectPtr<UItemPickerUI> item_picker_widget_;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI")
+	TWeakObjectPtr<UUserWidget> map_widget_;
+};

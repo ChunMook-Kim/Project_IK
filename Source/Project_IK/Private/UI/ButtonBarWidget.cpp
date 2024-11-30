@@ -20,6 +20,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/TargetingComponent.h"
 #include "WorldSettings/IKPlayerController.h"
 #include "Abilities/ItemInventory.h"
+#include "Abilities/Item.h"
 #include "WorldSettings/IKGameInstance.h"
 
 void UButtonBarWidget::NativeConstruct()
@@ -71,6 +72,8 @@ void UButtonBarWidget::NativeConstruct()
 	{
 		item_inventory_ = GI->GetItemInventory();
 	}
+
+	SynchroItemButtons();
 
 	caster_ = -1;
 	selected_item_index_ = -1;
@@ -137,7 +140,7 @@ void UButtonBarWidget::OnSkillButtonClicked3()
 
 void UButtonBarWidget::OnItemButtonClicked0()
 {
-	if (item_inventory_->GetItem(0))
+	if (item_inventory_->GetItem(0).IsValid())
 	{
 		caster_ = -1;
 		selected_item_index_ = 0;
@@ -147,21 +150,68 @@ void UButtonBarWidget::OnItemButtonClicked0()
 
 void UButtonBarWidget::OnItemButtonClicked1()
 {
-	if (item_inventory_->GetItem(1))
+	if (item_inventory_->GetItem(1).IsValid())
 	{
 		caster_ = -1;
 		selected_item_index_ = 1;
-		targeting_component_->StartItemTargeting(ETargetingMode::Location);
+		targeting_component_->StartItemTargeting(ETargetingMode::Actor);
 	}
 }
 
 void UButtonBarWidget::OnItemButtonClicked2()
 {
-	if (item_inventory_->GetItem(2))
+	if (item_inventory_->GetItem(2).IsValid())
 	{
 		caster_ = -1;
 		selected_item_index_ = 2;
-		targeting_component_->StartItemTargeting(ETargetingMode::Location);
+		targeting_component_->StartItemTargeting(ETargetingMode::Actor);
+	}
+}
+
+void UButtonBarWidget::SynchroItemButtons()
+{
+	UTexture2D* item_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/HP_potion.HP_potion")));
+	FSlateBrush normal_brush;
+	normal_brush.SetResourceObject(item_texture);
+	normal_brush.DrawAs = ESlateBrushDrawType::Type::Image;
+	normal_brush.SetImageSize(FVector2D(128.0, 128.0));
+	normal_brush.TintColor = FSlateColor(FLinearColor(0.69f, 0.69f, 0.69f));
+	FSlateBrush hovered_brush = normal_brush;
+	hovered_brush.TintColor = FSlateColor(FLinearColor(0.95f, 0.95f, 0.95f));
+	FSlateBrush pressed_brush = normal_brush;
+	pressed_brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f));
+	if (item_inventory_->GetItem(0) != nullptr)
+	{
+		item_button_0_->SetIsEnabled(true);
+		item_button_0_->WidgetStyle.SetNormal(normal_brush);
+		item_button_0_->WidgetStyle.SetHovered(hovered_brush);
+		item_button_0_->WidgetStyle.SetPressed(pressed_brush);
+	}
+	else
+	{
+		item_button_0_->SetIsEnabled(false);
+	}
+	if (item_inventory_->GetItem(1) != nullptr)
+	{
+		item_button_1_->SetIsEnabled(true);
+		item_button_1_->WidgetStyle.SetNormal(normal_brush);
+		item_button_1_->WidgetStyle.SetHovered(hovered_brush);
+		item_button_1_->WidgetStyle.SetPressed(pressed_brush);
+	}
+	else
+	{
+		item_button_1_->SetIsEnabled(false);
+	}
+	if (item_inventory_->GetItem(2) != nullptr)
+	{
+		item_button_2_->SetIsEnabled(true);
+		item_button_2_->WidgetStyle.SetNormal(normal_brush);
+		item_button_2_->WidgetStyle.SetHovered(hovered_brush);
+		item_button_2_->WidgetStyle.SetPressed(pressed_brush);
+	}
+	else
+	{
+		item_button_2_->SetIsEnabled(false);
 	}
 }
 
@@ -169,7 +219,23 @@ void UButtonBarWidget::InvokeSkills(const FTargetData& TargetData)
 {
 	if (caster_ < 0)
 	{
-		item_inventory_->GetItem(selected_item_index_)->ActivateSkill(TargetData);
+		item_inventory_->GetItem(selected_item_index_)->UseItem(TargetData);
+		item_inventory_->RemoveItem(selected_item_index_);
+
+		switch (selected_item_index_)
+		{
+		case 0:
+			item_button_0_->SetIsEnabled(false);
+			break;
+		case 1:
+			item_button_1_->SetIsEnabled(false);
+			break;
+		case 2:
+			item_button_2_->SetIsEnabled(false);
+			break;
+		default:
+			break;
+		}
 	}
 	else
 	{

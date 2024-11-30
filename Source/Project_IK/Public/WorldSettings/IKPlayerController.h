@@ -35,7 +35,6 @@ public:
 	class UTargetingComponent* GetTargetingComponent();
 
 protected:
-	void ToggleMap();
 
 	UPROPERTY(VisibleAnywhere, Category = "Targeting")
 	class UTargetingComponent* targeting_component_;

@@ -20,6 +20,7 @@ class UVerticalBox;
 class UTextBlock;
 class UHorizontalBox;
 class UCombatResultBlock;
+
 /**
  * 
  */
@@ -42,6 +43,8 @@ protected:
 	void InitializeChildWidgets();
 
 	void UpdateHPBars(float InDeltaTime);
+
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	// Widget pointers
 	UPROPERTY()

@@ -43,21 +43,12 @@ void AIKPlayerController::SetupInputComponent()
 
 	if (UEnhancedInputComponent* enhanced_input_component = Cast<UEnhancedInputComponent>(InputComponent))
 	{
-		enhanced_input_component->BindAction(toggle_map_action, ETriggerEvent::Triggered, this, &AIKPlayerController::ToggleMap);
+		// Deprecated code, but remain it for sake of later follwers.
+		//enhanced_input_component->BindAction(toggle_map_action, ETriggerEvent::Triggered, this, &AIKPlayerController::AFunctionYouWant);
 	}
 }
 
 UTargetingComponent* AIKPlayerController::GetTargetingComponent()
 {
 	return targeting_component_;
-}
-
-void AIKPlayerController::ToggleMap()
-{
-	AIKHUD* HUD = Cast<AIKHUD>(GetHUD());
-
-	if (HUD)
-	{
-		HUD->ToggleMapWidget();
-	}
 }

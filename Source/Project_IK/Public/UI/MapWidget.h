@@ -14,9 +14,13 @@ See LICENSE file in the project root for full license information.
 #include "Blueprint/UserWidget.h"
 #include "MapWidget.generated.h"
 
-class UButton;
-class UIKMaps;
 class UCanvasPanel;
+class UBorder;
+class UScrollBox;
+class UGridPanel;
+class UButton;
+
+class UIKMaps;
 
 /**
  * 
@@ -37,16 +41,28 @@ protected:
 
 	void InitializeWidgetTree();
 	void InitializeButtons();
-	inline FVector2D CalculateButtonPosition(int32 row, int32 col, const FVector2D& buttonSize) const;
-	inline FVector2f CalculateButtonCenterPosition(const FVector2D& position, const FVector2D& buttonSize) const;
+	void InitializeWidgets();
+
+	FVector2D GetButtonPosition(TWeakObjectPtr<UButton> button) const;
 
 	UFUNCTION()
 	void OpenLevel();
 
 	UPROPERTY()
-	UCanvasPanel* canvas_panel_;
-	TArray<UButton*> buttons_;
-	const UIKMaps* maps_;
+	TWeakObjectPtr<UCanvasPanel> root_canvas_panel_;
 
-	TArray<FVector2f> path_points_;
+	UPROPERTY()
+	TWeakObjectPtr<UBorder> background_border_;
+
+	UPROPERTY()
+	TWeakObjectPtr<UScrollBox> scroll_box_;
+
+	UPROPERTY()
+	TWeakObjectPtr<UGridPanel> buttons_holder_;
+
+	UPROPERTY()
+	TMap<FIntPoint, TWeakObjectPtr<UButton>> buttons_;
+
+	UPROPERTY()
+	TWeakObjectPtr<const UIKMaps> maps_;
 };

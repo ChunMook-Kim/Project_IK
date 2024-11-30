@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "Managers/CharacterDataManager.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
 #include "WorldSettings/IKGameModeBase.h"
 #include "Components/CharacterStatComponent.h"
 
@@ -23,11 +24,32 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/SkillContainer.h"
 
 #include "Abilities/MyTestSkill.h"
+#include "UI/IKMaps.h"
 
 
 ULevelTransitionManager::ULevelTransitionManager()
 	: Super::UObject()
 {
+}
+
+void ULevelTransitionManager::OpenLevel(UWorld* world, FIntPoint map_position)
+{
+	SaveData(world);
+
+	UIKGameInstance* instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(world));
+	FMapNode node = instance->GetMapPtr()->GetNode(map_position.X, map_position.Y);
+	switch (node.type)
+	{
+	case NodeType::None:
+		UE_LOG(LogTemp, Warning, TEXT("ULevelTransitionManager::OpenLevel -> Tried to go to invalid map node"));
+		break;
+	case NodeType::Enemy:
+		UGameplayStatics::OpenLevel(world, FName("CombatLevel"));
+		instance->GetMapPtr()->SetPlayerGridPosition(map_position);
+		break;
+	default:
+		break;
+	}
 }
 
 void ULevelTransitionManager::SaveData(UWorld* world)
@@ -47,13 +69,6 @@ void ULevelTransitionManager::SaveData(UWorld* world)
 			data_.Add(stat_component->GetCharacterData());
 		}
 	}
-}
-
-void ULevelTransitionManager::OpenLevel(FName LevelName, UWorld* world)
-{
-	SaveData(world);
-
-	UGameplayStatics::OpenLevel(world, LevelName);
 }
 
 void ULevelTransitionManager::PrepareLevel(UWorld* world)

@@ -60,8 +60,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Map")
 	const FMapNode& GetNode(int32 row, int32 col) const;
 
+	void SetPlayerGridPosition(FIntPoint position);
+	FIntPoint GetPlayerGridPosition() const;
+
 protected:
 	TArray<TArray<FMapNode>> map;
+	FIntPoint player_grid_position_;
 
 	void ClearMaps();
 	bool IsPathCrossed(int32 row, int32 col, int32 path_to) const;

@@ -13,7 +13,7 @@ See LICENSE file in the project root for full license information.
 
 #include "Abilities/ItemInventory.h"
 #include "UI/IKMaps.h"
-#include "Abilities/MyTestItem.h"
+#include "Managers/ItemDataManager.h"
 #include "Managers/CharacterDataManager.h"
 #include "Managers/LevelTransitionManager.h"
 
@@ -30,11 +30,18 @@ void UIKGameInstance::Init()
 	Super::Init();
 
 	InitializeCharacterDataManager();
+	InitializeItemDataManager();
+
 	InitializeItemInventory();
 	InitializeMaps();
 	InitializeLevelTransitionManager();
 
-	item_inventory_->AddItem(UMyTestItem::StaticClass());
+	item_inventory_->AddItem(*item_data_manager_->GetItemDataRandomly());
+}
+
+const UItemDataManager* UIKGameInstance::GetItemDataManager() noexcept
+{
+	return item_data_manager_;
 }
 
 const UCharacterDataManager* UIKGameInstance::GetCharacterDataManager() noexcept
@@ -47,7 +54,7 @@ UItemInventory* UIKGameInstance::GetItemInventory() const noexcept
 	return item_inventory_;
 }
 
-const UIKMaps* UIKGameInstance::GetMapPtr() const noexcept
+UIKMaps* UIKGameInstance::GetMapPtr() const noexcept
 {
 	return maps_;
 }
@@ -55,6 +62,11 @@ const UIKMaps* UIKGameInstance::GetMapPtr() const noexcept
 ULevelTransitionManager* UIKGameInstance::GetLevelTransitionManager() noexcept
 {
 	return level_transition_manager_;
+}
+
+void UIKGameInstance::InitializeItemDataManager()
+{
+	item_data_manager_ = NewObject<UItemDataManager>();
 }
 
 void UIKGameInstance::InitializeCharacterDataManager()

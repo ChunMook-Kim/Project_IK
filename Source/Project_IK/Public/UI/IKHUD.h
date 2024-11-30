@@ -14,7 +14,13 @@ See LICENSE file in the project root for full license information.
 #include "GameFramework/HUD.h"
 #include "IKHUD.generated.h"
 
+class UButtonBarWidget;
 class UCombatResultUI;
+class UItemPickerUI;
+class ULevelEndUIManager;
+
+
+enum class ELevelEndState : uint8;
 
 /**
  * 
@@ -24,33 +30,35 @@ class PROJECT_IK_API AIKHUD : public AHUD
 {
 	GENERATED_BODY()
 public:
-	void ToggleMapWidget();
-	
 	UFUNCTION()
 	void DisplayCombatResult(const TArray<AActor*>& heroes, const TMap<TWeakObjectPtr<AActor>, float>& damage_map);
+
+	UFUNCTION()
+	void SwitchUIByState(ELevelEndState state);
+
+	UFUNCTION()
+	void SynchroItemButtons();
 
 protected:
 	// Reference to the Widget Blueprint class to create
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<class UUserWidget> HUD_widget_class_;
+	TSubclassOf<class UButtonBarWidget> button_widget_class_;
 
 	// Reference to the widget instance
 	UPROPERTY(VisibleAnywhere, Category = "UI")
-	UUserWidget* HUD_widget_;
-
-	// Reference to the Widget Blueprint class to create
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<class UUserWidget> map_widget_class_;
-
-	// Reference to the widget instance
-	UPROPERTY(VisibleAnywhere, Category = "UI")
-	UUserWidget* map_widget_;
+	UButtonBarWidget* button_widget_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UCombatResultUI> combat_result_widget_class_;
 
-	UPROPERTY(VisibleAnywhere, Category = "UI")
-	UCombatResultUI* combat_result_widget_;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UItemPickerUI> item_picker_widget_class_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidget> map_widget_class_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	ULevelEndUIManager* level_end_ui_manager_;
 
 	virtual void BeginPlay() override;
 };

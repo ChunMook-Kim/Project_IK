@@ -28,9 +28,28 @@ void ARifle::FireWeapon(FVector target_pos)
 	if(cur_megazine_ > 0)
 	{
 		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(muzzle_->GetComponentLocation(), target_pos);
-		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bullet_class_, muzzle_->GetComponentLocation(), rotation);
-		bullet->SetShooter(gun_owner_);
-		cur_megazine_--;	
+		FActorSpawnParameters spawn_params;
+
+		// @@ TODO: Need to discuss use it even though there are side effects.
+			// While using AlwaysSpawn works, there might be Overlapping Actors, and GameplayMechanics 
+				// 1. Overlapping Actors
+						// It may cause physics glitches or visual artifacts
+				// 2. Gameplay Mechanics
+						// Spawn in obstructed areas might break immersion or functionality.
+						// Such as enemies spawning inside walls.
+		spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bullet_class_, muzzle_->GetComponentLocation(), rotation, spawn_params);
+
+		// @@ TODO: Don't know why exact reason why SpawnActor has failed.
+		if (bullet)
+		{
+			bullet->SetShooter(gun_owner_);
+			cur_megazine_--;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Spawning a bullet has failed!"));
+		}
 	}
 }
 
