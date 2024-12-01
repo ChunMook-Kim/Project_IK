@@ -49,6 +49,7 @@ void UItemPickerUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	FadeInOutHighlight(InDeltaTime);
 }
 
 void UItemPickerUI::NativeConstruct()
@@ -58,6 +59,9 @@ void UItemPickerUI::NativeConstruct()
 	InitializeChildWidgets();
 	
 	selected_button_index_ = -1;
+	highlight_current_opacity_ = 0.f;
+	highlight_fade_speed_ = 2.f;
+	is_highligh_fade_in_ = true;
 }
 
 void UItemPickerUI::InitializeRootWidget()
@@ -162,6 +166,7 @@ void UItemPickerUI::InitializeChildWidgets()
 	select_brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f));
 	select_button_->WidgetStyle.SetPressed(select_brush);
 	select_button_->OnClicked.AddDynamic(this, &UItemPickerUI::SelectButtonBindingFunc);
+	select_button_->SetIsEnabled(false);
 	UVerticalBoxSlot* select_button_slot = widgets_holder_->AddChildToVerticalBox(select_button_.Get());
 	if (select_button_slot)
 	{
@@ -181,6 +186,33 @@ void UItemPickerUI::InitializeChildWidgets()
 	// @@ TODO: Fixed size data is may not appropriate for the all environments.
 	highlight_image_slot->SetSize(FVector2D(125.0));
 	highlight_image_->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UItemPickerUI::FadeInOutHighlight(float InDeltaTime)
+{
+	if (selected_button_index_ >= 0)
+	{
+		if (is_highligh_fade_in_)
+		{	// Fade In
+			highlight_current_opacity_ += InDeltaTime * highlight_fade_speed_;
+			if (highlight_current_opacity_ >= 1.f)
+			{
+				highlight_current_opacity_ = 1.f;
+				is_highligh_fade_in_ = false;
+			}
+		}
+		else
+		{	// Fade Out
+			highlight_current_opacity_ -= InDeltaTime * highlight_fade_speed_;
+			if (highlight_current_opacity_ <= 0.f)
+			{
+				highlight_current_opacity_ = 0.f;
+				is_highligh_fade_in_ = true;
+			}
+		}
+
+		highlight_image_->SetRenderOpacity(highlight_current_opacity_);
+	}
 }
 
 void UItemPickerUI::SelectButtonBindingFunc()
@@ -210,6 +242,11 @@ void UItemPickerUI::ItemButtonOnClicked()
 	{
 		if (buttons_[i]->IsHovered())
 		{
+			// Enable selection button when an item selected
+			if (selected_button_index_ < 0)
+			{
+				select_button_->SetIsEnabled(true);
+			}
 			selected_button_index_ = i;
 
 
@@ -219,6 +256,7 @@ void UItemPickerUI::ItemButtonOnClicked()
 			{
 				highlight_image_->SetVisibility(ESlateVisibility::Visible);
 			}
+			description_->SetText(FText::FromString(item_candidates_[selected_button_index_]->item_description_));
 		}
 	}
 }

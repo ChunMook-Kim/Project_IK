@@ -41,6 +41,8 @@ protected:
 	void InitializeRootWidget();
 	void InitializeChildWidgets();
 
+	void FadeInOutHighlight(float InDeltaTime);
+
 	UFUNCTION()
 	void SelectButtonBindingFunc();
 	UFUNCTION()
@@ -61,4 +63,8 @@ protected:
 	TArray<FItemData*> item_candidates_;
 
 	int32 selected_button_index_;
+
+	float highlight_current_opacity_;
+	float highlight_fade_speed_;
+	bool is_highligh_fade_in_;
 };

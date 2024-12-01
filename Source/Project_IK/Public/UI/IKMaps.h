@@ -63,9 +63,13 @@ public:
 	void SetPlayerGridPosition(FIntPoint position);
 	FIntPoint GetPlayerGridPosition() const;
 
+	TArray<FIntPoint> GetPlayerVisitedPath() const;
+
 protected:
 	TArray<TArray<FMapNode>> map;
 	FIntPoint player_grid_position_;
+
+	TArray<FIntPoint> player_visited_path_;
 
 	void ClearMaps();
 	bool IsPathCrossed(int32 row, int32 col, int32 path_to) const;
