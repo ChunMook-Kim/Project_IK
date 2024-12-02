@@ -16,6 +16,8 @@ See LICENSE file in the project root for full license information.
 
 #include "Components/CharacterStatComponent.h"
 
+#include "Interfaces/Damageable.h"
+
 void UItem::InitializeItemUsingData(FItemData item_data)
 {
 	item_data_ = item_data;
@@ -69,10 +71,10 @@ void UItem::LaunchMissile(TArray<AActor*> actors)
 	{
 		if (actors[i])
 		{
-			UCharacterStatComponent* stat = actors[i]->GetComponentByClass<UCharacterStatComponent>();
-			if (stat)
+			IDamageable* damageable_actor = Cast<IDamageable>(actors[i]);
+			if (damageable_actor)
 			{
-				stat->SetHitPoint(stat->GetHitPoint() - 50.f);
+				damageable_actor->GetDamage(50.f, nullptr);
 			}
 		}
 	}

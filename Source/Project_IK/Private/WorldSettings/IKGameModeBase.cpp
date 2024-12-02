@@ -15,6 +15,8 @@ See LICENSE file in the project root for full license information.
 
 #include "Project_IK/Public/UI/IKHUD.h"
 #include "WorldSettings/IKGameInstance.h"
+#include "WorldSettings/IKPlayerController.h"
+#include "Components/TargetingComponent.h"
 #include "Managers/LevelTransitionManager.h"
 
 #include "UI/IKHUD.h"
@@ -73,14 +75,22 @@ void AIKGameModeBase::RemoveEnemy(AActor* enemy)
 
 void AIKGameModeBase::CheckWinLoseCondition()
 {
+	// Escape immediately if any side is not annihilated.
+	if (enemies_.Num() > 0 && heroes_.Num() > 0)
+	{
+		return;
+	}
+
+	DisplayCombatResult();
+	AIKPlayerController* pc = Cast<AIKPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	pc->GetTargetingComponent()->StopTargeting();
+
 	if (enemies_.Num() <= 0)
 	{
-		DisplayCombatResult();
 		OnGameWin();
 	}
 	else if (heroes_.Num() <= 0)
 	{
-		DisplayCombatResult();
 		OnGameLose();
 	}
 }
