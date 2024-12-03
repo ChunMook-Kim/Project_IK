@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Managers/CharacterDataManager.h"
+#include "Structs/DronePluginData.h"
 #include "CharacterStatComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDieDelegate);
@@ -88,6 +89,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetCharacterData(const FCharacterData& character_data) noexcept;
 
+	//Getter & Setter for Drone Plugins.
+	UFUNCTION(BlueprintPure)
+	FDronePluginData GetPeriodicDP() const noexcept;
+
+	UFUNCTION(BlueprintCallable)
+	void SetPeriodicDP(const FDronePluginData& dp_data) noexcept;
+
+	UFUNCTION(BlueprintPure)
+	FDronePluginData GetGeneralDP() const noexcept;
+
+	UFUNCTION(BlueprintCallable)
+	void SetGeneralDP(const FDronePluginData& dp_data) noexcept;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FDieDelegate Die;
 
@@ -107,4 +121,8 @@ private:
 	FCharacterData stat_;
 
 	FCharacterData max_stat_;
+
+	//TODO: 일단은 여기에 선언했지만, 더 좋은 자리가 있을 수 있다.
+	FDronePluginData periodic_plugin_data_;
+	FDronePluginData general_plugin_data_;
 };

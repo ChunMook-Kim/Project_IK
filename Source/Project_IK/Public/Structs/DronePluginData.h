@@ -19,6 +19,9 @@ struct FDronePluginData
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool is_empty = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool is_periodic = false;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FName name;

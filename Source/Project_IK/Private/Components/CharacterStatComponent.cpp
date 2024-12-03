@@ -192,3 +192,23 @@ void UCharacterStatComponent::SetCharacterData(const FCharacterData& character_d
 {
 	stat_ = character_data;
 }
+
+FDronePluginData UCharacterStatComponent::GetPeriodicDP() const noexcept
+{
+	return periodic_plugin_data_;
+}
+
+void UCharacterStatComponent::SetPeriodicDP(const FDronePluginData& dp_data) noexcept
+{
+	periodic_plugin_data_ = dp_data;
+}
+
+FDronePluginData UCharacterStatComponent::GetGeneralDP() const noexcept
+{
+	return general_plugin_data_;
+}
+
+void UCharacterStatComponent::SetGeneralDP(const FDronePluginData& dp_data) noexcept
+{
+	general_plugin_data_ = dp_data;
+}
