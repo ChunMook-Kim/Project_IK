@@ -18,7 +18,9 @@ class UCanvasPanel;
 class UBorder;
 class UScrollBox;
 class UGridPanel;
+class UGridSlot;
 class UButton;
+class UImage;
 
 class UIKMaps;
 
@@ -45,6 +47,8 @@ protected:
 
 	FVector2D GetButtonPosition(TWeakObjectPtr<UButton> button) const;
 
+	void SetSlotRowCol(UGridSlot* GridSlot, int32 Row, int32 Column);
+
 	UFUNCTION()
 	void OpenLevel();
 
@@ -62,6 +66,9 @@ protected:
 
 	UPROPERTY()
 	TMap<FIntPoint, TWeakObjectPtr<UButton>> buttons_;
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<UImage>> check_images_;
 
 	UPROPERTY()
 	TWeakObjectPtr<const UIKMaps> maps_;

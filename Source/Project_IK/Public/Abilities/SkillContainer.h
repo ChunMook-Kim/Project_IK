@@ -32,7 +32,7 @@ public:
 	virtual void InitializeComponent() override;
 
 	UFUNCTION(BlueprintCallable)
-	void InvokeSkills(const FTargetData& TargetData);
+	void InvokeSkills(const FTargetResult& TargetResult);
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkill(TSubclassOf<class USkillBase> skill);

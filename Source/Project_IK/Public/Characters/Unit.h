@@ -17,6 +17,7 @@ See LICENSE file in the project root for full license information.
 
 class UWidgetComponent;
 class UCharacterStatComponent;
+class UDamageUI;
 
 UCLASS()
 class PROJECT_IK_API AUnit : public ACharacter, public IDamageable
@@ -45,6 +46,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UWidgetComponent* hp_UI_;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UDamageUI> damage_UI_class_;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	FVector forward_dir_;

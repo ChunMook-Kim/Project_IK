@@ -17,6 +17,7 @@ See LICENSE file in the project root for full license information.
 class UButton;
 class USkillContainer;
 class UItemInventory;
+struct FTargetResult;
 
 /**
  * 
@@ -56,7 +57,7 @@ protected:
 	void OnItemButtonClicked2();
 
 	UFUNCTION()
-	void InvokeSkills(const FTargetData& TargetData);
+	void InvokeSkills(const FTargetResult& TargetResult);
 
 	UFUNCTION()
 	void FindCharacters();

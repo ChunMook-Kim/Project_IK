@@ -20,7 +20,7 @@ UMyTestSkill::UMyTestSkill()
 {
 }
 
-bool UMyTestSkill::ActivateSkill_Implementation(const FTargetData& TargetData)
+bool UMyTestSkill::ActivateSkill_Implementation(const FTargetResult& TargetResult)
 {
 	const bool is_energy_enough = SpendCost();
 	if (is_energy_enough == false)
@@ -28,10 +28,10 @@ bool UMyTestSkill::ActivateSkill_Implementation(const FTargetData& TargetData)
 		return false;	
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Skill executed in derived class! %s"), *TargetData.target_location_.ToString());
-	for (int32 i = 0; i < TargetData.target_actors_.Num(); ++i)
+	UE_LOG(LogTemp, Warning, TEXT("Skill executed in derived class! %s"), *TargetResult.target_location_.ToString());
+	for (int32 i = 0; i < TargetResult.target_actors_.Num(); ++i)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Selected %ith actor name: %s"), i, *TargetData.target_actors_[i]->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Selected %ith actor name: %s"), i, *TargetResult.target_actors_[i]->GetName());
 	}
 	return true;
 }

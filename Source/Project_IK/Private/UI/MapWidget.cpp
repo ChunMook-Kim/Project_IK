@@ -22,6 +22,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/GridPanel.h"
 #include "Components/GridSlot.h"
 #include "Components/Button.h"
+#include "Components/Image.h"
 
 #include "Blueprint/WidgetTree.h"
 #include "Rendering/DrawElements.h"
@@ -62,7 +63,7 @@ int32 UMapWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedG
 	FVector2D EndPoint = AllottedGeometry.GetLocalSize();  // Bottom-right corner based on widget size
 
 	// Define color and thickness
-	FLinearColor LineColor = FLinearColor::Red;
+	FLinearColor LineColor = FLinearColor::Red * 0.4f;
 	float LineThickness = 5.0f;
 	
 	FSlateClippingZone clipping_zone(scroll_box_->GetPaintSpaceGeometry());
@@ -85,15 +86,15 @@ int32 UMapWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedG
 
 				if (!departures->GetPaintSpaceGeometry().GetLocalSize().IsNearlyZero() && !arrivals->GetPaintSpaceGeometry().GetLocalSize().IsNearlyZero())
 				{
-					FSlateDrawElement::MakeLines(OutDrawElements, CurrentLayer, AllottedGeometry.ToPaintGeometry(), line, ESlateDrawEffect::None, LineColor, true, LineThickness);
+					static constexpr int32 DrawBelowButtons = -34;
+					FSlateDrawElement::MakeLines(OutDrawElements, CurrentLayer + DrawBelowButtons, AllottedGeometry.ToPaintGeometry(), line, ESlateDrawEffect::None, LineColor, true, LineThickness);
 				}
 			}
 		}
 	}
 	OutDrawElements.PopClip();
 
-	// Increase the layer ID if you plan to add more elements later
-	return CurrentLayer + 1;
+	return CurrentLayer;
 }
 
 void UMapWidget::NativeConstruct()
@@ -156,8 +157,7 @@ void UMapWidget::InitializeButtons()
 					if (button_slot)
 					{
 						button_slot->SetPadding(FMargin(32.f));
-						button_slot->SetColumn(j);
-						button_slot->SetRow(maps_->GetHeight() - 1 - i);
+						SetSlotRowCol(button_slot, i, j);
 					}
 
 					button->SetIsEnabled(false);
@@ -180,6 +180,35 @@ void UMapWidget::InitializeButtons()
 	}
 	// Update scroll bar
 	scroll_box_->ScrollWidgetIntoView(buttons_[player_grid_position].Get());
+
+
+
+	// Display check icons on visited nodes
+	check_images_.Empty();
+	const TArray<FIntPoint> visited_nodes = maps_->GetPlayerVisitedPath();
+	UTexture2D* check_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/check_icon.check_icon")));
+	FSlateBrush check_brush;
+	check_brush.SetResourceObject(check_texture);
+	check_brush.DrawAs = ESlateBrushDrawType::Type::Image;
+	check_brush.SetImageSize(FVector2D(128.0));
+	
+
+	for (size_t i = 0; i < visited_nodes.Num(); i++)
+	{
+		UImage* check = NewObject<UImage>();
+		check->SetBrush(check_brush);
+		UGridSlot* check_slot = buttons_holder_->AddChildToGrid(check);
+		if (check_slot)
+		{
+			check_slot->SetPadding(FMargin(16.f));
+			SetSlotRowCol(check_slot, visited_nodes[i].X, visited_nodes[i].Y);
+			static constexpr int32 DrawAboveButton = 1;
+			check_slot->SetLayer(DrawAboveButton);
+		}
+
+		TWeakObjectPtr<UButton> visited_button = buttons_[visited_nodes[i]];
+		visited_button->WidgetStyle.Disabled = visited_button->WidgetStyle.Normal;
+	}
 }
 
 void UMapWidget::InitializeWidgets()
@@ -210,6 +239,12 @@ void UMapWidget::InitializeWidgets()
 FVector2D UMapWidget::GetButtonPosition(TWeakObjectPtr<UButton> button) const
 {
 	return background_border_->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + scroll_box_->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + button->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0)) - FVector2D(0.0, scroll_box_->GetScrollOffset()) + (button->GetPaintSpaceGeometry().GetLocalSize() / 2.f);
+}
+
+void UMapWidget::SetSlotRowCol(UGridSlot* GridSlot, int32 Row, int32 Column)
+{
+	GridSlot->SetRow(maps_->GetHeight() - 1 - Row);
+	GridSlot->SetColumn(Column);
 }
 
 void UMapWidget::OpenLevel()

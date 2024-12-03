@@ -40,6 +40,7 @@ AHeroBase::AHeroBase()
 void AHeroBase::BeginPlay()
 {
 	Super::BeginPlay();
+	weapon_mechanics_->SetWeaponOwner(this);		
 	drone_ = GetWorld()->SpawnActor<AActor>(drone_bp_class_, drone_location_->GetComponentTransform());
 	
 	if(drone_ == nullptr)
