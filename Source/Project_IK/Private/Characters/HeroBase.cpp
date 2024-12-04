@@ -14,11 +14,13 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/SkillContainer.h"
 #include "AI/GunnerAIController.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/CharacterStatComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WeaponMechanics.h"
 #include "Kismet/GameplayStatics.h"
 #include "Weapons/Drone.h"
 #include "WorldSettings/IKGameModeBase.h"
+#include "Weapons/Drone.h"
 
 AHeroBase::AHeroBase()
 {
@@ -40,7 +42,7 @@ AHeroBase::AHeroBase()
 void AHeroBase::BeginPlay()
 {
 	Super::BeginPlay();
-	drone_ = GetWorld()->SpawnActor<AActor>(drone_bp_class_, drone_location_->GetComponentTransform());
+	drone_ = GetWorld()->SpawnActor<ADrone>(drone_bp_class_, drone_location_->GetComponentTransform());
 	
 	if(drone_ == nullptr)
 	{
@@ -50,6 +52,14 @@ void AHeroBase::BeginPlay()
 	{
 		Cast<ADrone>(drone_)->Initialize(this	);
 		drone_->AttachToComponent(drone_location_, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	}
+}
+
+void AHeroBase::Initialize()
+{
+	if(drone_)
+	{
+		drone_->SetPlugins(character_stat_component_->GetPeriodicDP(), character_stat_component_->GetGeneralDP());
 	}
 }
 

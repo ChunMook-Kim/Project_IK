@@ -193,22 +193,22 @@ void UCharacterStatComponent::SetCharacterData(const FCharacterData& character_d
 	stat_ = character_data;
 }
 
-FDronePluginData UCharacterStatComponent::GetPeriodicDP() const noexcept
+EDPType UCharacterStatComponent::GetPeriodicDP() const noexcept
 {
-	return periodic_plugin_data_;
+	return stat_.periodic_dp_;
 }
 
-void UCharacterStatComponent::SetPeriodicDP(const FDronePluginData& dp_data) noexcept
+void UCharacterStatComponent::SetPeriodicDP(const EDPType& dp_data) noexcept
 {
-	periodic_plugin_data_ = dp_data;
+	stat_.periodic_dp_ = dp_data;
 }
 
-FDronePluginData UCharacterStatComponent::GetGeneralDP() const noexcept
+EDPType UCharacterStatComponent::GetGeneralDP() const noexcept
 {
-	return general_plugin_data_;
+	return stat_.general_dp_;
 }
 
-void UCharacterStatComponent::SetGeneralDP(const FDronePluginData& dp_data) noexcept
+void UCharacterStatComponent::SetGeneralDP(const EDPType& dp_data) noexcept
 {
-	general_plugin_data_ = dp_data;
+	stat_.general_dp_ = dp_data;
 }

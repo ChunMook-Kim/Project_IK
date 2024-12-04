@@ -15,6 +15,7 @@ See LICENSE file in the project root for full license information.
 #include "Characters/Unit.h"
 #include "HeroBase.generated.h"
 
+class ADrone;
 class USphereComponent;
 class UPassiveMechanics;
 class UWeaponMechanics;
@@ -28,6 +29,7 @@ public:
 	AHeroBase();
 	virtual void BeginPlay() override;
 public:
+	virtual void Initialize();
 	virtual void Die() override;
 	
 	virtual void Reload() override;
@@ -62,5 +64,5 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero", meta = (AllowPrivateAccess = "true"))
 	USphereComponent* drone_location_;
 
-	AActor* drone_;
+	ADrone* drone_;
 };

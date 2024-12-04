@@ -11,6 +11,7 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Managers/EnumCluster.h"
 #include "Drone.generated.h"
 
 class USphereComponent;
@@ -34,6 +35,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void ActivateDronePlugin();
+	void SetPlugins(EDPType p_dp_data, EDPType g_dp_data);
 	float GetDronePluginHoldTime() const;
 	bool IsPluginAvailable() const;
 	void Die();

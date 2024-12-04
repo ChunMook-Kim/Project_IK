@@ -21,6 +21,7 @@ class UIKMaps;
 class UCharacterDataManager;
 class UItemDataManager;
 class ULevelTransitionManager;
+class UDronePluginManager;
 
 /**
  * 
@@ -45,6 +46,8 @@ public:
 	class UIKMaps* GetMapPtr() const noexcept;
 	UFUNCTION(BlueprintPure)
 	class ULevelTransitionManager* GetLevelTransitionManager() noexcept;
+	UFUNCTION(BlueprintPure)
+	const class UDronePluginManager* GetDronePluginManager() noexcept;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelTransition")
@@ -59,6 +62,7 @@ private:
 	void InitializeItemInventory();
 	void InitializeMaps();
 	void InitializeLevelTransitionManager();
+	void InitializeDronePluginManager();
 
 	UPROPERTY()
 	class UItemDataManager* item_data_manager_;
@@ -72,4 +76,7 @@ private:
 
 	UPROPERTY()
 	class ULevelTransitionManager* level_transition_manager_;
+
+	UPROPERTY()
+	class UDronePluginManager* drone_plugin_manager;
 };
