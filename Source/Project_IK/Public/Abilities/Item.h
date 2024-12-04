@@ -15,7 +15,7 @@ See LICENSE file in the project root for full license information.
 #include "Managers/ItemDataManager.h"
 #include "Item.generated.h"
 
-struct FTargetData;
+struct FTargetResult;
 
 /**
  * 
@@ -29,13 +29,17 @@ public:
 	void InitializeItemUsingData(FItemData item_data);
 
 	UFUNCTION()
-	void UseItem(const FTargetData& TargetData);
+	void UseItem(const FTargetResult& TargetResult);
 
 	UFUNCTION()
 	FItemData GetData() const;
+
+	UFUNCTION()
+	FTargetParameters GetTargetParameters() const;
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	FItemData item_data_;
 
 	void RestoreHP(AActor* actor);
+	void LaunchMissile(TArray<AActor*> actors);
 };

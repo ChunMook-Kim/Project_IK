@@ -21,10 +21,10 @@ ARifle::ARifle()
 	reload_duration_ = 1.5;
 }
 
-void ARifle::FireWeapon(FVector target_pos)
+void ARifle::FireWeapon(FVector target_pos, float damage)
 {
 	//TODO: 오브젝트 풀을 이용하면 최적화 가능.
-	Super::FireWeapon(target_pos);
+	Super::FireWeapon(target_pos, damage);
 	if(cur_megazine_ > 0)
 	{
 		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(muzzle_->GetComponentLocation(), target_pos);
@@ -40,10 +40,10 @@ void ARifle::FireWeapon(FVector target_pos)
 		spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bullet_class_, muzzle_->GetComponentLocation(), rotation, spawn_params);
 
-		// @@ TODO: Don't know why exact reason why SpawnActor has failed.
 		if (bullet)
 		{
 			bullet->SetShooter(gun_owner_);
+			bullet->SetDamage(damage);
 			cur_megazine_--;
 		}
 		else

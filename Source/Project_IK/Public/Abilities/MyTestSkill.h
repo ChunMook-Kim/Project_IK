@@ -29,7 +29,7 @@ class PROJECT_IK_API UMyTestSkill : public USkillBase
 public:
 	UMyTestSkill();
 
-	virtual bool ActivateSkill_Implementation(const FTargetData& TargetData) override;
+	virtual bool ActivateSkill_Implementation(const FTargetResult& TargetResult) override;
 
 private:
 

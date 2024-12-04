@@ -28,7 +28,6 @@ UTargetingComponent::UTargetingComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	is_targeting_ = false;
-	current_mode_ = ETargetingMode::None;	
 }
 
 
@@ -75,10 +74,10 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 	if (player_controller_->WasInputKeyJustPressed(EKeys::LeftMouseButton))
 	{
-		switch (current_mode_)
+		switch (target_parameters_.current_mode_)
 		{
 		case ETargetingMode::None:
-			OnTargetDataSelected.Broadcast(current_target_data_);
+			OnTargetResultSelected.Broadcast(current_target_result_);
 			StopTargeting();
 			break;
 		case ETargetingMode::Actor:
@@ -96,27 +95,27 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	}
 }
 
-void UTargetingComponent::StartSkillTargeting(AActor* invoker, ETargetingMode mode, float Range, float Radius)
+void UTargetingComponent::StartSkillTargeting(AActor* invoker, FTargetParameters TargetParams)
 {
 	is_targeting_ = true;
 	invoker_ = invoker;
-	current_mode_ = mode;
-	current_target_data_.range_ = Range;
-	current_target_data_.radius_ = Radius;
-	current_target_data_.target_actors_.Empty();
+	target_parameters_.current_mode_ = TargetParams.current_mode_;
+	target_parameters_.range_= TargetParams.range_;
+	target_parameters_.radius_= TargetParams.radius_;
+	current_target_result_.target_actors_.Empty();
 
 
-	range_decal_->DecalSize = FVector(current_target_data_.range_);
-	radius_decal_->DecalSize = FVector(current_target_data_.radius_);
-	sector_decal_->DecalSize = FVector(current_target_data_.range_);
+	range_decal_->DecalSize = FVector(target_parameters_.range_);
+	radius_decal_->DecalSize = FVector(target_parameters_.radius_);
+	sector_decal_->DecalSize = FVector(target_parameters_.range_);
 	UMaterialInstanceDynamic* dynamic_material = sector_decal_->CreateDynamicMaterialInstance();
 	if (dynamic_material)
 	{
-		dynamic_material->SetScalarParameterValue(FName("ArcWidth"), current_target_data_.radius_ / 360);
+		dynamic_material->SetScalarParameterValue(FName("ArcWidth"), target_parameters_.radius_ / 360);
 	}
 	
 
-	switch (mode)
+	switch (target_parameters_.current_mode_)
 	{
 	case ETargetingMode::None:
 		break;
@@ -142,25 +141,25 @@ void UTargetingComponent::StartSkillTargeting(AActor* invoker, ETargetingMode mo
 	}
 }
 
-void UTargetingComponent::StartItemTargeting(ETargetingMode mode, float Range, float Radius)
+void UTargetingComponent::StartItemTargeting(FTargetParameters TargetParams)
 {
 	is_targeting_ = true;
 	invoker_ = nullptr;
-	current_mode_ = mode;
-	current_target_data_.range_ = Range;
-	current_target_data_.radius_ = Radius;
+	target_parameters_.current_mode_ = TargetParams.current_mode_;
+	target_parameters_.range_ = TargetParams.range_;
+	target_parameters_.radius_ = TargetParams.radius_;
 
 
-	range_decal_->DecalSize = FVector(current_target_data_.range_);
-	radius_decal_->DecalSize = FVector(current_target_data_.radius_);
-	sector_decal_->DecalSize = FVector(current_target_data_.range_);
+	range_decal_->DecalSize = FVector(target_parameters_.range_);
+	radius_decal_->DecalSize = FVector(target_parameters_.radius_);
+	sector_decal_->DecalSize = FVector(target_parameters_.range_);
 	UMaterialInstanceDynamic* dynamic_material = sector_decal_->CreateDynamicMaterialInstance();
 	if (dynamic_material)
 	{
-		dynamic_material->SetScalarParameterValue(FName("ArcWidth"), current_target_data_.radius_ / 360);
+		dynamic_material->SetScalarParameterValue(FName("ArcWidth"), target_parameters_.radius_ / 360);
 	}
 
-	switch (mode)
+	switch (target_parameters_.current_mode_)
 	{
 	case ETargetingMode::None:
 		break;
@@ -187,7 +186,7 @@ void UTargetingComponent::StartItemTargeting(ETargetingMode mode, float Range, f
 void UTargetingComponent::StopTargeting()
 {
 	is_targeting_ = false;
-	current_mode_ = ETargetingMode::None;
+	target_parameters_.current_mode_ = ETargetingMode::None;
 	player_controller_->CurrentMouseCursor = EMouseCursor::Default;
 	CleanupTargetingVisuals();
 }
@@ -198,10 +197,10 @@ void UTargetingComponent::HandleActorTargeting()
 	FVector target_location = GetGroundLocation();
 	AActor* closest_actor = FindClosestActor(target_location);
 
-	current_target_data_.target_location_ = target_location;
-	current_target_data_.target_actors_.Add(closest_actor);
+	current_target_result_.target_location_ = target_location;
+	current_target_result_.target_actors_.Add(closest_actor);
 
-	OnTargetDataSelected.Broadcast(current_target_data_);
+	OnTargetResultSelected.Broadcast(current_target_result_);
 	StopTargeting();
 }
 
@@ -209,9 +208,29 @@ void UTargetingComponent::HandleLocationTargeting()
 {
 	FVector target_location = GetGroundLocation();
 
-	current_target_data_.target_location_ = ClampingOntoInvoker(target_location);
+	current_target_result_.target_location_ = ClampingOntoInvoker(target_location);
 
-	OnTargetDataSelected.Broadcast(current_target_data_);
+
+
+	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (game_mode)
+	{
+		auto enemies = game_mode->GetEnemyContainers();
+
+		for (AActor* actor : enemies)
+		{
+			FVector to_actor = actor->GetActorLocation() - current_target_result_.target_location_;
+
+			float distance_to_actor = to_actor.Size();
+			if (distance_to_actor <= target_parameters_.radius_)
+			{
+				current_target_result_.target_actors_.Add(actor);
+			}
+		}
+	}
+
+	OnTargetResultSelected.Broadcast(current_target_result_);
 	StopTargeting();
 }
 
@@ -226,7 +245,7 @@ void UTargetingComponent::HandleDirectionTargeting()
 	FVector target_location = GetGroundLocation();
 	FVector origin = invoker_->GetActorLocation();
 	FVector direction = target_location - origin;
-	current_target_data_.target_location_ = target_location;
+	current_target_result_.target_location_ = target_location;
 
 
 	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -239,15 +258,15 @@ void UTargetingComponent::HandleDirectionTargeting()
 		{
 			if (actor)
 			{
-				if (IsWithinSector(origin, direction, current_target_data_.range_, current_target_data_.radius_, actor->GetActorLocation()))
+				if (IsWithinSector(origin, direction, target_parameters_.range_, target_parameters_.radius_, actor->GetActorLocation()))
 				{
-					current_target_data_.target_actors_.Add(actor);
+					current_target_result_.target_actors_.Add(actor);
 				}
 			}
 		}
 	}
 
-	OnTargetDataSelected.Broadcast(current_target_data_);
+	OnTargetResultSelected.Broadcast(current_target_result_);
 	StopTargeting();
 }
 
@@ -320,21 +339,20 @@ void UTargetingComponent::UpdateTargetingVisuals()
 		invoker_location = FVector(10000, 10000, 10000);
 	}
 
-	if (current_mode_ == ETargetingMode::Actor)
+	if (target_parameters_.current_mode_ == ETargetingMode::Actor)
 	{
 		range_decal_->SetWorldLocation(invoker_location);
 
 		ApplyMaterialHighlight(FindClosestActor(GetGroundLocation()));
 	}
-	if (current_mode_ == ETargetingMode::Location)
+	if (target_parameters_.current_mode_ == ETargetingMode::Location)
 	{
 
 		radius_decal_->SetWorldLocation(target_location);
 		range_decal_->SetWorldLocation(invoker_location);
 	}
-	if (current_mode_ == ETargetingMode::Direction)
+	if (target_parameters_.current_mode_ == ETargetingMode::Direction)
 	{
-		// @@ TODO: Visuallize sector based on arc
 		sector_decal_->SetWorldLocation(invoker_location);
 
 		FVector direction = target_location - invoker_location;
@@ -414,9 +432,9 @@ FVector UTargetingComponent::ClampingOntoInvoker(const FVector& TargetLocation)
 	if (invoker_)
 	{
 		FVector owner_location = invoker_->GetActorLocation();
-		if (FVector::DistXY(owner_location, TargetLocation) >= current_target_data_.range_)
+		if (FVector::DistXY(owner_location, TargetLocation) >= target_parameters_.range_)
 		{
-			return ProjectPointOntoCircle(TargetLocation, owner_location, current_target_data_.range_);
+			return ProjectPointOntoCircle(TargetLocation, owner_location, target_parameters_.range_);
 		}
 	}
 

@@ -42,8 +42,10 @@ AHeroBase::AHeroBase()
 void AHeroBase::BeginPlay()
 {
 	Super::BeginPlay();
+
 	drone_ = GetWorld()->SpawnActor<ADrone>(drone_bp_class_, drone_location_->GetComponentTransform());
-	
+	weapon_mechanics_->SetWeaponOwner(this);		
+
 	if(drone_ == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed To create Drone!"));
@@ -84,7 +86,7 @@ void AHeroBase::Reload()
 
 void AHeroBase::Fire(AActor* target)
 {
-	weapon_mechanics_->FireWeapon(target);
+	weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
 	PlayAnimMontage(fire_montage_);
 }
 
@@ -95,7 +97,7 @@ bool AHeroBase::IsMagazineEmpty() const
 
 float AHeroBase::GetFireInterval() const
 {
-	return weapon_mechanics_->GetFireInterval();
+	return weapon_mechanics_->GetFireInterval() * character_stat_component_->GetAttackSpeed();
 }
 
 float AHeroBase::GetReloadDuration() const

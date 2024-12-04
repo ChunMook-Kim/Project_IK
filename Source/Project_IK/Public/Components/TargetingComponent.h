@@ -18,14 +18,14 @@ See LICENSE file in the project root for full license information.
 UENUM(BlueprintType)
 enum class ETargetingMode : uint8
 {
-	None,
-	Actor,
-	Location,
-	Direction,
+	None UMETA(DisplayName = "None"),
+	Actor UMETA(DisplayName = "Actor"),
+	Location UMETA(DisplayName = "Location"),
+	Direction UMETA(DisplayName = "Direction"),
 };
 
 USTRUCT(BlueprintType)
-struct FTargetData
+struct FTargetResult
 {
 	GENERATED_BODY()
 
@@ -37,17 +37,30 @@ struct FTargetData
 
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	FRotator target_rotation_ = FRotator::ZeroRotator;
+};
+
+USTRUCT(BlueprintType)
+struct FTargetParameters
+{
+	GENERATED_BODY()
+
+	FTargetParameters(ETargetingMode mode = ETargetingMode::None, float range = 0.f, float radius = 0.f)
+		: current_mode_(mode), range_(range), radius_(radius)
+	{	}
+
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
+	ETargetingMode current_mode_;
 
 	// How far selectable
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
-	float range_ = 1000.f;
+	float range_;
 
 	// A radius of selected area, an arc width for direction mode
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
-	float radius_ = 0.f;
+	float radius_;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetDataSelected, const FTargetData&, TargetData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetResultSelected, const FTargetResult&, TargetResult);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTargetingCanceled);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -70,16 +83,16 @@ public:
 
 
 	UPROPERTY(BlueprintAssignable, Category = "Targeting")
-	FOnTargetDataSelected OnTargetDataSelected;
+	FOnTargetResultSelected OnTargetResultSelected;
 
 	UPROPERTY(BlueprintAssignable, Category = "Targeting")
 	FOnTargetingCanceled OnTargetingCanceled;
 
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
-	void StartSkillTargeting(AActor* invoker, ETargetingMode mode, float Range = 500.f, float Radius = 50.f);
+	void StartSkillTargeting(AActor* invoker, FTargetParameters TargetParams);
 
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
-	void StartItemTargeting(ETargetingMode mode, float Range = 500.f, float Radius = 50.f);
+	void StartItemTargeting(FTargetParameters TargetParams);
 	UFUNCTION(BlueprintCallable, Category="Targeting")
 	void StopTargeting();
 
@@ -98,10 +111,10 @@ public:
 private:
 	UPROPERTY() 
 	AActor* targeting_visual_actor_;
-	ETargetingMode current_mode_;
 	bool is_targeting_;
 	APlayerController* player_controller_;
-	FTargetData current_target_data_;
+	FTargetParameters target_parameters_;
+	FTargetResult current_target_result_;
 
 	// Components for visual feedback
 	UPROPERTY()

@@ -41,6 +41,8 @@ protected:
 	void InitializeRootWidget();
 	void InitializeChildWidgets();
 
+	void FadeInOutHighlight(float InDeltaTime);
+
 	UFUNCTION()
 	void SelectButtonBindingFunc();
 	UFUNCTION()
@@ -54,11 +56,15 @@ protected:
 	TWeakObjectPtr<UTextBlock> title_;
 	TWeakObjectPtr<UTextBlock> description_;
 	TWeakObjectPtr<UHorizontalBox> buttons_holder_;
-	TArray<TWeakObjectPtr<UButton>> buttons_;
+	TArray<UButton*> buttons_;
 	TWeakObjectPtr<UButton> select_button_;
 	TWeakObjectPtr<UImage> highlight_image_;
 
 	TArray<FItemData*> item_candidates_;
 
 	int32 selected_button_index_;
+
+	float highlight_current_opacity_;
+	float highlight_fade_speed_;
+	bool is_highligh_fade_in_;
 };

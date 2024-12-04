@@ -34,9 +34,9 @@ public:
 	bool SpendCost();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool ActivateSkill(const FTargetData& TargetData);
+	bool ActivateSkill(const FTargetResult& TargetResult);
 
-	virtual bool ActivateSkill_Implementation(const FTargetData& TargetData) PURE_VIRTUAL(USkillBase::ActivateSkill_Implementation, return true;);
+	virtual bool ActivateSkill_Implementation(const FTargetResult& TargetResult) PURE_VIRTUAL(USkillBase::ActivateSkill_Implementation, return true;);
 
 protected:
 	UPROPERTY(VisibleAnywhere)

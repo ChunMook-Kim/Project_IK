@@ -13,6 +13,8 @@ See LICENSE file in the project root for full license information.
 #include "GameFramework/Character.h"
 #include "Weapons/Gun.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/Unit.h"
+#include "Components/CharacterStatComponent.h"
 
 // Sets default values for this component's properties
 UWeaponMechanics::UWeaponMechanics()
@@ -40,7 +42,7 @@ void UWeaponMechanics::BeginPlay()
 	EquipWeapon();
 }
 
-void UWeaponMechanics::FireWeapon(AActor* target)
+void UWeaponMechanics::FireWeapon(AActor* target, float damage)
 {
 	if(weapon_ref_)
 	{
@@ -51,16 +53,16 @@ void UWeaponMechanics::FireWeapon(AActor* target)
 		{
 			if(FMath::RandRange(0, 100) > 50)
 			{
-				weapon_ref_->FireWeapon(casted_target->GetMesh()->GetSocketLocation(head_socket_name_));
+				weapon_ref_->FireWeapon(casted_target->GetMesh()->GetSocketLocation(head_socket_name_), damage);
 			}
 			else
 			{
-				weapon_ref_->FireWeapon(target->GetActorLocation() - FVector(0, 0, 50));
+				weapon_ref_->FireWeapon(target->GetActorLocation() - FVector(0, 0, 50), damage);
 			}
 		}
 		else
 		{
-			weapon_ref_->FireWeapon(target->GetActorLocation());
+			weapon_ref_->FireWeapon(target->GetActorLocation(), damage);
 		}
 	}
 }

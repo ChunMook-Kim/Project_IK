@@ -32,7 +32,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 		
 	virtual void Reload();
-	virtual void FireWeapon(FVector target_pos);
+	virtual void FireWeapon(FVector target_pos, float damage);
 
 	bool IsMagazineEmpty() const;
 	float GetFireInterval() const;
