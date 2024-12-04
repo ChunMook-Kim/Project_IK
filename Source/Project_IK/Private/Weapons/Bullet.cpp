@@ -21,7 +21,7 @@ ABullet::ABullet()
 	movement_ = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovement"));
 	bullet_mesh_ = CreateDefaultSubobject<UStaticMeshComponent>(FName("StaticMesh"));
 	bullet_mesh_->SetupAttachment(collision_);
-	damage_ = 10.f;
+	damage_ = 0.f;
 	collision_->OnComponentBeginOverlap.AddDynamic(this, &ABullet::OnOverlapBegin);
 	
 	SetRootComponent(collision_);
@@ -43,4 +43,9 @@ void ABullet::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AA
 void ABullet::SetShooter(TWeakObjectPtr<AActor> shooter)
 {
 	shooter_ = shooter;
+}
+
+void ABullet::SetDamage(float damage)
+{
+	damage_ = damage;
 }

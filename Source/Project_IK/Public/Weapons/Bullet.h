@@ -30,6 +30,9 @@ public:
 	UFUNCTION()
 	void SetShooter(TWeakObjectPtr<AActor> shooter);
 
+	UFUNCTION()
+	void SetDamage(float damage);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
