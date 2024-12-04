@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "UObject/NoExportTypes.h"
+#include "Managers/EnumCluster.h"
 #include "CharacterDataManager.generated.h"
 
 /**
@@ -48,6 +49,12 @@ public:
 	float move_speed_;
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	float sight_range_;
+
+	//Drone Plugins
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+	EDPType periodic_dp_;
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+	EDPType general_dp_;
 };
 
 UCLASS()

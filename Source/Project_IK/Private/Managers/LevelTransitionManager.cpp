@@ -106,6 +106,7 @@ void ULevelTransitionManager::SpawnHeroes(UWorld* world)
 		hero->SpawnDefaultController();
 		hero->GetComponentByClass<USkillContainer>()->SetSkill(UMyTestSkill::StaticClass());
 		hero->GetComponentByClass<UCharacterStatComponent>()->SetCharacterData(data_[0]);
+		hero->Initialize();
 	}
 }
 
