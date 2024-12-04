@@ -34,20 +34,11 @@ void ADPI_FireRange::StartPassiveSkill()
 	unit_caster_ = Cast<AUnit>(caster_);
 	if(unit_caster_)
 	{
-		unit_caster_->GetCharacterStat()->
-		SetFireRange(unit_caster_->GetCharacterStat()->GetFireRange() + buff_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("General Buff Activated, cur fire range: %f"), unit_caster_->GetCharacterStat()->GetFireRange());
+		unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::FireRange, buff_amount_, false, 9999.f));
 	}
 }
 
 void ADPI_FireRange::FinishPassiveSkill()
 {
 	Super::FinishPassiveSkill();
-	unit_caster_ = Cast<AUnit>(caster_);
-	if(unit_caster_)
-	{
-		unit_caster_->GetCharacterStat()->
-		SetFireRange(unit_caster_->GetCharacterStat()->GetFireRange() - buff_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f"), unit_caster_->GetCharacterStat()->GetFireRange());
-	}
 }

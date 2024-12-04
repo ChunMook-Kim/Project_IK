@@ -19,10 +19,9 @@ See LICENSE file in the project root for full license information.
 
 // Sets default values
 UCharacterStatComponent::UCharacterStatComponent()
-	: character_id_(ECharacterID::Gunner)
+	: character_id_(ECharacterID::Gunner), max_hit_points_(0.f)
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 
 	bWantsInitializeComponent = true;
 }
@@ -48,16 +47,8 @@ void UCharacterStatComponent::InitializeComponent()
 		stat_.sight_range_ = character_data->sight_range_;
 
 
-		// They are initial data of each attributes. Theoretical oritical limitation will be implemented later
-		max_stat_.ability_power_ = stat_.ability_power_;
-		max_stat_.attack_ = stat_.attack_;
-		max_stat_.attack_speed_ = stat_.attack_speed_;
-		max_stat_.hit_point_ = stat_.hit_point_;
-		max_stat_.magazine_ = stat_.magazine_;
-
-		max_stat_.fire_range_ = stat_.fire_range_;
-		max_stat_.move_speed_ = stat_.move_speed_;
-		max_stat_.sight_range_ = stat_.sight_range_;
+		// They are initial data of each attributes. Theoretical limitation will be implemented later
+		max_hit_points_ = stat_.hit_point_;
 	}
 }
 
@@ -72,71 +63,81 @@ void UCharacterStatComponent::BeginPlay()
 void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunctionoverride)
 {
 	Super::TickComponent(DELTA, TickType, ThisTickFunctionoverride);
+
+	for (FBuff& buff : buffs_)
+	{
+		buff.time_remaining_ -= DeltaTime;
+	}
+
+	buffs_.RemoveAll([](const FBuff& buff)
+		{
+			return buff.time_remaining_ <= 0.f;
+		});
 }
 
 void UCharacterStatComponent::GetDamage(float DamageAmount)
 {
-	SetHitPoint(stat_.hit_point_ - DamageAmount);
+	SetHitPoint(GetHitPoint() - DamageAmount);
 }
 
 float UCharacterStatComponent::GetAbilityPower() const noexcept
 {
-	return stat_.ability_power_;
+	return CalculateStat(ECharacterStatType::AbillityPower);
 }
 
 float UCharacterStatComponent::GetAttack() const noexcept
 {
-	return stat_.attack_;
+	return CalculateStat(ECharacterStatType::Attack);
 }
 
 float UCharacterStatComponent::GetAttackSpeed() const noexcept
 {
-	return stat_.attack_speed_;
+	return CalculateStat(ECharacterStatType::AttackSpeed);
 }
 
 float UCharacterStatComponent::GetHitPoint() const noexcept
 {
-	return stat_.hit_point_;
+	return CalculateStat(ECharacterStatType::HitPoints);
 }
 
 float UCharacterStatComponent::GetMagazine() const noexcept
 {
-	return stat_.magazine_;
+	return CalculateStat(ECharacterStatType::Magazine);
 }
 
 float UCharacterStatComponent::GetFireRange() const noexcept
 {
-	return stat_.fire_range_;
+	return CalculateStat(ECharacterStatType::FireRange);
 }
 
 float UCharacterStatComponent::GetMoveSpeed() const noexcept
 {
-	return stat_.move_speed_;
+	return CalculateStat(ECharacterStatType::MoveSpeed);
 }
 
 float UCharacterStatComponent::GetSightRange() const noexcept
 {
-	return stat_.sight_range_;
+	return CalculateStat(ECharacterStatType::SightRange);
 }
 
 void UCharacterStatComponent::SetAbilityPower(float ability_power) noexcept
 {
-	stat_.ability_power_ = FMath::Min(ability_power, max_stat_.ability_power_);
+	stat_.ability_power_ = ability_power;
 }
 
 void UCharacterStatComponent::SetAttack(float attack) noexcept
 {
-	stat_.attack_ = FMath::Min(attack, max_stat_.attack_);
+	stat_.attack_ = attack;
 }
 
 void UCharacterStatComponent::SetAttackSpeed(float attack_speed) noexcept
 {
-	stat_.attack_speed_ = FMath::Min(attack_speed, max_stat_.attack_speed_);
+	stat_.attack_speed_ = attack_speed;
 }
 
 void UCharacterStatComponent::SetHitPoint(float hit_point) noexcept
 {
-	stat_.hit_point_ = FMath::Min(hit_point, max_stat_.hit_point_);
+	stat_.hit_point_ = FMath::Min(hit_point, GetMaxHitPoint());
 
 	OnHPChanged.Broadcast();
 	if (stat_.hit_point_ < KINDA_SMALL_NUMBER)
@@ -148,39 +149,58 @@ void UCharacterStatComponent::SetHitPoint(float hit_point) noexcept
 
 void UCharacterStatComponent::SetMagazine(float magazine) noexcept
 {
-	stat_.magazine_ = FMath::Min(magazine, max_stat_.magazine_);
+	stat_.magazine_ = magazine;
 }
 
 void UCharacterStatComponent::SetFireRange(float fire_range) noexcept
 {
-	stat_.fire_range_ = FMath::Min(fire_range, max_stat_.fire_range_);
+	stat_.fire_range_ = fire_range;
 }
 
 void UCharacterStatComponent::SetMoveSpeed(float move_speed) noexcept
 {
-	stat_.move_speed_ = FMath::Min(move_speed, max_stat_.move_speed_);
+	stat_.move_speed_ = move_speed;
 }
 
 void UCharacterStatComponent::SetSightRange(float sight_range) noexcept
 {
-	stat_.sight_range_ = FMath::Min(sight_range, max_stat_.sight_range_);
+	stat_.sight_range_ = sight_range;
 }
 
 float UCharacterStatComponent::GetHPRatio() const noexcept
-{
-	if (max_stat_.hit_point_ < KINDA_SMALL_NUMBER)
+{	// Don't calculate buffs because it calculates RATIO. The number caused by buffs will be simplified.
+	if (max_hit_points_ < KINDA_SMALL_NUMBER)
 	{
 		return 0.f;
 	}
 	else
 	{
-		return stat_.hit_point_ / max_stat_.hit_point_;
+		return stat_.hit_point_ / max_hit_points_;
 	}
 }
 
 float UCharacterStatComponent::GetMaxHitPoint() const noexcept
 {
-	return max_stat_.hit_point_;
+	float stat = max_hit_points_;
+	float percentage_bonus = 0.f;
+	float value_bonus = 0.f;
+
+	for (const FBuff& buff : buffs_)
+	{
+		if (buff.stat_type_ == ECharacterStatType::HitPoints)
+		{
+			if (buff.is_percentage_)
+			{
+				percentage_bonus += buff.value_;
+			}
+			else
+			{
+				value_bonus += buff.value_;
+			}
+		}
+	}
+
+	return (stat + value_bonus) * (1.f + percentage_bonus);
 }
 
 FCharacterData UCharacterStatComponent::GetCharacterData() const noexcept
@@ -191,4 +211,68 @@ FCharacterData UCharacterStatComponent::GetCharacterData() const noexcept
 void UCharacterStatComponent::SetCharacterData(const FCharacterData& character_data) noexcept
 {
 	stat_ = character_data;
+}
+
+float UCharacterStatComponent::CalculateStat(ECharacterStatType StatType) const
+{
+	float stat = GetBaseStat(StatType);
+
+	float percentage_bonus = 0.f;
+	float value_bonus = 0.f;
+
+	for (const FBuff& buff : buffs_)
+	{
+		if (buff.stat_type_ == StatType)
+		{
+			if (buff.is_percentage_)
+			{
+				percentage_bonus += buff.value_;
+			}
+			else
+			{
+				value_bonus += buff.value_;
+			}
+		}
+	}
+
+	return (stat + value_bonus) * (1.f + percentage_bonus);
+}
+
+float UCharacterStatComponent::GetBaseStat(ECharacterStatType StatType) const
+{
+	switch (StatType)
+	{
+	case ECharacterStatType::AbillityPower:
+		return stat_.ability_power_;
+		break;
+	case ECharacterStatType::Attack:
+		return stat_.attack_;
+		break;
+	case ECharacterStatType::AttackSpeed:
+		return stat_.attack_speed_;
+		break;
+	case ECharacterStatType::HitPoints:
+		return stat_.hit_point_;
+		break;
+	case ECharacterStatType::Magazine:
+		return stat_.magazine_;
+		break;
+	case ECharacterStatType::FireRange:
+		return stat_.fire_range_;
+		break;
+	case ECharacterStatType::MoveSpeed:
+		return stat_.move_speed_;
+		break;
+	case ECharacterStatType::SightRange:
+		return stat_.sight_range_;
+		break;
+	default:
+		break;
+	}
+	return 0.f;
+}
+
+void UCharacterStatComponent::ApplyBuff(FBuff buff)
+{	// @@ TODO: Implement here to distinguish stackable vs non-stackable buffs.
+	buffs_.Add(buff);
 }

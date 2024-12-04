@@ -41,20 +41,11 @@ void ADPI_FireRateBurst::StartPassiveSkill()
 	unit_caster_ = Cast<AUnit>(caster_);
 	if(unit_caster_)
 	{
-		unit_caster_->GetCharacterStat()->
-		SetAttackSpeed(unit_caster_->GetCharacterStat()->GetAttackSpeed() / accelerate_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f, divided: %f"), unit_caster_->GetCharacterStat()->GetAttackSpeed(), accelerate_amount_);
+		unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, -1.f / accelerate_amount_, true, duration_));
 	}
 }
 
 void ADPI_FireRateBurst::FinishPassiveSkill()
 {
 	Super::FinishPassiveSkill();
-	unit_caster_ = Cast<AUnit>(caster_);
-	if(unit_caster_)
-	{
-		unit_caster_->GetCharacterStat()->
-		SetAttackSpeed(unit_caster_->GetCharacterStat()->GetAttackSpeed() * accelerate_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Finished, cur speed: %f, divided: %f"), unit_caster_->GetCharacterStat()->GetAttackSpeed(), accelerate_amount_);
-	}
 }
