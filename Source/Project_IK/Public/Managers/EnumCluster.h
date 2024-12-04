@@ -21,9 +21,3 @@ enum class EDPType : uint8
 	FireRange UMETA(DisplayName = "Fire Range"),
 	INVALID UMETA(DisplayName = "Invalid")
 };
-
-UCLASS(BlueprintType)
-class PROJECT_IK_API UEnumCluster : public UObject
-{
-	GENERATED_BODY()
-};
