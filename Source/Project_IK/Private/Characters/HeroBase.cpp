@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/SkillContainer.h"
 #include "AI/GunnerAIController.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/CharacterStatComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WeaponMechanics.h"
 #include "Kismet/GameplayStatics.h"
@@ -75,7 +76,7 @@ void AHeroBase::Reload()
 
 void AHeroBase::Fire(AActor* target)
 {
-	weapon_mechanics_->FireWeapon(target);
+	weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
 	PlayAnimMontage(fire_montage_);
 }
 
@@ -86,7 +87,7 @@ bool AHeroBase::IsMagazineEmpty() const
 
 float AHeroBase::GetFireInterval() const
 {
-	return weapon_mechanics_->GetFireInterval();
+	return weapon_mechanics_->GetFireInterval() * character_stat_component_->GetAttackSpeed();
 }
 
 float AHeroBase::GetReloadDuration() const

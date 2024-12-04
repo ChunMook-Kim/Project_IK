@@ -21,10 +21,10 @@ ARifle::ARifle()
 	reload_duration_ = 1.5;
 }
 
-void ARifle::FireWeapon(FVector target_pos)
+void ARifle::FireWeapon(FVector target_pos, float damage)
 {
 	//TODO: 오브젝트 풀을 이용하면 최적화 가능.
-	Super::FireWeapon(target_pos);
+	Super::FireWeapon(target_pos, damage);
 	if(cur_megazine_ > 0)
 	{
 		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(muzzle_->GetComponentLocation(), target_pos);
@@ -43,6 +43,7 @@ void ARifle::FireWeapon(FVector target_pos)
 		if (bullet)
 		{
 			bullet->SetShooter(gun_owner_);
+			bullet->SetDamage(damage);
 			cur_megazine_--;
 		}
 		else

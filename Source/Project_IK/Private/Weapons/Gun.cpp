@@ -47,7 +47,7 @@ void AGun::Reload()
 	cur_megazine_ = max_megazine_;
 }
 
-void AGun::FireWeapon(FVector target_pos)
+void AGun::FireWeapon(FVector target_pos, float damage)
 {
 }
 
