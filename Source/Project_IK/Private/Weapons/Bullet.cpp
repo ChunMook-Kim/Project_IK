@@ -21,8 +21,13 @@ ABullet::ABullet()
 	movement_ = CreateDefaultSubobject<UProjectileMovementComponent>(FName("ProjectileMovement"));
 	bullet_mesh_ = CreateDefaultSubobject<UStaticMeshComponent>(FName("StaticMesh"));
 	bullet_mesh_->SetupAttachment(collision_);
-	damage_ = 0.f;
+	
 	collision_->OnComponentBeginOverlap.AddDynamic(this, &ABullet::OnOverlapBegin);
+	movement_->InitialSpeed = 1000.f;
+	movement_->ProjectileGravityScale = 0.f;
+	
+	damage_ = 0.f;
+
 	
 	SetRootComponent(collision_);
 }
@@ -33,11 +38,24 @@ void ABullet::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ABullet::SetInUse(bool in_use)
+{
+	Super::SetInUse(in_use);
+	if(in_use_)
+	{
+		movement_->Velocity = GetActorForwardVector() * movement_->InitialSpeed;
+	}
+	else
+	{
+		movement_->Velocity = FVector::ZeroVector;
+	}
+}
+
 void ABullet::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	IDamageable* casted_damage_logic = Cast<IDamageable>(OtherActor);
 	if(casted_damage_logic) casted_damage_logic->GetDamage(damage_, shooter_);
-	Destroy();
+	ReturnToPool();
 }
 
 void ABullet::SetShooter(TWeakObjectPtr<AActor> shooter)

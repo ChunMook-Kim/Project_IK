@@ -10,6 +10,7 @@ See LICENSE file in the project root for full license information.
 
 #include "Weapons/Gun.h"
 #include "Components/SphereComponent.h"
+#include "Components/ObjectPoolComponent.h"
 
 // Sets default values
 AGun::AGun()
@@ -18,6 +19,7 @@ AGun::AGun()
 	PrimaryActorTick.bCanEverTick = true;
 	gun_mesh_ = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	muzzle_ = CreateDefaultSubobject<USphereComponent>(TEXT("Muzzle"));
+	object_pool_component_ = CreateDefaultSubobject<UObjectPoolComponent>(TEXT("ObjectPool"));
 	
 	gun_mesh_->SetCollisionProfileName(TEXT("NoCollision"));
 	muzzle_->SetCollisionProfileName(TEXT("NoCollision"));
