@@ -21,6 +21,7 @@ class UIKMaps;
 class UCharacterDataManager;
 class UItemDataManager;
 class ULevelTransitionManager;
+class UTextureManager;
 
 /**
  * 
@@ -45,6 +46,8 @@ public:
 	class UIKMaps* GetMapPtr() const noexcept;
 	UFUNCTION(BlueprintPure)
 	class ULevelTransitionManager* GetLevelTransitionManager() noexcept;
+	UFUNCTION(BlueprintPure)
+	const class UTextureManager* GetTextureManager() const noexcept;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelTransition")
@@ -59,6 +62,7 @@ private:
 	void InitializeItemInventory();
 	void InitializeMaps();
 	void InitializeLevelTransitionManager();
+	void InitializeTextureManager();
 
 	UPROPERTY()
 	class UItemDataManager* item_data_manager_;
@@ -72,4 +76,7 @@ private:
 
 	UPROPERTY()
 	class ULevelTransitionManager* level_transition_manager_;
+
+	UPROPERTY()
+	class UTextureManager* texture_manager_;
 };

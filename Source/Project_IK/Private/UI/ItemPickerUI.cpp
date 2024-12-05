@@ -30,6 +30,7 @@ See LICENSE file in the project root for full license information.
 #include "UI/IKHUD.h"
 #include "Managers/LevelEndUIManager.h"
 #include "Managers/ItemDataManager.h"
+#include "Managers/TextureManager.h"
 
 
 bool UItemPickerUI::Initialize()
@@ -152,8 +153,7 @@ void UItemPickerUI::InitializeChildWidgets()
 		buttons_.Add(button.Get());
 	}
 
-
-	UTexture2D* select_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/take_it_button.take_it_button")));
+	UTexture2D* select_texture = game_instance->GetTextureManager()->GetTexture(ETextureID::TakeItButton);
 	select_button_ = NewObject<UButton>();
 	FSlateBrush select_brush;
 	select_brush.SetResourceObject(select_texture);
@@ -175,7 +175,7 @@ void UItemPickerUI::InitializeChildWidgets()
 		select_button_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
 	}
 
-	UTexture2D* highlight_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Images/highlight_image.highlight_image")));
+	UTexture2D* highlight_texture = game_instance->GetTextureManager()->GetTexture(ETextureID::HighlightImage);
 	highlight_image_ = NewObject<UImage>();
 	FSlateBrush highlight_brush;
 	highlight_brush.SetResourceObject(highlight_texture);

@@ -48,6 +48,9 @@ public:
 	ECharacterStatType  stat_type_;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	UTexture2D* buff_icon_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
 	float value_;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
@@ -62,11 +65,11 @@ public:
 
 
 	FBuff()
-		: stat_type_(ECharacterStatType::Attack), value_(0.f), is_percentage_(false), duration_(0.f), time_remaining_(0.f)
+		: stat_type_(ECharacterStatType::Attack), buff_icon_(nullptr), value_(0.f), is_percentage_(false), duration_(0.f), time_remaining_(0.f)
 	{}
 
-	FBuff(ECharacterStatType StatType, float Value, bool IsPercentage, float Duration)
-		: stat_type_(StatType), value_(Value), is_percentage_(IsPercentage), duration_(Duration), time_remaining_(Duration)
+	FBuff(ECharacterStatType StatType, UTexture2D* Texture, float Value, bool IsPercentage, float Duration)
+		: stat_type_(StatType), buff_icon_(Texture), value_(Value), is_percentage_(IsPercentage), duration_(Duration), time_remaining_(Duration)
 	{}
 };
 
@@ -141,6 +144,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyBuff(FBuff buff);
+
+	UFUNCTION(BlueprintPure)
+	TArray<FBuff> GetBuffs() const;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FDieDelegate Die;

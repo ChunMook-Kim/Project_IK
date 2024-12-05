@@ -23,6 +23,10 @@ See LICENSE file in the project root for full license information.
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/TextBlock.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
+#include "Managers/TextureManager.h"
+
 bool UCombatResultBlock::Initialize()
 {
 	bool success = Super::Initialize();
@@ -82,12 +86,19 @@ void UCombatResultBlock::InitializeRootWidget()
 
 void UCombatResultBlock::InitializeChildWidgets()
 {
+	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!game_instance)
+	{
+		return;
+	}
+	const UTextureManager* texture_manager = game_instance->GetTextureManager();
+
 	// Init a portrait image component
 	hero_portrait_ = NewObject<UImage>();
 	FString hero_portrait_unique_name = MakeUniqueObjectName(GetOuter(), hero_portrait_->GetClass(), TEXT("Hero portrait")).ToString();
 	hero_portrait_->Rename(*hero_portrait_unique_name);
 	// @@ TODO: Change portraits by targeted hero not using default.
-	UTexture2D* hero_portrait_texture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/default_portrait.default_portrait"));
+	UTexture2D* hero_portrait_texture = texture_manager->GetTexture(ETextureID::DefaultPortrait);
 	if (!hero_portrait_texture)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Loading hero portrait image in CombatResultBlock has failed!"));
@@ -142,7 +153,8 @@ void UCombatResultBlock::InitializeChildWidgets()
 	deal_icon_ = NewObject<UImage>();
 	FString deal_icon_unique_name = MakeUniqueObjectName(GetOuter(), deal_holder_->GetClass(), TEXT("Deal icon")).ToString();
 	deal_icon_->Rename(*deal_icon_unique_name);
-	UTexture2D* deal_texture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/damage_icon.damage_icon"));
+
+	UTexture2D* deal_texture = texture_manager->GetTexture(ETextureID::DamageIcon);
 	if (!deal_texture)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Loading damage icon image has failed!"));

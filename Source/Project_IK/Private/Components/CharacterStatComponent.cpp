@@ -276,3 +276,8 @@ void UCharacterStatComponent::ApplyBuff(FBuff buff)
 {	// @@ TODO: Implement here to distinguish stackable vs non-stackable buffs.
 	buffs_.Add(buff);
 }
+
+TArray<FBuff> UCharacterStatComponent::GetBuffs() const
+{
+	return buffs_;
+}

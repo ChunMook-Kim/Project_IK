@@ -16,6 +16,7 @@ See LICENSE file in the project root for full license information.
 #include "Managers/ItemDataManager.h"
 #include "Managers/CharacterDataManager.h"
 #include "Managers/LevelTransitionManager.h"
+#include "Managers/TextureManager.h"
 
 #include "Characters/HeroBase.h"
 #include "Characters/EnemyBase.h"
@@ -35,6 +36,7 @@ void UIKGameInstance::Init()
 	InitializeItemInventory();
 	InitializeMaps();
 	InitializeLevelTransitionManager();
+	InitializeTextureManager();
 
 	item_inventory_->AddItem(*item_data_manager_->GetItemDataRandomly());
 }
@@ -64,6 +66,11 @@ ULevelTransitionManager* UIKGameInstance::GetLevelTransitionManager() noexcept
 	return level_transition_manager_;
 }
 
+const UTextureManager* UIKGameInstance::GetTextureManager() const noexcept
+{
+	return texture_manager_;
+}
+
 void UIKGameInstance::InitializeItemDataManager()
 {
 	item_data_manager_ = NewObject<UItemDataManager>();
@@ -89,4 +96,10 @@ void UIKGameInstance::InitializeLevelTransitionManager()
 {
 	level_transition_manager_ = NewObject<ULevelTransitionManager>();
 	level_transition_manager_->SetActorBlueprints(hero_blueprint_, enemy_blueprint_);
+}
+
+void UIKGameInstance::InitializeTextureManager()
+{
+	texture_manager_ = NewObject<UTextureManager>();
+	texture_manager_->InitializeTextures();
 }

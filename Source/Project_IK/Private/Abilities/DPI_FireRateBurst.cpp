@@ -12,6 +12,10 @@ See LICENSE file in the project root for full license information.
 #include "Characters/Unit.h"
 #include "Components/CharacterStatComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
+#include "Managers/TextureManager.h"
+
 ADPI_FireRateBurst::ADPI_FireRateBurst()
 {
 	is_periodic_ = true;
@@ -41,7 +45,12 @@ void ADPI_FireRateBurst::StartPassiveSkill()
 	unit_caster_ = Cast<AUnit>(caster_);
 	if(unit_caster_)
 	{
-		unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, -1.f / accelerate_amount_, true, duration_));
+		UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		if (game_instance)
+		{
+			UTexture2D* texture = game_instance->GetTextureManager()->GetTexture(ETextureID::FireRateBurst);
+			unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, texture, -1.f / accelerate_amount_, true, duration_));
+		}
 	}
 }
 
