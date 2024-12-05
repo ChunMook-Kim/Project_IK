@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "GameFramework/Actor.h"
 #include "Gun.generated.h"
 
+class UObjectPoolComponent;
 class USphereComponent;
 UCLASS()
 class PROJECT_IK_API AGun : public AActor
@@ -48,6 +49,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gun", meta = (AllowPrivateAccess = "true", BindWidget))
 	USphereComponent* muzzle_;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gun", meta = (AllowPrivateAccess = "true", BindWidget))
+	UObjectPoolComponent* object_pool_component_;
 
 	UPROPERTY(VisibleAnywhere, Category = "Gun")
 	TWeakObjectPtr<AActor> gun_owner_;

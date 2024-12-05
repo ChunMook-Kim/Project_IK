@@ -10,6 +10,7 @@ See LICENSE file in the project root for full license information.
 
 #include "Weapons/Rifle.h"
 #include "Weapons/Bullet.h"
+#include "Components/ObjectPoolComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -23,13 +24,9 @@ ARifle::ARifle()
 
 void ARifle::FireWeapon(FVector target_pos, float damage)
 {
-	//TODO: 오브젝트 풀을 이용하면 최적화 가능.
 	Super::FireWeapon(target_pos, damage);
 	if(cur_megazine_ > 0)
 	{
-		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(muzzle_->GetComponentLocation(), target_pos);
-		FActorSpawnParameters spawn_params;
-
 		// @@ TODO: Need to discuss use it even though there are side effects.
 			// While using AlwaysSpawn works, there might be Overlapping Actors, and GameplayMechanics 
 				// 1. Overlapping Actors
@@ -37,9 +34,11 @@ void ARifle::FireWeapon(FVector target_pos, float damage)
 				// 2. Gameplay Mechanics
 						// Spawn in obstructed areas might break immersion or functionality.
 						// Such as enemies spawning inside walls.
-		spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		ABullet* bullet = GetWorld()->SpawnActor<ABullet>(bullet_class_, muzzle_->GetComponentLocation(), rotation, spawn_params);
 
+		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(muzzle_->GetComponentLocation(), target_pos);
+		FVector scale = object_pool_component_->GetObjectClass()->GetDefaultObject<AActor>()->GetRootComponent()->GetRelativeScale3D();
+		FTransform spawn_transform(rotation, muzzle_->GetComponentLocation(), scale);
+		ABullet* bullet = Cast<ABullet>(object_pool_component_->SpawnFromPool(spawn_transform));
 		if (bullet)
 		{
 			bullet->SetShooter(gun_owner_);
