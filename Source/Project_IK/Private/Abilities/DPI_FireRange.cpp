@@ -12,6 +12,10 @@ See LICENSE file in the project root for full license information.
 #include "Characters/Unit.h"
 #include "Components/CharacterStatComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
+#include "Managers/TextureManager.h"
+
 ADPI_FireRange::ADPI_FireRange()
 {
 	is_periodic_ = false;
@@ -34,20 +38,16 @@ void ADPI_FireRange::StartPassiveSkill()
 	unit_caster_ = Cast<AUnit>(caster_);
 	if(unit_caster_)
 	{
-		unit_caster_->GetCharacterStat()->
-		SetFireRange(unit_caster_->GetCharacterStat()->GetFireRange() + buff_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("General Buff Activated, cur fire range: %f"), unit_caster_->GetCharacterStat()->GetFireRange());
+		UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		if (game_instance)
+		{
+			UTexture2D* texture = game_instance->GetTextureManager()->GetTexture("fire_range");
+			unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::FireRange, texture, buff_amount_, false, 9999.f));
+		}
 	}
 }
 
 void ADPI_FireRange::FinishPassiveSkill()
 {
 	Super::FinishPassiveSkill();
-	unit_caster_ = Cast<AUnit>(caster_);
-	if(unit_caster_)
-	{
-		unit_caster_->GetCharacterStat()->
-		SetFireRange(unit_caster_->GetCharacterStat()->GetFireRange() - buff_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f"), unit_caster_->GetCharacterStat()->GetFireRange());
-	}
 }

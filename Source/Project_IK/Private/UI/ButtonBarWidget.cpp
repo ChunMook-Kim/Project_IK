@@ -217,7 +217,7 @@ void UButtonBarWidget::SynchroItemButtons()
 	}
 	if (item_inventory_->GetItem(2) != nullptr)
 	{
-		UTexture2D* item_icon = item_inventory_->GetItem(1)->GetData().item_icon_;
+		UTexture2D* item_icon = item_inventory_->GetItem(2)->GetData().item_icon_;
 		normal_brush.SetResourceObject(item_icon);
 		hovered_brush.SetResourceObject(item_icon);
 		pressed_brush.SetResourceObject(item_icon);

@@ -25,6 +25,54 @@ enum class ECharacterID : uint8
 	Cover UMETA(DisplayName = "Cover"),
 };
 
+UENUM(BlueprintType)
+enum class ECharacterStatType : uint8
+{
+	AbillityPower UMETA(DisplayName = "AbilityPower"),
+	Attack UMETA(DisplayName = "Attack"),
+	AttackSpeed UMETA(DisplayName = "AttackSpeed"),
+	HitPoints UMETA(DisplayName = "HitPoints"),
+	Magazine UMETA(DisplayName = "Magazine"),
+	FireRange UMETA(DisplayName = "FireRange"),
+	MoveSpeed UMETA(DisplayName = "MoveSpeed"),
+	SightRange UMETA(DisplayName = "SightRange"),
+};
+
+USTRUCT(BlueprintType)
+struct FBuff
+{
+public:
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	ECharacterStatType  stat_type_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	UTexture2D* buff_icon_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	float value_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	bool is_percentage_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	float duration_;
+
+	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadWrite, Category = "Buff")
+	float time_remaining_;
+
+
+
+	FBuff()
+		: stat_type_(ECharacterStatType::Attack), buff_icon_(nullptr), value_(0.f), is_percentage_(false), duration_(0.f), time_remaining_(0.f)
+	{}
+
+	FBuff(ECharacterStatType StatType, UTexture2D* Texture, float Value, bool IsPercentage, float Duration)
+		: stat_type_(StatType), buff_icon_(Texture), value_(Value), is_percentage_(IsPercentage), duration_(Duration), time_remaining_(Duration)
+	{}
+};
+
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PROJECT_IK_API UCharacterStatComponent : public UActorComponent
 {
@@ -101,6 +149,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetGeneralDP(const EDPType& dp_data) noexcept;
 
+	UFUNCTION(BlueprintCallable)
+	float CalculateStat(ECharacterStatType StatType) const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetBaseStat(ECharacterStatType StatType) const;
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyBuff(FBuff buff);
+
+	UFUNCTION(BlueprintPure)
+	TArray<FBuff> GetBuffs() const;
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FDieDelegate Die;
 
@@ -119,5 +179,7 @@ private:
 	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
 	FCharacterData stat_;
 
-	FCharacterData max_stat_;
+	float max_hit_points_;
+
+	TArray<FBuff> buffs_;
 };

@@ -57,7 +57,7 @@ void UCombatResultUI::SetHeroNumbers(int32 num)
 
 	for (int32 i = 0; i < num; i++)
 	{
-		UCombatResultBlock* block = NewObject<UCombatResultBlock>();
+		UCombatResultBlock* block = CreateWidget<UCombatResultBlock>(this);
 		FString block_unique_name = MakeUniqueObjectName(GetOuter(), block->GetClass(), TEXT("Block")).ToString();
 		block->Rename(*block_unique_name);
 		UHorizontalBoxSlot* block_slot = blocks_holder_->AddChildToHorizontalBox(block);
@@ -210,7 +210,10 @@ void UCombatResultUI::UpdateHPBars(float InDeltaTime)
 		for (int32 i = 0; i < blocks_.Num(); i++)
 		{
 			float hp = FMath::Lerp(hp_ratio_before_[i], hp_ratio_after_[i], HP_timer_);
-			blocks_[i]->SetHPPercent(hp);
+			if (blocks_[i].IsValid())
+			{
+				blocks_[i]->SetHPPercent(hp);
+			}
 		}
 	}
 	else if (HP_timer_ >= 1.25f && HP_timer_ <= 1.75)
@@ -218,9 +221,12 @@ void UCombatResultUI::UpdateHPBars(float InDeltaTime)
 		float opacity = FMath::Abs((HP_timer_ - 1.5f) * 4);
 		for (int32 i = 0; i < blocks_.Num(); i++)
 		{
-			if (blocks_[i]->GetHPPercent() < 0.25f)
+			if (blocks_[i].IsValid())
 			{
-				blocks_[i]->SetHPOpacity(opacity);
+				if (blocks_[i]->GetHPPercent() < 0.25f)
+				{
+					blocks_[i]->SetHPOpacity(opacity);
+				}
 			}
 		}
 	}
@@ -229,9 +235,12 @@ void UCombatResultUI::UpdateHPBars(float InDeltaTime)
 		float opacity = FMath::Abs((HP_timer_ - 2.5f) * 4);
 		for (int32 i = 0; i < blocks_.Num(); i++)
 		{
-			if (blocks_[i]->GetHPPercent() < 0.25f)
+			if (blocks_[i].IsValid())
 			{
-				blocks_[i]->SetHPOpacity(opacity);
+				if (blocks_[i]->GetHPPercent() < 0.25f)
+				{
+					blocks_[i]->SetHPOpacity(opacity);
+				}
 			}
 		}
 	}

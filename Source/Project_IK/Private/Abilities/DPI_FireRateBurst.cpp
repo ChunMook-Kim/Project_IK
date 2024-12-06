@@ -12,6 +12,10 @@ See LICENSE file in the project root for full license information.
 #include "Characters/Unit.h"
 #include "Components/CharacterStatComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
+#include "Managers/TextureManager.h"
+
 ADPI_FireRateBurst::ADPI_FireRateBurst()
 {
 	is_periodic_ = true;
@@ -41,20 +45,16 @@ void ADPI_FireRateBurst::StartPassiveSkill()
 	unit_caster_ = Cast<AUnit>(caster_);
 	if(unit_caster_)
 	{
-		unit_caster_->GetCharacterStat()->
-		SetAttackSpeed(unit_caster_->GetCharacterStat()->GetAttackSpeed() / accelerate_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Activated, cur speed: %f, divided: %f"), unit_caster_->GetCharacterStat()->GetAttackSpeed(), accelerate_amount_);
+		UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		if (game_instance)
+		{
+			UTexture2D* texture = game_instance->GetTextureManager()->GetTexture("fire_rate_burst");
+			unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, texture, -1.f / accelerate_amount_, true, duration_));
+		}
 	}
 }
 
 void ADPI_FireRateBurst::FinishPassiveSkill()
 {
 	Super::FinishPassiveSkill();
-	unit_caster_ = Cast<AUnit>(caster_);
-	if(unit_caster_)
-	{
-		unit_caster_->GetCharacterStat()->
-		SetAttackSpeed(unit_caster_->GetCharacterStat()->GetAttackSpeed() * accelerate_amount_);
-		UE_LOG(LogTemp, Warning, TEXT("Periodic Buff Finished, cur speed: %f, divided: %f"), unit_caster_->GetCharacterStat()->GetAttackSpeed(), accelerate_amount_);
-	}
 }

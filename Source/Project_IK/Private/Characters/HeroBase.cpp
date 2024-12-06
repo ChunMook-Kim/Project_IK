@@ -17,6 +17,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/CharacterStatComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WeaponMechanics.h"
+#include "Components/CharacterStatComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Weapons/Drone.h"
 #include "WorldSettings/IKGameModeBase.h"
