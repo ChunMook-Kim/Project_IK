@@ -23,6 +23,11 @@ void APassiveSkill::Initialize(AActor* caster)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	caster_ = caster;
+
+	//Scene이 load되고 최초 한번은 패시브 지속 시간, duration을 0으로 하고 스킬을 발동하는 것으로 쿨타임만 돌린다.
+	activated_ = true;
+	left_duration_ = 0.f;
+	left_time_ = cool_time_;
 }
 
 // Called when the game starts or when spawned
@@ -32,19 +37,35 @@ void APassiveSkill::BeginPlay()
 	
 }
 
+void APassiveSkill::StartPassiveSkill()
+{
+	left_time_ = cool_time_;
+	left_duration_ = duration_;
+	activated_ = true;
+}
+
+void APassiveSkill::FinishPassiveSkill()
+{
+	activated_ = false;
+}
+
 // Called every frame
 void APassiveSkill::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if(activated_)
 	{
-		if(left_duration_ > 0)
+		if(left_duration_ > 0.f)
 		{
 			left_duration_ -= DeltaTime;
 		}
-		else
+	}
+	else
+	{
+		if(left_time_ > 0.f)
 		{
 			left_time_ -= DeltaTime;
+			UE_LOG(LogTemp, Warning, TEXT("Passive Left Cool Time: %f"), left_time_);
 		}
 	}
 }
@@ -93,17 +114,3 @@ bool APassiveSkill::IsPassiveAvailable() const
 {
 	return left_time_ <= 0;
 }
-
-
-void APassiveSkill::StartPassiveSkill()
-{
-	left_time_ = cool_time_;
-	left_duration_ = duration_;
-	activated_ = true;
-}
-
-void APassiveSkill::FinishPassiveSkill()
-{
-	activated_ = false;
-}
-
