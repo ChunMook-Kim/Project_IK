@@ -9,9 +9,11 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 #include "Weapons/Drone.h"
+#include "Managers/DronePluginManager.h"
 #include "Components/DroneMechanics.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "WorldSettings/IKGameInstance.h"
 
 // Sets default values
 ADrone::ADrone()
@@ -51,6 +53,27 @@ void ADrone::Tick(float DeltaTime)
 void ADrone::ActivateDronePlugin()
 {
 	drone_mechanics_->ActivatePeriodicDronePlugin();
+}
+
+
+void ADrone::SetPlugins(EDPType p_dp_id, EDPType g_dp_id)
+{
+	if(p_dp_id != EDPType::Empty)
+	{
+		FDronePluginData p_dp_data = Cast<UIKGameInstance>(GetGameInstance())->GetDronePluginManager()->GetDPData(p_dp_id);
+		if(p_dp_data.dp_class_ != nullptr)
+		{
+			drone_mechanics_->AddPeriodicPlugIn(p_dp_data.dp_class_);
+		}
+	}
+	if(g_dp_id != EDPType::Empty)
+	{
+		FDronePluginData g_dp_data = Cast<UIKGameInstance>(GetGameInstance())->GetDronePluginManager()->GetDPData(g_dp_id);
+		if(g_dp_data.dp_class_ != nullptr)
+		{
+			drone_mechanics_->AddGeneralPlugIn(g_dp_data.dp_class_);
+		}
+	}
 }
 
 float ADrone::GetDronePluginHoldTime() const

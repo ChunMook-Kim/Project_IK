@@ -22,7 +22,7 @@ class PROJECT_IK_API ARifle : public AGun
 	GENERATED_BODY()
 public:
 	ARifle();
-	virtual void FireWeapon(FVector target_pos) override;
+	virtual void FireWeapon(FVector target_pos, float damage) override;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet", meta = (AllowPrivateAccess = "true", AllowedClass = "Bullet"))

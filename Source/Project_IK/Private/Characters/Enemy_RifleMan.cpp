@@ -9,6 +9,8 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 #include "Characters/Enemy_RifleMan.h"
+
+#include "Components/CharacterStatComponent.h"
 #include "Components/WeaponMechanics.h"
 
 AEnemy_RifleMan::AEnemy_RifleMan()
@@ -30,7 +32,7 @@ void AEnemy_RifleMan::Reload()
 
 void AEnemy_RifleMan::Fire(AActor* target)
 {
-	weapon_mechanics_->FireWeapon(target);
+	weapon_mechanics_->FireWeapon(target, character_stat_component_->GetAttack());
 	PlayAnimMontage(fire_montage_);
 }
 
@@ -41,7 +43,7 @@ bool AEnemy_RifleMan::IsMagazineEmpty() const
 
 float AEnemy_RifleMan::GetFireInterval() const
 {
-	return weapon_mechanics_->GetFireInterval();
+	return weapon_mechanics_->GetFireInterval() * character_stat_component_->GetAttackSpeed();
 }
 
 float AEnemy_RifleMan::GetReloadDuration() const

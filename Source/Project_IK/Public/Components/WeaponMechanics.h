@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/ActorComponent.h"
 #include "WeaponMechanics.generated.h"
 
+class UCharacterStatComponent;
 class AGun;
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_IK_API UWeaponMechanics : public UActorComponent
@@ -29,7 +30,7 @@ public:
 
 public:
 	void OnDestroy();
-	void FireWeapon(AActor* target);
+	void FireWeapon(AActor* target, float damage);
 	void Reload();
 	bool IsMagazineEmpty() const;
 	float GetFireInterval() const;
@@ -42,7 +43,6 @@ private:
 	void EquipWeapon();
 	
 private:
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponMechanics", meta = (AllowPrivateAccess = "true", AllowedClasses = "Gun"))
 	UClass* weapon_class_;
 

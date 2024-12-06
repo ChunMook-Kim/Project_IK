@@ -1,0 +1,4 @@
+---,is_periodic_,dp_class_,dp_type_,dp_icon_,dp_description_
+Empty,"False","None","Empty","None",""
+FireRateBurst,"True","/Script/CoreUObject.Class'/Script/Project_IK.DPI_FireRateBurst'","FireRateBurst","/Game/Images/DP/FireRateBurst.FireRateBurst",""
+FireRange,"False","/Script/CoreUObject.Class'/Script/Project_IK.DPI_FireRange'","FireRange","/Game/Images/DP/FireRangeIncrease.FireRangeIncrease",""

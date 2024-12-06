@@ -16,6 +16,7 @@ See LICENSE file in the project root for full license information.
 #include "Managers/ItemDataManager.h"
 #include "Managers/CharacterDataManager.h"
 #include "Managers/LevelTransitionManager.h"
+#include "Managers/DronePluginManager.h"
 #include "Managers/TextureManager.h"
 
 #include "Characters/HeroBase.h"
@@ -36,6 +37,7 @@ void UIKGameInstance::Init()
 	InitializeItemInventory();
 	InitializeMaps();
 	InitializeLevelTransitionManager();
+	InitializeDronePluginManager();
 	InitializeTextureManager();
 
 	item_inventory_->AddItem(*item_data_manager_->GetItemDataRandomly());
@@ -64,6 +66,11 @@ UIKMaps* UIKGameInstance::GetMapPtr() const noexcept
 ULevelTransitionManager* UIKGameInstance::GetLevelTransitionManager() noexcept
 {
 	return level_transition_manager_;
+}
+
+const UDronePluginManager* UIKGameInstance::GetDronePluginManager() noexcept
+{
+	return drone_plugin_manager; 
 }
 
 const UTextureManager* UIKGameInstance::GetTextureManager() const noexcept
@@ -96,6 +103,11 @@ void UIKGameInstance::InitializeLevelTransitionManager()
 {
 	level_transition_manager_ = NewObject<ULevelTransitionManager>();
 	level_transition_manager_->SetActorBlueprints(hero_blueprint_, enemy_blueprint_);
+}
+
+void UIKGameInstance::InitializeDronePluginManager()
+{
+	drone_plugin_manager = NewObject<UDronePluginManager>();
 }
 
 void UIKGameInstance::InitializeTextureManager()
