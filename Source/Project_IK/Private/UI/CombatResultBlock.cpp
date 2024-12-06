@@ -98,7 +98,7 @@ void UCombatResultBlock::InitializeChildWidgets()
 	FString hero_portrait_unique_name = MakeUniqueObjectName(GetOuter(), hero_portrait_->GetClass(), TEXT("Hero portrait")).ToString();
 	hero_portrait_->Rename(*hero_portrait_unique_name);
 	// @@ TODO: Change portraits by targeted hero not using default.
-	UTexture2D* hero_portrait_texture = texture_manager->GetTexture(ETextureID::DefaultPortrait);
+	UTexture2D* hero_portrait_texture = texture_manager->GetTexture("default_portrait");
 	if (!hero_portrait_texture)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Loading hero portrait image in CombatResultBlock has failed!"));
@@ -154,7 +154,7 @@ void UCombatResultBlock::InitializeChildWidgets()
 	FString deal_icon_unique_name = MakeUniqueObjectName(GetOuter(), deal_holder_->GetClass(), TEXT("Deal icon")).ToString();
 	deal_icon_->Rename(*deal_icon_unique_name);
 
-	UTexture2D* deal_texture = texture_manager->GetTexture(ETextureID::DamageIcon);
+	UTexture2D* deal_texture = texture_manager->GetTexture("damage_icon");
 	if (!deal_texture)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Loading damage icon image has failed!"));

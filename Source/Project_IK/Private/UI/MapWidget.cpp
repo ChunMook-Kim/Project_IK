@@ -117,7 +117,7 @@ void UMapWidget::InitializeButtons()
 
 	auto ik_game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
-	UTexture2D* enemy_icon_texture = ik_game_instance->GetTextureManager()->GetTexture(ETextureID::EnemyIcon);
+	UTexture2D* enemy_icon_texture = ik_game_instance->GetTextureManager()->GetTexture("enemy_icon");
 	if (!enemy_icon_texture)
 	{
 		return;
@@ -185,7 +185,7 @@ void UMapWidget::InitializeButtons()
 	// Display check icons on visited nodes
 	check_images_.Empty();
 	const TArray<FIntPoint> visited_nodes = maps_->GetPlayerVisitedPath();
-	UTexture2D* check_texture = ik_game_instance->GetTextureManager()->GetTexture(ETextureID::CheckIcon);
+	UTexture2D* check_texture = ik_game_instance->GetTextureManager()->GetTexture("check_icon");
 	FSlateBrush check_brush;
 	check_brush.SetResourceObject(check_texture);
 	check_brush.DrawAs = ESlateBrushDrawType::Type::Image;

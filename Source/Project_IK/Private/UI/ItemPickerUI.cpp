@@ -153,7 +153,7 @@ void UItemPickerUI::InitializeChildWidgets()
 		buttons_.Add(button.Get());
 	}
 
-	UTexture2D* select_texture = game_instance->GetTextureManager()->GetTexture(ETextureID::TakeItButton);
+	UTexture2D* select_texture = game_instance->GetTextureManager()->GetTexture("take_it_button");
 	select_button_ = NewObject<UButton>();
 	FSlateBrush select_brush;
 	select_brush.SetResourceObject(select_texture);
@@ -175,7 +175,7 @@ void UItemPickerUI::InitializeChildWidgets()
 		select_button_slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
 	}
 
-	UTexture2D* highlight_texture = game_instance->GetTextureManager()->GetTexture(ETextureID::HighlightImage);
+	UTexture2D* highlight_texture = game_instance->GetTextureManager()->GetTexture("highlight_image");
 	highlight_image_ = NewObject<UImage>();
 	FSlateBrush highlight_brush;
 	highlight_brush.SetResourceObject(highlight_texture);

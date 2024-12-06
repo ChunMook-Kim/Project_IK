@@ -41,7 +41,7 @@ void ADPI_FireRange::StartPassiveSkill()
 		UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 		if (game_instance)
 		{
-			UTexture2D* texture = game_instance->GetTextureManager()->GetTexture(ETextureID::FireRange);
+			UTexture2D* texture = game_instance->GetTextureManager()->GetTexture("fire_range");
 			unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::FireRange, texture, buff_amount_, false, 9999.f));
 		}
 	}

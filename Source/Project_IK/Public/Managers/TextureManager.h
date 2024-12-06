@@ -16,21 +16,6 @@ See LICENSE file in the project root for full license information.
 #include "UObject/NoExportTypes.h"
 #include "TextureManager.generated.h"
 
-UENUM(BlueprintType)
-enum class ETextureID : uint8
-{
-	CheckIcon UMETA(DisplayName = "CheckIcon"),
-	DamageIcon UMETA(DisplayName = "DamageIcon"),
-	DefaultPortrait UMETA(DisplayName = "DefaultPortrait"),
-	EnemyIcon UMETA(DisplayName = "EnemyIcon"),
-	FireRange UMETA(DisplayName = "FireRange"),
-	FireRateBurst UMETA(DisplayName = "FireRateBurst"),
-	HighlightImage UMETA(DisplayName = "HighlightImage"),
-	HPPotion UMETA(DisplayName = "HPPotion"),
-	MissileItem UMETA(DisplayName = "MissileItem"),
-	TakeItButton UMETA(DisplayName = "TakeItButton"),
-};
-
 /**
  * 
  */
@@ -41,7 +26,9 @@ class PROJECT_IK_API UTextureManager : public UObject
 public:
 	void InitializeTextures();
 
-	UTexture2D* GetTexture(ETextureID Key) const;
+	UTexture2D* GetTexture(FString Key) const;
 private:
-	TMap<ETextureID, UTexture2D*> textures_;
+	void GetAllTexturesInFolder(const FString& FolderPath);
+
+	TMap<FString, UTexture2D*> textures_;
 };

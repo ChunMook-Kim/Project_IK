@@ -13,25 +13,50 @@ See LICENSE file in the project root for full license information.
 
 #include "Managers/TextureManager.h"
 
+#include "AssetRegistry/AssetRegistryModule.h"
+
 void UTextureManager::InitializeTextures()
 {
-	textures_.Add(ETextureID::CheckIcon, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/check_icon.check_icon")));
-	textures_.Add(ETextureID::DamageIcon, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/damage_icon.damage_icon")));
-	textures_.Add(ETextureID::DefaultPortrait, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/default_portrait.default_portrait")));
-	textures_.Add(ETextureID::EnemyIcon, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/enemy_icon.enemy_icon")));
-	textures_.Add(ETextureID::FireRange, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/fire_range.fire_range")));
-	textures_.Add(ETextureID::FireRateBurst, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/fire_rate_burst.fire_rate_burst")));
-	textures_.Add(ETextureID::HighlightImage, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/highlight_image.highlight_image")));
-	textures_.Add(ETextureID::HPPotion, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/HP_potion.HP_potion")));
-	textures_.Add(ETextureID::MissileItem, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/missile_item.missile_item")));
-	textures_.Add(ETextureID::TakeItButton, LoadObject<UTexture2D>(nullptr, TEXT("/Game/Images/take_it_button.take_it_button")));
+	GetAllTexturesInFolder("/Game/Images");
 }
 
-UTexture2D* UTextureManager::GetTexture(ETextureID Key) const
+UTexture2D* UTextureManager::GetTexture(FString Key) const
 {
 	if (textures_.Contains(Key))
 	{
 		return textures_[Key];
 	}
 	return nullptr;
+}
+
+void UTextureManager::GetAllTexturesInFolder(const FString& FolderPath)
+{
+	FAssetRegistryModule& asset_registry_module = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+
+	if (!asset_registry_module.Get().IsLoadingAssets())
+	{
+		asset_registry_module.Get().SearchAllAssets(true);
+	}
+
+	FARFilter filter;
+	filter.PackagePaths.Add(*FolderPath);
+	// Include subfolders
+	filter.bRecursivePaths = true;
+
+	TArray<FAssetData> asset_data_list;
+	asset_registry_module.Get().GetAssets(filter, asset_data_list);
+
+	for (const FAssetData& data : asset_data_list)
+	{
+		// Synchronously load the texture asset
+		UTexture2D* texture = Cast<UTexture2D>(data.GetAsset());
+		if (texture)
+		{
+			textures_.Add(texture->GetName(), texture);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to load texture: %s"), *data.ObjectPath.ToString());
+		}
+	}
 }
