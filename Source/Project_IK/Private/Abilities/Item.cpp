@@ -12,6 +12,13 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/Item.h"
 
 #include "Managers/ItemDataManager.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
+#include "Managers/TextureManager.h"
+
+#include "Characters/Unit.h"
+
 #include "Components/TargetingComponent.h"
 
 #include "Components/CharacterStatComponent.h"
@@ -35,6 +42,9 @@ void UItem::UseItem(const FTargetResult& TargetResult)
 	case EItemLogicType::LaunchMissile:
 		LaunchMissile(TargetResult.target_actors_);
 		break;
+	case EItemLogicType::AttackSpeedStimuli:
+		AttackSpeedStimuli(TargetResult.target_actors_);
+		break;
 	default:
 		break;
 	}
@@ -47,7 +57,7 @@ FItemData UItem::GetData() const
 
 FTargetParameters UItem::GetTargetParameters() const
 {
-	return FTargetParameters(item_data_.targeting_mode_, item_data_.range_, item_data_.radius_);
+	return FTargetParameters(item_data_.targeting_mode_, item_data_.target_type_, item_data_.range_, item_data_.radius_);
 }
 
 void UItem::RestoreHP(AActor* actor)
@@ -78,4 +88,34 @@ void UItem::LaunchMissile(TArray<AActor*> actors)
 			}
 		}
 	}
+}
+
+void UItem::AttackSpeedStimuli(TArray<AActor*> actors)
+{
+	if (actors.Num() <= 0)
+	{
+		return;
+	}
+	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(actors[0]->GetWorld()));
+
+	if (game_instance)
+	{
+		const UTextureManager* texture_manager = game_instance->GetTextureManager();
+		if (texture_manager)
+		{
+			UTexture2D* texture = texture_manager->GetTexture("fire_rate_burst");
+			if (texture)
+			{
+				for (int32 i = 0; i < actors.Num(); i++)
+				{
+					AUnit* unit = Cast<AUnit>(actors[i]);
+					if (unit)
+					{
+						unit->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, texture, -0.25f, false, 10.f));
+					}
+				}
+			}
+		}
+	}
+
 }

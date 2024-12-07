@@ -101,7 +101,7 @@ void UButtonBarWidget::OnSkillButtonClicked0()
 
 	if (targeting_component_ && characters_.IsValidIndex(caster_))
 	{
-		FTargetParameters target_params(ETargetingMode::Direction, 1000.f, 90.f);
+		FTargetParameters target_params(ETargetingMode::Direction, ETargetType::All, 1000.f, 90.f);
 		targeting_component_->StartSkillTargeting(characters_[caster_], target_params);
 	}
 }

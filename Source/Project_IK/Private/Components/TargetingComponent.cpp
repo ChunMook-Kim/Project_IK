@@ -99,9 +99,7 @@ void UTargetingComponent::StartSkillTargeting(AActor* invoker, FTargetParameters
 {
 	is_targeting_ = true;
 	invoker_ = invoker;
-	target_parameters_.current_mode_ = TargetParams.current_mode_;
-	target_parameters_.range_= TargetParams.range_;
-	target_parameters_.radius_= TargetParams.radius_;
+	target_parameters_ = TargetParams;
 	current_target_result_.target_actors_.Empty();
 
 
@@ -113,7 +111,7 @@ void UTargetingComponent::StartSkillTargeting(AActor* invoker, FTargetParameters
 	{
 		dynamic_material->SetScalarParameterValue(FName("ArcWidth"), target_parameters_.radius_ / 360);
 	}
-	
+
 
 	switch (target_parameters_.current_mode_)
 	{
@@ -145,9 +143,7 @@ void UTargetingComponent::StartItemTargeting(FTargetParameters TargetParams)
 {
 	is_targeting_ = true;
 	invoker_ = nullptr;
-	target_parameters_.current_mode_ = TargetParams.current_mode_;
-	target_parameters_.range_ = TargetParams.range_;
-	target_parameters_.radius_ = TargetParams.radius_;
+	target_parameters_ = TargetParams;
 
 
 	range_decal_->DecalSize = FVector(target_parameters_.range_);
@@ -216,16 +212,34 @@ void UTargetingComponent::HandleLocationTargeting()
 
 	if (game_mode)
 	{
-		auto enemies = game_mode->GetEnemyContainers();
-
-		for (AActor* actor : enemies)
+		if (target_parameters_.target_type_ == ETargetType::All || target_parameters_.target_type_ == ETargetType::Allies)
 		{
-			FVector to_actor = actor->GetActorLocation() - current_target_result_.target_location_;
+			auto heroes = game_mode->GetHeroContainers();
 
-			float distance_to_actor = to_actor.Size();
-			if (distance_to_actor <= target_parameters_.radius_)
+			for (AActor* actor : heroes)
 			{
-				current_target_result_.target_actors_.Add(actor);
+				FVector to_actor = actor->GetActorLocation() - current_target_result_.target_location_;
+
+				float distance_to_actor = to_actor.Size();
+				if (distance_to_actor <= target_parameters_.radius_)
+				{
+					current_target_result_.target_actors_.Add(actor);
+				}
+			}
+		}
+		if (target_parameters_.target_type_ == ETargetType::All || target_parameters_.target_type_ == ETargetType::Opponents)
+		{
+			auto enemies = game_mode->GetEnemyContainers();
+
+			for (AActor* actor : enemies)
+			{
+				FVector to_actor = actor->GetActorLocation() - current_target_result_.target_location_;
+
+				float distance_to_actor = to_actor.Size();
+				if (distance_to_actor <= target_parameters_.radius_)
+				{
+					current_target_result_.target_actors_.Add(actor);
+				}
 			}
 		}
 	}
@@ -252,15 +266,33 @@ void UTargetingComponent::HandleDirectionTargeting()
 
 	if (game_mode)
 	{
-		auto enemies = game_mode->GetEnemyContainers();
-
-		for (AActor* actor : enemies)
+		if (target_parameters_.target_type_ == ETargetType::All || target_parameters_.target_type_ == ETargetType::Allies)
 		{
-			if (actor)
+			auto heroes = game_mode->GetHeroContainers();
+
+			for (AActor* actor : heroes)
 			{
-				if (IsWithinSector(origin, direction, target_parameters_.range_, target_parameters_.radius_, actor->GetActorLocation()))
+				if (actor)
 				{
-					current_target_result_.target_actors_.Add(actor);
+					if (IsWithinSector(origin, direction, target_parameters_.range_, target_parameters_.radius_, actor->GetActorLocation()))
+					{
+						current_target_result_.target_actors_.Add(actor);
+					}
+				}
+			}
+		}
+		if (target_parameters_.target_type_ == ETargetType::All || target_parameters_.target_type_ == ETargetType::Opponents)
+		{
+			auto enemies = game_mode->GetEnemyContainers();
+
+			for (AActor* actor : enemies)
+			{
+				if (actor)
+				{
+					if (IsWithinSector(origin, direction, target_parameters_.range_, target_parameters_.radius_, actor->GetActorLocation()))
+					{
+						current_target_result_.target_actors_.Add(actor);
+					}
 				}
 			}
 		}
@@ -450,35 +482,42 @@ AActor* UTargetingComponent::FindClosestActor(const FVector& TargetLocation)
 		return nullptr;
 	}
 
-	auto characters = game_mode->GetHeroContainers();
-	auto enemies = game_mode->GetEnemyContainers();
 	AActor* closest_actor = nullptr;
 	float closest_distance_sq = MAX_FLT;
 
-	for (AActor* actor : characters)
+	if (target_parameters_.target_type_ == ETargetType::All || target_parameters_.target_type_ == ETargetType::Allies)
 	{
-		if (actor)
+		auto characters = game_mode->GetHeroContainers();
+		for (AActor* actor : characters)
 		{
-			float distance_sq = FVector::DistSquared(TargetLocation, actor->GetActorLocation());
-			if (distance_sq < closest_distance_sq)
+			if (actor)
 			{
-				closest_distance_sq = distance_sq;
-				closest_actor = actor;
+				float distance_sq = FVector::DistSquared(TargetLocation, actor->GetActorLocation());
+				if (distance_sq < closest_distance_sq)
+				{
+					closest_distance_sq = distance_sq;
+					closest_actor = actor;
+				}
 			}
 		}
 	}
 
-	for (AActor* actor : enemies)
+	if (target_parameters_.target_type_ == ETargetType::All || target_parameters_.target_type_ == ETargetType::Opponents)
 	{
-		if (actor)
+		auto enemies = game_mode->GetEnemyContainers();
+		for (AActor* actor : enemies)
 		{
-			float distance_sq = FVector::DistSquared(TargetLocation, actor->GetActorLocation());
-			if (distance_sq < closest_distance_sq)
+			if (actor)
 			{
-				closest_distance_sq = distance_sq;
-				closest_actor = actor;
+				float distance_sq = FVector::DistSquared(TargetLocation, actor->GetActorLocation());
+				if (distance_sq < closest_distance_sq)
+				{
+					closest_distance_sq = distance_sq;
+					closest_actor = actor;
+				}
 			}
 		}
+
 	}
 
 	return closest_actor;
@@ -523,7 +562,7 @@ void UTargetingComponent::ApplyMaterialHighlight(AActor* target)
 bool UTargetingComponent::IsWithinSector(const FVector& origin, const FVector& direction, float range, float angle, const FVector& actor_location)
 {
 	FVector to_actor = actor_location - origin;
-	
+
 	// Is the actor in range?
 	float distance_to_actor = to_actor.Size();
 	if (distance_to_actor > range)

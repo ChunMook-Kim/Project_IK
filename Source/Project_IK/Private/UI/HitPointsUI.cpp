@@ -61,6 +61,7 @@ void UHitPointsUI::UpdateBuffWidgets()
 		int32 loop_until = FMath::Min(IMAGE_SIZE, buffs.Num());
 		for (int32 i = 0; i < loop_until; ++i)
 		{
+			buff_images_[i]->SetVisibility(ESlateVisibility::Visible);
 			buff_images_[i]->SetBrushFromTexture(buffs[i].buff_icon_);
 		}
 		for (int32 i = loop_until; i < IMAGE_SIZE; ++i)

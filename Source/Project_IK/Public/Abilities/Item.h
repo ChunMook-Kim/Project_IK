@@ -42,4 +42,5 @@ private:
 
 	void RestoreHP(AActor* actor);
 	void LaunchMissile(TArray<AActor*> actors);
+	void AttackSpeedStimuli(TArray<AActor*> actors);
 };

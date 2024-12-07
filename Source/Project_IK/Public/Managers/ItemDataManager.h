@@ -15,6 +15,7 @@ See LICENSE file in the project root for full license information.
 #include "ItemDataManager.generated.h"
 
 enum class ETargetingMode : uint8;
+enum class ETargetType : uint8;
 
 UENUM(BlueprintType)
 enum class EItemLogicType : uint8
@@ -22,6 +23,7 @@ enum class EItemLogicType : uint8
 	None UMETA(DisplayName = "None"),
 	RestoreHP UMETA(DisplayName = "RestoreHP"),
 	LaunchMissile UMETA(DisplayName = "LaunchMissile"),
+	AttackSpeedStimuli UMETA(DisplayName = "AttackSpeedStimuli")
 };
 
 USTRUCT(BlueprintType)
@@ -44,6 +46,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	ETargetingMode targeting_mode_;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	ETargetType target_type_;
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	float range_;
