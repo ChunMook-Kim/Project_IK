@@ -91,9 +91,13 @@ void UCombatResultUI::UpdateResults(const TArray<AActor*>& heroes, const TMap<TW
 		else
 		{
 			// Consider the hero has dead
-			hp_ratio_after_.Add(0.f);
 			blocks_[i]->SetVisibility(ESlateVisibility::Hidden);
 		}
+	}
+
+	while (hp_ratio_after_.Num() < hp_ratio_before_.Num())
+	{
+		hp_ratio_after_.Add(0.f);
 	}
 
 	HP_timer_ = 0;

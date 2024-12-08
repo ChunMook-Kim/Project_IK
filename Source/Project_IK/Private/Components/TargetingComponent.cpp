@@ -144,6 +144,7 @@ void UTargetingComponent::StartItemTargeting(FTargetParameters TargetParams)
 	is_targeting_ = true;
 	invoker_ = nullptr;
 	target_parameters_ = TargetParams;
+	current_target_result_.target_actors_.Empty();
 
 
 	range_decal_->DecalSize = FVector(target_parameters_.range_);

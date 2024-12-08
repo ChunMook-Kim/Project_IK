@@ -237,7 +237,7 @@ float UCharacterStatComponent::CalculateStat(ECharacterStatType StatType) const
 {
 	float stat = GetBaseStat(StatType);
 
-	float percentage_bonus = 0.f;
+	float percentage_bonus = 1.f;
 	float value_bonus = 0.f;
 
 	for (const FBuff& buff : buffs_)
@@ -246,7 +246,7 @@ float UCharacterStatComponent::CalculateStat(ECharacterStatType StatType) const
 		{
 			if (buff.is_percentage_)
 			{
-				percentage_bonus += buff.value_;
+				percentage_bonus *= buff.value_;
 			}
 			else
 			{
@@ -255,7 +255,7 @@ float UCharacterStatComponent::CalculateStat(ECharacterStatType StatType) const
 		}
 	}
 
-	return (stat + value_bonus) * (1.f + percentage_bonus);
+	return (stat + value_bonus) * percentage_bonus;
 }
 
 float UCharacterStatComponent::GetBaseStat(ECharacterStatType StatType) const
