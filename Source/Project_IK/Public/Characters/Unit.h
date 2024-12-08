@@ -30,13 +30,13 @@ public:
 	UCharacterStatComponent* GetCharacterStat() const;
 	FVector GetForwardDir() const;
 	void SetForwardDir(const FVector& Forward_Dir);
-
+	
+	UFUNCTION()
+	virtual void GetDamage(float damage, TWeakObjectPtr<AActor> attacker) override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	UFUNCTION()
-	virtual void GetDamage(float damage, TWeakObjectPtr<AActor> attacker) override;
-
+	
 	UFUNCTION()
 	virtual void Die() override;
 

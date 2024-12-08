@@ -12,29 +12,19 @@ See LICENSE file in the project root for full license information.
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Environments/Cover.h"
 
+AGunnerAIController::AGunnerAIController()
+{
+	owned_cover_key_name_ = TEXT("OwnedCover");
+}
+
 void AGunnerAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	if(behavior_tree_)
-	{
-		RunBehaviorTree(behavior_tree_);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("BlackBoard isn't exist!"));
-	}
-	if(GetBlackboardComponent()->IsValidKey(GetBlackboardComponent()->GetKeyID(target_class_key_name_)))
-	{
-		GetBlackboardComponent()->SetValueAsClass(target_class_key_name_, target_class_);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Target class key name is wrong!"));
-	}
 }
 
 void AGunnerAIController::OnDie()
 {
+	Super::OnDie();
 	UObject* cover = GetBlackboardComponent()->GetValueAsObject(owned_cover_key_name_);
 	if(cover != nullptr)
 	{
