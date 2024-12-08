@@ -11,29 +11,19 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "AI/MeleeAIController.h"
 #include "GunnerAIController.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class PROJECT_IK_API AGunnerAIController : public AAIController
+class PROJECT_IK_API AGunnerAIController : public AMeleeAIController
 {
 	GENERATED_BODY()
 public:
+	AGunnerAIController();
 	void OnDie();
 	virtual void OnPossess(APawn* InPawn) override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
-	UBehaviorTree* behavior_tree_;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true", AllowedClass = "HeroBase, EnemyBase"))
-	UClass* target_class_;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
-	FName target_class_key_name_;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
 	FName owned_cover_key_name_;
 };

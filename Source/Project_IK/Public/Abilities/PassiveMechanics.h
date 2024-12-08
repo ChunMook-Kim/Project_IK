@@ -37,5 +37,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PassiveMechanics", meta = (AllowPrivateAccess = "true", AllowedClass = "PassiveSkill"))
 	UClass* passive_class_ = nullptr;
 
+	UPROPERTY(Transient)
 	APassiveSkill* passive_ref_ = nullptr;
 };
