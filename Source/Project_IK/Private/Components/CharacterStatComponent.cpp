@@ -80,6 +80,11 @@ void UCharacterStatComponent::GetDamage(float DamageAmount)
 	SetHitPoint(GetHitPoint() - DamageAmount);
 }
 
+void UCharacterStatComponent::Heal(float HealAmount)
+{
+	SetHitPoint(GetHitPoint() + HealAmount);
+}
+
 float UCharacterStatComponent::GetAbilityPower() const noexcept
 {
 	return CalculateStat(ECharacterStatType::AbillityPower);

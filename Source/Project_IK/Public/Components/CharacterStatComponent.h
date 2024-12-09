@@ -88,6 +88,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void GetDamage(float DamageAmount);
+	UFUNCTION(BlueprintCallable)
+	void Heal(float HealAmount);
 
 	// Getters&Setters of member variables
 	UFUNCTION(BlueprintPure)

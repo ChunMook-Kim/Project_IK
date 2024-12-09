@@ -67,11 +67,39 @@ void UItem::RestoreHP(AActor* actor)
 		UE_LOG(LogTemp, Warning, TEXT("UItem::RestoreHP -> Actor is invalid!!"));
 		return;
 	}
-	UCharacterStatComponent* stat = actor->GetComponentByClass<UCharacterStatComponent>();
-	if (stat)
+	TWeakObjectPtr<UCharacterStatComponent> stat = actor->GetComponentByClass<UCharacterStatComponent>();
+	if (stat.IsValid())
 	{
-		// @@ TODO: Change fixed data into some variable.
-		stat->SetHitPoint(stat->GetHitPoint() + 50.f);
+		static constexpr float heal_amount = 50.f;
+		// Instant heal immediately.
+		stat->Heal(heal_amount);
+		int32 heal_count = 0;
+		const int32 max_heal_count = 4;
+		FTimerDelegate delegate;
+		FTimerHandle heal_handler;
+		UWorld* world = actor->GetWorld();
+		if (world)
+		{
+			FTimerManager& timer_manager = world->GetTimerManager();
+			delegate.BindLambda([stat, &heal_count, max_heal_count, &timer_manager, &heal_handler]() {
+				if (!stat.IsValid())
+				{
+					timer_manager.ClearTimer(heal_handler);
+					return;
+				}
+				stat->Heal(heal_amount);
+
+				++heal_count;
+
+				if (heal_count >= max_heal_count)
+				{
+					timer_manager.ClearTimer(heal_handler);
+				}
+				});
+
+			timer_manager.SetTimer(heal_handler, delegate, 2.5f, true);
+			
+		}
 	}
 }
 

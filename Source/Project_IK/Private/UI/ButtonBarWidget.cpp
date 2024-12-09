@@ -22,6 +22,7 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/ItemInventory.h"
 #include "Abilities/Item.h"
 #include "WorldSettings/IKGameInstance.h"
+#include "Managers/TextureManager.h"
 
 void UButtonBarWidget::NativeConstruct()
 {
@@ -71,6 +72,8 @@ void UButtonBarWidget::NativeConstruct()
 	if (UIKGameInstance* GI = Cast<UIKGameInstance>(GetGameInstance()))
 	{
 		item_inventory_ = GI->GetItemInventory();
+
+		empty_item_icon = GI->GetTextureManager()->GetTexture("empty_item_slot");
 	}
 
 	SynchroItemButtons();
@@ -182,6 +185,8 @@ void UButtonBarWidget::SynchroItemButtons()
 	hovered_brush.TintColor = FSlateColor(FLinearColor(0.95f, 0.95f, 0.95f));
 	FSlateBrush pressed_brush = normal_brush;
 	pressed_brush.TintColor = FSlateColor(FLinearColor(0.5f, 0.5f, 0.5f));
+	FSlateBrush disabled_brush = pressed_brush;
+	disabled_brush.SetResourceObject(empty_item_icon);
 
 	if (item_inventory_->GetItem(0) != nullptr)
 	{
@@ -198,6 +203,7 @@ void UButtonBarWidget::SynchroItemButtons()
 	else
 	{
 		item_button_0_->SetIsEnabled(false);
+		item_button_0_->WidgetStyle.SetDisabled(disabled_brush);
 	}
 	if (item_inventory_->GetItem(1) != nullptr)
 	{
@@ -214,6 +220,7 @@ void UButtonBarWidget::SynchroItemButtons()
 	else
 	{
 		item_button_1_->SetIsEnabled(false);
+		item_button_1_->WidgetStyle.SetDisabled(disabled_brush);
 	}
 	if (item_inventory_->GetItem(2) != nullptr)
 	{
@@ -230,6 +237,7 @@ void UButtonBarWidget::SynchroItemButtons()
 	else
 	{
 		item_button_2_->SetIsEnabled(false);
+		item_button_2_->WidgetStyle.SetDisabled(disabled_brush);
 	}
 }
 
@@ -259,6 +267,8 @@ void UButtonBarWidget::InvokeSkills(const FTargetResult& TargetResult)
 	{
 		skill_containers_[caster_]->InvokeSkills(TargetResult);
 	}
+
+	SynchroItemButtons();
 }
 
 void UButtonBarWidget::FindCharacters()
