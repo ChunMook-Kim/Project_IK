@@ -9,6 +9,7 @@
 class UProgressBar;
 class UHorizontalBox;
 class UBuffDisplayer;
+class UTextureManager;
 
 /**
  * 
@@ -46,6 +47,8 @@ private:
 
 	UPROPERTY()
 	TArray<TWeakObjectPtr<UBuffDisplayer>> buff_displayers_;
+
+	TWeakObjectPtr <const UTextureManager> texture_manager_;
 
 	static constexpr int32 DISPLAYER_SIZE = 3;
 };

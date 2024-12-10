@@ -23,7 +23,8 @@ enum class EItemLogicType : uint8
 	None UMETA(DisplayName = "None"),
 	RestoreHP UMETA(DisplayName = "RestoreHP"),
 	LaunchMissile UMETA(DisplayName = "LaunchMissile"),
-	AttackSpeedStimuli UMETA(DisplayName = "AttackSpeedStimuli")
+	AttackSpeedStimuli UMETA(DisplayName = "AttackSpeedStimuli"),
+	SmokeGrenade UMETA(DisplayName = "SmokeGrenade")
 };
 
 USTRUCT(BlueprintType)

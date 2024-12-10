@@ -15,6 +15,8 @@ See LICENSE file in the project root for full license information.
 
 #include "AssetRegistry/AssetRegistryModule.h"
 
+#include "Components/CharacterStatComponent.h"
+
 void UTextureManager::InitializeTextures()
 {
 	GetAllTexturesInFolder("/Game/Images");
@@ -25,6 +27,37 @@ UTexture2D* UTextureManager::GetTexture(FString Key) const
 	if (textures_.Contains(Key))
 	{
 		return textures_[Key];
+	}
+	return nullptr;
+}
+
+UTexture2D* UTextureManager::GetBuffTexture(ECharacterStatType StatType) const
+{
+	switch (StatType)
+	{
+	case ECharacterStatType::AbillityPower:
+		break;
+	case ECharacterStatType::Attack:
+		break;
+	case ECharacterStatType::AttackSpeed:
+		return textures_["fire_rate_burst"];
+		break;
+	case ECharacterStatType::HitPoints:
+		break;
+	case ECharacterStatType::Magazine:
+		break;
+	case ECharacterStatType::FireRange:
+		return textures_["fire_range"];
+		break;
+	case ECharacterStatType::MoveSpeed:
+		break;
+	case ECharacterStatType::SightRange:
+		break;
+	case ECharacterStatType::Evasion:
+		return textures_["evasion"];
+		break;
+	default:
+		break;
 	}
 	return nullptr;
 }

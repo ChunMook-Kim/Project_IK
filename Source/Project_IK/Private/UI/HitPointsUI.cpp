@@ -19,6 +19,10 @@ See LICENSE file in the project root for full license information.
 
 #include "UI/BuffDisplayer.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
+#include "Managers/TextureManager.h"
+
 void UHitPointsUI::BindCharacterStat(UCharacterStatComponent* NewCharacterStat)
 {
 	if (NewCharacterStat)
@@ -36,6 +40,8 @@ void UHitPointsUI::NativeConstruct()
 	InitializeImages();
 
 	UpdateHPWidget();
+
+	texture_manager_ = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GetTextureManager();
 }
 
 void UHitPointsUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -60,16 +66,16 @@ void UHitPointsUI::UpdateBuffWidgets()
 	{
 		const TArray<FBuff> buffs = character_stat_->GetBuffs();
 
-		TMap<ECharacterStatType, TPair<int32, UTexture2D*>> buff_counts;
+		TMap<ECharacterStatType, int32> buff_counts;
 		for (const FBuff& buff : buffs)
 		{
 			if (buff_counts.Contains(buff.stat_type_))
 			{
-				buff_counts[buff.stat_type_].Key += 1;
+				buff_counts[buff.stat_type_] += 1;
 			}
 			else
 			{
-				buff_counts.Add(buff.stat_type_, TPair<int32, UTexture2D*>(1, buff.buff_icon_));
+				buff_counts.Add(buff.stat_type_, 1);
 			}
 		}
 
@@ -80,11 +86,11 @@ void UHitPointsUI::UpdateBuffWidgets()
 			{
 				buff_displayers_[i]->SetVisibility(ESlateVisibility::Visible);
 			}
-			buff_displayers_[i]->SetImage(buff_count.Value.Value);
+			buff_displayers_[i]->SetImage(texture_manager_->GetBuffTexture(buff_count.Key));
 			
-			if (buff_count.Value.Key > 1)
+			if (buff_count.Value > 1)
 			{
-				buff_displayers_[i]->SetDuplicatedText(buff_count.Value.Key);
+				buff_displayers_[i]->SetDuplicatedText(buff_count.Value);
 			}
 			else
 			{

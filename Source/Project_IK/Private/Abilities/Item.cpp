@@ -37,13 +37,16 @@ void UItem::UseItem(const FTargetResult& TargetResult)
 	case EItemLogicType::None:
 		break;
 	case EItemLogicType::RestoreHP:
-		RestoreHP(TargetResult.target_actors_[0]);
+		RestoreHP(TargetResult.target_actors_);
 		break;
 	case EItemLogicType::LaunchMissile:
 		LaunchMissile(TargetResult.target_actors_);
 		break;
 	case EItemLogicType::AttackSpeedStimuli:
 		AttackSpeedStimuli(TargetResult.target_actors_);
+		break;
+	case EItemLogicType::SmokeGrenade:
+		SmokeGrenade(TargetResult.target_actors_);
 		break;
 	default:
 		break;
@@ -60,45 +63,43 @@ FTargetParameters UItem::GetTargetParameters() const
 	return FTargetParameters(item_data_.targeting_mode_, item_data_.target_type_, item_data_.range_, item_data_.radius_);
 }
 
-void UItem::RestoreHP(AActor* actor)
+void UItem::RestoreHP(TArray<AActor*> actors)
 {
-	if (!actor)
+	for (AActor* actor : actors)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UItem::RestoreHP -> Actor is invalid!!"));
-		return;
-	}
-	TWeakObjectPtr<UCharacterStatComponent> stat = actor->GetComponentByClass<UCharacterStatComponent>();
-	if (stat.IsValid())
-	{
-		static constexpr float heal_amount = 50.f;
-		// Instant heal immediately.
-		stat->Heal(heal_amount);
-		int32 heal_count = 0;
-		const int32 max_heal_count = 4;
-		FTimerDelegate delegate;
-		FTimerHandle heal_handler;
-		UWorld* world = actor->GetWorld();
-		if (world)
+		TWeakObjectPtr<UCharacterStatComponent> stat = actor->GetComponentByClass<UCharacterStatComponent>();
+		if (stat.IsValid())
 		{
-			FTimerManager& timer_manager = world->GetTimerManager();
-			delegate.BindLambda([stat, &heal_count, max_heal_count, &timer_manager, &heal_handler]() {
-				if (!stat.IsValid())
-				{
-					timer_manager.ClearTimer(heal_handler);
-					return;
-				}
-				stat->Heal(heal_amount);
+			static constexpr float heal_amount = 50.f;
+			// Instant heal immediately.
+			stat->Heal(heal_amount);
+			int32 heal_count = 0;
+			const int32 max_heal_count = 4;
+			FTimerDelegate delegate;
+			FTimerHandle heal_handler;
+			UWorld* world = actor->GetWorld();
+			if (world)
+			{
+				FTimerManager& timer_manager = world->GetTimerManager();
+				delegate.BindLambda([stat, &heal_count, max_heal_count, &timer_manager, &heal_handler]() {
+					if (!stat.IsValid())
+					{
+						timer_manager.ClearTimer(heal_handler);
+						return;
+					}
+					stat->Heal(heal_amount);
 
-				++heal_count;
+					++heal_count;
 
-				if (heal_count >= max_heal_count)
-				{
-					timer_manager.ClearTimer(heal_handler);
-				}
-				});
+					if (heal_count >= max_heal_count)
+					{
+						timer_manager.ClearTimer(heal_handler);
+					}
+					});
 
-			timer_manager.SetTimer(heal_handler, delegate, 2.5f, true);
-			
+				timer_manager.SetTimer(heal_handler, delegate, 2.5f, true);
+
+			}
 		}
 	}
 }
@@ -120,30 +121,25 @@ void UItem::LaunchMissile(TArray<AActor*> actors)
 
 void UItem::AttackSpeedStimuli(TArray<AActor*> actors)
 {
-	if (actors.Num() <= 0)
+	for (int32 i = 0; i < actors.Num(); i++)
 	{
-		return;
-	}
-	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(actors[0]->GetWorld()));
-
-	if (game_instance)
-	{
-		const UTextureManager* texture_manager = game_instance->GetTextureManager();
-		if (texture_manager)
+		AUnit* unit = Cast<AUnit>(actors[i]);
+		if (unit)
 		{
-			UTexture2D* texture = texture_manager->GetTexture("fire_rate_burst");
-			if (texture)
-			{
-				for (int32 i = 0; i < actors.Num(); i++)
-				{
-					AUnit* unit = Cast<AUnit>(actors[i]);
-					if (unit)
-					{
-						unit->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, texture, -0.25f, false, 10.f));
-					}
-				}
-			}
+			unit->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, -0.25f, false, 10.f));
 		}
 	}
 
+}
+
+void UItem::SmokeGrenade(TArray<AActor*> actors)
+{
+	for (int32 i = 0; i < actors.Num(); i++)
+	{
+		AUnit* unit = Cast<AUnit>(actors[i]);
+		if (unit)
+		{
+			unit->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::Evasion, 0.5f, false, 10.f));
+		}
+	}
 }

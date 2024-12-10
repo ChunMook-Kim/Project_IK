@@ -15,6 +15,7 @@ See LICENSE file in the project root for full license information.
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Project_IK/Public/WorldSettings/IKGameInstance.h"
 
+#include "random"
 
 
 // Sets default values
@@ -75,9 +76,17 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		});
 }
 
-void UCharacterStatComponent::GetDamage(float DamageAmount)
+bool UCharacterStatComponent::GetDamage(float DamageAmount)
 {
+	float evasion_rand = FMath::RandRange(0.f, 1.f);
+	if (evasion_rand < GetEvasion())
+	{
+		return false;
+	}
+
 	SetHitPoint(GetHitPoint() - DamageAmount);
+	
+	return true;
 }
 
 void UCharacterStatComponent::Heal(float HealAmount)
@@ -123,6 +132,11 @@ float UCharacterStatComponent::GetMoveSpeed() const noexcept
 float UCharacterStatComponent::GetSightRange() const noexcept
 {
 	return CalculateStat(ECharacterStatType::SightRange);
+}
+
+float UCharacterStatComponent::GetEvasion() const noexcept
+{
+	return CalculateStat(ECharacterStatType::Evasion);
 }
 
 void UCharacterStatComponent::SetAbilityPower(float ability_power) noexcept
@@ -291,6 +305,8 @@ float UCharacterStatComponent::GetBaseStat(ECharacterStatType StatType) const
 	case ECharacterStatType::SightRange:
 		return stat_.sight_range_;
 		break;
+	case ECharacterStatType::Evasion:
+		return stat_.evasion_;
 	default:
 		break;
 	}

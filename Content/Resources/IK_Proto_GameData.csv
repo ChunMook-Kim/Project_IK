@@ -1,4 +1,4 @@
-CharID,ability_power_,attack_,attack_speed_,hit_point_,magazine_,fire_range_,move_speed_,sight_range_
--1,100,200,10,1000,100,6000,100,10000
-0,1,20,1,100,10,600,10,1000
-1,0,0,0,60,0,0,0,0
+CharID,ability_power_,attack_,attack_speed_,hit_point_,magazine_,fire_range_,move_speed_,sight_range_,evasion_,periodic_dp_,general_dp_
+-1,100,200,10,1000,100,6000,100,10000,1,Empty,Empty
+0,1,20,1,100,10,600,10,1000,0,Empty,Empty
+1,0,0,0,60,0,0,0,0,0,Empty,Empty

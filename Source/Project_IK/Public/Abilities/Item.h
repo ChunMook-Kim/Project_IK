@@ -40,7 +40,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	FItemData item_data_;
 
-	void RestoreHP(AActor* actor);
+	void RestoreHP(TArray<AActor*> actors);
 	void LaunchMissile(TArray<AActor*> actors);
 	void AttackSpeedStimuli(TArray<AActor*> actors);
+	void SmokeGrenade(TArray<AActor*> actors);
 };

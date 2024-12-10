@@ -63,15 +63,26 @@ void AUnit::BeginPlay()
 
 void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 {
-	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
-	game_mode->RecordDamage(damage, attacker);
+	bool is_damaged_ = character_stat_component_->GetDamage(damage);
+	if (is_damaged_)
+	{
+		AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		game_mode->RecordDamage(damage, attacker);
+	}
 
 	if (damage_UI_class_)
 	{
 		UDamageUI* damage_UI = CreateWidget<UDamageUI>(GetWorld(), damage_UI_class_);
 		if (damage_UI)
 		{
-			damage_UI->SetDamageAmount(damage);
+			if (is_damaged_)
+			{
+				damage_UI->SetDamageAmount(damage);
+			}
+			else
+			{
+				damage_UI->SetMissed();
+			}
 			damage_UI->AddToViewport();
 			FVector2D screen_position;
 			UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), GetActorLocation(), screen_position);
@@ -85,8 +96,6 @@ void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 				}, 0.75f, false);
 		}
 	}
-
-	character_stat_component_->GetDamage(damage);
 }
 
 void AUnit::Die()
