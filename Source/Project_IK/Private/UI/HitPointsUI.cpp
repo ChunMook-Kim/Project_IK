@@ -11,11 +11,17 @@ See LICENSE file in the project root for full license information.
 
 #include "UI/HitPointsUI.h"
 
+#include "Blueprint/WidgetTree.h"
 #include "Components/CharacterStatComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
-#include "Components/Image.h"
+
+#include "UI/BuffDisplayer.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
+#include "Managers/TextureManager.h"
 
 void UHitPointsUI::BindCharacterStat(UCharacterStatComponent* NewCharacterStat)
 {
@@ -34,6 +40,8 @@ void UHitPointsUI::NativeConstruct()
 	InitializeImages();
 
 	UpdateHPWidget();
+
+	texture_manager_ = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GetTextureManager();
 }
 
 void UHitPointsUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -58,30 +66,56 @@ void UHitPointsUI::UpdateBuffWidgets()
 	{
 		const TArray<FBuff> buffs = character_stat_->GetBuffs();
 
-		int32 loop_until = FMath::Min(IMAGE_SIZE, buffs.Num());
-		for (int32 i = 0; i < loop_until; ++i)
+		TMap<ECharacterStatType, int32> buff_counts;
+		for (const FBuff& buff : buffs)
 		{
-			buff_images_[i]->SetBrushFromTexture(buffs[i].buff_icon_);
+			if (buff_counts.Contains(buff.stat_type_))
+			{
+				buff_counts[buff.stat_type_] += 1;
+			}
+			else
+			{
+				buff_counts.Add(buff.stat_type_, 1);
+			}
 		}
-		for (int32 i = loop_until; i < IMAGE_SIZE; ++i)
+
+		int i = 0;
+		for (auto buff_count : buff_counts)
 		{
-			buff_images_[i]->SetVisibility(ESlateVisibility::Hidden);
+			if (buff_displayers_[i]->GetVisibility() != ESlateVisibility::Visible)
+			{
+				buff_displayers_[i]->SetVisibility(ESlateVisibility::Visible);
+			}
+			buff_displayers_[i]->SetImage(texture_manager_->GetBuffTexture(buff_count.Key));
+			
+			if (buff_count.Value > 1)
+			{
+				buff_displayers_[i]->SetDuplicatedText(buff_count.Value);
+			}
+			else
+			{
+				buff_displayers_[i]->HideText();
+			}
+
+			++i;
+		}
+		for (; i < DISPLAYER_SIZE; ++i)
+		{
+			if (buff_displayers_[i]->GetVisibility() != ESlateVisibility::Collapsed)
+			{
+				buff_displayers_[i]->SetVisibility(ESlateVisibility::Collapsed);
+			}
 		}
 	}
 }
 
 void UHitPointsUI::InitializeImages()
 {
-	FSlateBrush brush;
-	brush.DrawAs = ESlateBrushDrawType::Image;
-	brush.SetImageSize(FVector2D(32.0));
-
-	for (int32 i = 0; i < IMAGE_SIZE; i++)
+	for (int32 i = 0; i < DISPLAYER_SIZE; i++)
 	{
-		UImage* image = NewObject<UImage>();
-		image->SetBrush(brush);
-		buffs_container_->AddChild(image);
+		UBuffDisplayer* buff_displayer = WidgetTree->ConstructWidget<UBuffDisplayer>();
+		UHorizontalBoxSlot* displayer_slot = buffs_container_->AddChildToHorizontalBox(buff_displayer);
 
-		buff_images_.Add(image);
+		buff_displayers_.Add(buff_displayer);
 	}
 }

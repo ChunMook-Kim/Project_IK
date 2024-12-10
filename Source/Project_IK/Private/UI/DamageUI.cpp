@@ -19,6 +19,12 @@ void UDamageUI::SetDamageAmount(float DamageAmount)
 	opacity = 1.f;
 }
 
+void UDamageUI::SetMissed()
+{
+	damage_text_->SetText(FText::FromString("Missed"));
+	opacity = 1.f;
+}
+
 void UDamageUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	static constexpr float speed = 1.f / 0.75f;

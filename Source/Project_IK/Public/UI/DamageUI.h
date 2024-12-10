@@ -28,6 +28,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetDamageAmount(float Damage);
 
+	UFUNCTION(BlueprintCallable)
+	void SetMissed();
 
 protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;

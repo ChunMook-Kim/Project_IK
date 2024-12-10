@@ -18,6 +18,7 @@ class UButton;
 class USkillContainer;
 class UItemInventory;
 struct FTargetResult;
+class UTexture2D;
 
 /**
  * 
@@ -95,4 +96,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, meta = (PrivateAccessAllow))
 	TWeakObjectPtr<UItemInventory> item_inventory_;
+
+	UPROPERTY()
+	UTexture2D* empty_item_icon;
 };

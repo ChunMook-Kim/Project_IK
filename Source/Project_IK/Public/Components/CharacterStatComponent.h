@@ -36,6 +36,7 @@ enum class ECharacterStatType : uint8
 	FireRange UMETA(DisplayName = "FireRange"),
 	MoveSpeed UMETA(DisplayName = "MoveSpeed"),
 	SightRange UMETA(DisplayName = "SightRange"),
+	Evasion UMETA(DisplayName = "SightRange"),
 };
 
 USTRUCT(BlueprintType)
@@ -46,9 +47,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
 	ECharacterStatType  stat_type_;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
-	UTexture2D* buff_icon_;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
 	float value_;
@@ -65,11 +63,11 @@ public:
 
 
 	FBuff()
-		: stat_type_(ECharacterStatType::Attack), buff_icon_(nullptr), value_(0.f), is_percentage_(false), duration_(0.f), time_remaining_(0.f)
+		: stat_type_(ECharacterStatType::Attack), value_(0.f), is_percentage_(false), duration_(0.f), time_remaining_(0.f)
 	{}
 
-	FBuff(ECharacterStatType StatType, UTexture2D* Texture, float Value, bool IsPercentage, float Duration)
-		: stat_type_(StatType), buff_icon_(Texture), value_(Value), is_percentage_(IsPercentage), duration_(Duration), time_remaining_(Duration)
+	FBuff(ECharacterStatType StatType, float Value, bool IsPercentage, float Duration)
+		: stat_type_(StatType), value_(Value), is_percentage_(IsPercentage), duration_(Duration), time_remaining_(Duration)
 	{}
 };
 
@@ -87,7 +85,9 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunctionoverride);
 
 	UFUNCTION(BlueprintCallable)
-	void GetDamage(float DamageAmount);
+	bool GetDamage(float DamageAmount);
+	UFUNCTION(BlueprintCallable)
+	void Heal(float HealAmount);
 
 	// Getters&Setters of member variables
 	UFUNCTION(BlueprintPure)
@@ -106,23 +106,8 @@ public:
 	float GetMoveSpeed() const noexcept;
 	UFUNCTION(BlueprintPure)
 	float GetSightRange() const noexcept;
-
-	UFUNCTION(BlueprintCallable)
-	void SetAbilityPower(float ability_power) noexcept;
-	UFUNCTION(BlueprintCallable)
-	void SetAttack(float attack) noexcept;
-	UFUNCTION(BlueprintCallable)
-	void SetAttackSpeed(float attack_speed) noexcept;
-	UFUNCTION(BlueprintCallable)
-	void SetHitPoint(float hit_point) noexcept;
-	UFUNCTION(BlueprintCallable)
-	void SetMagazine(float magazine) noexcept;
-	UFUNCTION(BlueprintCallable)
-	void SetFireRange(float fire_range) noexcept;
-	UFUNCTION(BlueprintCallable)
-	void SetMoveSpeed(float move_speed) noexcept;
-	UFUNCTION(BlueprintCallable)
-	void SetSightRange(float sight_range) noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetEvasion() const noexcept;
 
 	UFUNCTION(BlueprintPure)
 	float GetHPRatio() const noexcept;
@@ -174,6 +159,24 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	ECharacterID character_id_;
 
+
+
+	UFUNCTION(BlueprintCallable)
+	void SetAbilityPower(float ability_power) noexcept;
+	UFUNCTION(BlueprintCallable)
+	void SetAttack(float attack) noexcept;
+	UFUNCTION(BlueprintCallable)
+	void SetAttackSpeed(float attack_speed) noexcept;
+	UFUNCTION(BlueprintCallable)
+	void SetHitPoint(float hit_point) noexcept;
+	UFUNCTION(BlueprintCallable)
+	void SetMagazine(float magazine) noexcept;
+	UFUNCTION(BlueprintCallable)
+	void SetFireRange(float fire_range) noexcept;
+	UFUNCTION(BlueprintCallable)
+	void SetMoveSpeed(float move_speed) noexcept;
+	UFUNCTION(BlueprintCallable)
+	void SetSightRange(float sight_range) noexcept;
 private:
 	// Scaling powers
 	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))

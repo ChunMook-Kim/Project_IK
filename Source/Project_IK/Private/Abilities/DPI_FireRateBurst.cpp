@@ -45,12 +45,7 @@ void ADPI_FireRateBurst::StartPassiveSkill()
 	unit_caster_ = Cast<AUnit>(caster_);
 	if(unit_caster_)
 	{
-		UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-		if (game_instance)
-		{
-			UTexture2D* texture = game_instance->GetTextureManager()->GetTexture("fire_rate_burst");
-			unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, texture, -1.f / accelerate_amount_, true, duration_));
-		}
+		unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, 1.f - (1.f / accelerate_amount_), true, duration_));
 	}
 }
 

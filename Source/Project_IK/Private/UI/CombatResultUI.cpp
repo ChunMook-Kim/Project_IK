@@ -95,6 +95,11 @@ void UCombatResultUI::UpdateResults(const TArray<AActor*>& heroes, const TMap<TW
 		}
 	}
 
+	while (hp_ratio_after_.Num() < hp_ratio_before_.Num())
+	{
+		hp_ratio_after_.Add(0.f);
+	}
+
 	HP_timer_ = 0;
 }
 

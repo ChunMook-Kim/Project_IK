@@ -24,6 +24,15 @@ enum class ETargetingMode : uint8
 	Direction UMETA(DisplayName = "Direction"),
 };
 
+UENUM(BlueprintType)
+enum class ETargetType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Allies UMETA(DisplayName = "Allies"),
+	Opponents UMETA(DisplayName = "Opponents"),
+	All UMETA(DisplayName = "All"),
+};
+
 USTRUCT(BlueprintType)
 struct FTargetResult
 {
@@ -44,12 +53,15 @@ struct FTargetParameters
 {
 	GENERATED_BODY()
 
-	FTargetParameters(ETargetingMode mode = ETargetingMode::None, float range = 0.f, float radius = 0.f)
-		: current_mode_(mode), range_(range), radius_(radius)
+	FTargetParameters(ETargetingMode mode = ETargetingMode::None, ETargetType type = ETargetType::All, float range = 0.f, float radius = 0.f)
+		: current_mode_(mode), target_type_(type), range_(range), radius_(radius)
 	{	}
 
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	ETargetingMode current_mode_;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
+	ETargetType target_type_;
 
 	// How far selectable
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")

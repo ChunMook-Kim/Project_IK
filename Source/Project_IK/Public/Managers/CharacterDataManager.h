@@ -49,6 +49,8 @@ public:
 	float move_speed_;
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	float sight_range_;
+	UPROPERTY(VisibleAnywhere, Category = "Data")
+	float evasion_;
 
 	//Drone Plugins
 	UPROPERTY(VisibleAnywhere, Category = "Data")

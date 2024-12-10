@@ -15,6 +15,7 @@ See LICENSE file in the project root for full license information.
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Project_IK/Public/WorldSettings/IKGameInstance.h"
 
+#include "random"
 
 
 // Sets default values
@@ -75,9 +76,22 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		});
 }
 
-void UCharacterStatComponent::GetDamage(float DamageAmount)
+bool UCharacterStatComponent::GetDamage(float DamageAmount)
 {
+	float evasion_rand = FMath::RandRange(0.f, 1.f);
+	if (evasion_rand < GetEvasion())
+	{
+		return false;
+	}
+
 	SetHitPoint(GetHitPoint() - DamageAmount);
+	
+	return true;
+}
+
+void UCharacterStatComponent::Heal(float HealAmount)
+{
+	SetHitPoint(GetHitPoint() + HealAmount);
 }
 
 float UCharacterStatComponent::GetAbilityPower() const noexcept
@@ -118,6 +132,11 @@ float UCharacterStatComponent::GetMoveSpeed() const noexcept
 float UCharacterStatComponent::GetSightRange() const noexcept
 {
 	return CalculateStat(ECharacterStatType::SightRange);
+}
+
+float UCharacterStatComponent::GetEvasion() const noexcept
+{
+	return CalculateStat(ECharacterStatType::Evasion);
 }
 
 void UCharacterStatComponent::SetAbilityPower(float ability_power) noexcept
@@ -237,7 +256,7 @@ float UCharacterStatComponent::CalculateStat(ECharacterStatType StatType) const
 {
 	float stat = GetBaseStat(StatType);
 
-	float percentage_bonus = 0.f;
+	float percentage_bonus = 1.f;
 	float value_bonus = 0.f;
 
 	for (const FBuff& buff : buffs_)
@@ -246,7 +265,7 @@ float UCharacterStatComponent::CalculateStat(ECharacterStatType StatType) const
 		{
 			if (buff.is_percentage_)
 			{
-				percentage_bonus += buff.value_;
+				percentage_bonus *= buff.value_;
 			}
 			else
 			{
@@ -255,7 +274,7 @@ float UCharacterStatComponent::CalculateStat(ECharacterStatType StatType) const
 		}
 	}
 
-	return (stat + value_bonus) * (1.f + percentage_bonus);
+	return (stat + value_bonus) * percentage_bonus;
 }
 
 float UCharacterStatComponent::GetBaseStat(ECharacterStatType StatType) const
@@ -286,6 +305,8 @@ float UCharacterStatComponent::GetBaseStat(ECharacterStatType StatType) const
 	case ECharacterStatType::SightRange:
 		return stat_.sight_range_;
 		break;
+	case ECharacterStatType::Evasion:
+		return stat_.evasion_;
 	default:
 		break;
 	}

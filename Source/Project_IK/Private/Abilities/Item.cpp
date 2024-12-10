@@ -12,6 +12,13 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/Item.h"
 
 #include "Managers/ItemDataManager.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "WorldSettings/IKGameInstance.h"
+#include "Managers/TextureManager.h"
+
+#include "Characters/Unit.h"
+
 #include "Components/TargetingComponent.h"
 
 #include "Components/CharacterStatComponent.h"
@@ -30,10 +37,16 @@ void UItem::UseItem(const FTargetResult& TargetResult)
 	case EItemLogicType::None:
 		break;
 	case EItemLogicType::RestoreHP:
-		RestoreHP(TargetResult.target_actors_[0]);
+		RestoreHP(TargetResult.target_actors_);
 		break;
 	case EItemLogicType::LaunchMissile:
 		LaunchMissile(TargetResult.target_actors_);
+		break;
+	case EItemLogicType::AttackSpeedStimuli:
+		AttackSpeedStimuli(TargetResult.target_actors_);
+		break;
+	case EItemLogicType::SmokeGrenade:
+		SmokeGrenade(TargetResult.target_actors_);
 		break;
 	default:
 		break;
@@ -47,21 +60,47 @@ FItemData UItem::GetData() const
 
 FTargetParameters UItem::GetTargetParameters() const
 {
-	return FTargetParameters(item_data_.targeting_mode_, item_data_.range_, item_data_.radius_);
+	return FTargetParameters(item_data_.targeting_mode_, item_data_.target_type_, item_data_.range_, item_data_.radius_);
 }
 
-void UItem::RestoreHP(AActor* actor)
+void UItem::RestoreHP(TArray<AActor*> actors)
 {
-	if (!actor)
+	for (AActor* actor : actors)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UItem::RestoreHP -> Actor is invalid!!"));
-		return;
-	}
-	UCharacterStatComponent* stat = actor->GetComponentByClass<UCharacterStatComponent>();
-	if (stat)
-	{
-		// @@ TODO: Change fixed data into some variable.
-		stat->SetHitPoint(stat->GetHitPoint() + 50.f);
+		TWeakObjectPtr<UCharacterStatComponent> stat = actor->GetComponentByClass<UCharacterStatComponent>();
+		if (stat.IsValid())
+		{
+			static constexpr float heal_amount = 50.f;
+			// Instant heal immediately.
+			stat->Heal(heal_amount);
+			int32 heal_count = 0;
+			const int32 max_heal_count = 4;
+			FTimerDelegate delegate;
+			FTimerHandle heal_handler;
+			UWorld* world = actor->GetWorld();
+			if (world)
+			{
+				FTimerManager& timer_manager = world->GetTimerManager();
+				delegate.BindLambda([stat, &heal_count, max_heal_count, &timer_manager, &heal_handler]() {
+					if (!stat.IsValid())
+					{
+						timer_manager.ClearTimer(heal_handler);
+						return;
+					}
+					stat->Heal(heal_amount);
+
+					++heal_count;
+
+					if (heal_count >= max_heal_count)
+					{
+						timer_manager.ClearTimer(heal_handler);
+					}
+					});
+
+				timer_manager.SetTimer(heal_handler, delegate, 2.5f, true);
+
+			}
+		}
 	}
 }
 
@@ -76,6 +115,31 @@ void UItem::LaunchMissile(TArray<AActor*> actors)
 			{
 				damageable_actor->GetDamage(50.f, nullptr);
 			}
+		}
+	}
+}
+
+void UItem::AttackSpeedStimuli(TArray<AActor*> actors)
+{
+	for (int32 i = 0; i < actors.Num(); i++)
+	{
+		AUnit* unit = Cast<AUnit>(actors[i]);
+		if (unit)
+		{
+			unit->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, -0.25f, false, 10.f));
+		}
+	}
+
+}
+
+void UItem::SmokeGrenade(TArray<AActor*> actors)
+{
+	for (int32 i = 0; i < actors.Num(); i++)
+	{
+		AUnit* unit = Cast<AUnit>(actors[i]);
+		if (unit)
+		{
+			unit->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::Evasion, 0.5f, false, 10.f));
 		}
 	}
 }
