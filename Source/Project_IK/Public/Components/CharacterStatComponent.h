@@ -15,6 +15,8 @@ See LICENSE file in the project root for full license information.
 #include "Managers/CharacterDataManager.h"
 #include "CharacterStatComponent.generated.h"
 
+class UDamageUI;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDieDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 
@@ -45,29 +47,39 @@ struct FBuff
 public:
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Buff")
+	FName buff_name_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Buff")
 	ECharacterStatType  stat_type_;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Buff")
 	float value_;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Buff")
 	bool is_percentage_;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Buff")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Buff")
+	bool is_permanent_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Buff")
 	float duration_;
 
-	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadWrite, Category = "Buff")
+	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category = "Buff")
 	float time_remaining_;
 
 
 
 	FBuff()
-		: stat_type_(ECharacterStatType::Attack), value_(0.f), is_percentage_(false), duration_(0.f), time_remaining_(0.f)
+		: stat_type_(ECharacterStatType::Attack), value_(0.f), is_percentage_(false), is_permanent_(false), duration_(0.f), time_remaining_(0.f)
 	{}
 
-	FBuff(ECharacterStatType StatType, float Value, bool IsPercentage, float Duration)
-		: stat_type_(StatType), value_(Value), is_percentage_(IsPercentage), duration_(Duration), time_remaining_(Duration)
+	FBuff(FName Name, ECharacterStatType StatType, float Value, bool IsPercentage, float Duration)
+		: buff_name_(Name), stat_type_(StatType), value_(Value), is_percentage_(IsPercentage), is_permanent_(false), duration_(Duration), time_remaining_(Duration)
+	{}
+
+	FBuff(FName Name, ECharacterStatType StatType, float Value, bool IsPercentage, bool IsPermanent)
+		: buff_name_(Name), stat_type_(StatType), value_(Value), is_percentage_(IsPercentage), is_permanent_(true), duration_(0.f), time_remaining_(0.f)
 	{}
 };
 
@@ -85,7 +97,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunctionoverride);
 
 	UFUNCTION(BlueprintCallable)
-	bool GetDamage(float DamageAmount);
+	bool GetDamage(float DamageAmount, AActor* Attacker);
+	bool GetDamage(float DamageAmount, TWeakObjectPtr <AActor> Attacker = nullptr);
 	UFUNCTION(BlueprintCallable)
 	void Heal(float HealAmount);
 
@@ -178,9 +191,12 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SetSightRange(float sight_range) noexcept;
 private:
-	// Scaling powers
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UDamageUI> damage_UI_class_;
+
 	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
 	FCharacterData stat_;
+
 
 	float max_hit_points_;
 

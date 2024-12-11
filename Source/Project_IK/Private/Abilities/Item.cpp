@@ -126,7 +126,7 @@ void UItem::AttackSpeedStimuli(TArray<AActor*> actors)
 		AUnit* unit = Cast<AUnit>(actors[i]);
 		if (unit)
 		{
-			unit->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::AttackSpeed, -0.25f, false, 10.f));
+			unit->GetCharacterStat()->ApplyBuff(FBuff(TEXT("Item_Stimuli"), ECharacterStatType::AttackSpeed, -0.25f, false, 10.f));
 		}
 	}
 
@@ -139,7 +139,7 @@ void UItem::SmokeGrenade(TArray<AActor*> actors)
 		AUnit* unit = Cast<AUnit>(actors[i]);
 		if (unit)
 		{
-			unit->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::Evasion, 0.5f, false, 10.f));
+			unit->GetCharacterStat()->ApplyBuff(FBuff(TEXT("Item_SmokeGrenade"),ECharacterStatType::Evasion, 0.5f, false, 10.f));
 		}
 	}
 }

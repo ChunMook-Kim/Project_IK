@@ -14,8 +14,9 @@ See LICENSE file in the project root for full license information.
 
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Project_IK/Public/WorldSettings/IKGameInstance.h"
+#include "WorldSettings/IKGameModeBase.h"
 
-#include "random"
+#include "UI/DamageUI.h"
 
 
 // Sets default values
@@ -67,30 +68,102 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 	for (FBuff& buff : buffs_)
 	{
+		if (buff.is_permanent_)
+		{
+			continue;
+		}
 		buff.time_remaining_ -= DeltaTime;
 	}
 
 	buffs_.RemoveAll([](const FBuff& buff)
 		{
-			return buff.time_remaining_ <= 0.f;
+			return buff.is_permanent_ == false && buff.time_remaining_ <= 0.f;
 		});
 }
 
-bool UCharacterStatComponent::GetDamage(float DamageAmount)
+bool UCharacterStatComponent::GetDamage(float DamageAmount, AActor* Attacker)
+{
+	return GetDamage(DamageAmount, TWeakObjectPtr<AActor>(Attacker));
+}
+
+bool UCharacterStatComponent::GetDamage(float DamageAmount, TWeakObjectPtr<AActor> Attacker)
 {
 	float evasion_rand = FMath::RandRange(0.f, 1.f);
-	if (evasion_rand < GetEvasion())
+	bool is_damaged = evasion_rand >= GetEvasion();
+
+	if (is_damaged && Attacker.IsValid())
+	{
+		AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		game_mode->RecordDamage(DamageAmount, Attacker);
+	}
+
+	// Display damage amount when damaged
+	if (damage_UI_class_)
+	{
+		UDamageUI* damage_UI = CreateWidget<UDamageUI>(GetWorld(), damage_UI_class_);
+		if (damage_UI)
+		{
+			damage_UI->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f));
+			if (is_damaged)
+			{
+				damage_UI->SetDamageAmount(DamageAmount);
+			}
+			else
+			{
+				damage_UI->SetMissed();
+			}
+			damage_UI->AddToViewport();
+
+			FVector2D screen_position;
+			UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), GetOwner()->GetActorLocation(), screen_position);
+			damage_UI->SetPositionInViewport(screen_position);
+
+			// Add an animation to remove it after seconds.
+			FTimerHandle timer_handle;
+			GetWorld()->GetTimerManager().SetTimer(timer_handle, [damage_UI]()
+				{
+					damage_UI->RemoveFromParent();
+				}, 0.75f, false);
+		}
+	}
+
+
+	if (!is_damaged)
 	{
 		return false;
 	}
 
 	SetHitPoint(GetHitPoint() - DamageAmount);
+
 	
 	return true;
 }
 
 void UCharacterStatComponent::Heal(float HealAmount)
 {
+	// Display damage amount when damaged
+	if (damage_UI_class_)
+	{
+		UDamageUI* damage_UI = CreateWidget<UDamageUI>(GetWorld(), damage_UI_class_);
+		if (damage_UI)
+		{
+			damage_UI->SetColorAndOpacity(FLinearColor(0.f, 1.f, 0.f));
+			damage_UI->SetDamageAmount(HealAmount);
+			damage_UI->AddToViewport();
+
+			FVector2D screen_position;
+			UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), GetOwner()->GetActorLocation(), screen_position);
+			damage_UI->SetPositionInViewport(screen_position);
+
+			// Add an animation to remove it after seconds.
+			FTimerHandle timer_handle;
+			GetWorld()->GetTimerManager().SetTimer(timer_handle, [damage_UI]()
+				{
+					damage_UI->RemoveFromParent();
+				}, 0.75f, false);
+		}
+	}
+
 	SetHitPoint(GetHitPoint() + HealAmount);
 }
 

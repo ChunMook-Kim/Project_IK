@@ -11,11 +11,8 @@ See LICENSE file in the project root for full license information.
 #include "Characters/Unit.h"
 #include "Components/CharacterStatComponent.h"
 #include "Components/WidgetComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "WorldSettings/IKGameModeBase.h"
 
 #include "UI/HitPointsUI.h"
-#include "UI/DamageUI.h"
 
 // Sets default values
 AUnit::AUnit()
@@ -63,39 +60,7 @@ void AUnit::BeginPlay()
 
 void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 {
-	bool is_damaged_ = character_stat_component_->GetDamage(damage);
-	if (is_damaged_)
-	{
-		AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
-		game_mode->RecordDamage(damage, attacker);
-	}
-
-	if (damage_UI_class_)
-	{
-		UDamageUI* damage_UI = CreateWidget<UDamageUI>(GetWorld(), damage_UI_class_);
-		if (damage_UI)
-		{
-			if (is_damaged_)
-			{
-				damage_UI->SetDamageAmount(damage);
-			}
-			else
-			{
-				damage_UI->SetMissed();
-			}
-			damage_UI->AddToViewport();
-			FVector2D screen_position;
-			UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), GetActorLocation(), screen_position);
-			damage_UI->SetPositionInViewport(screen_position);
-
-			// Add an animation to remove it after seconds.
-			FTimerHandle timer_handle;
-			GetWorld()->GetTimerManager().SetTimer(timer_handle, [damage_UI]()
-				{
-					damage_UI->RemoveFromParent();
-				}, 0.75f, false);
-		}
-	}
+	character_stat_component_->GetDamage(damage, attacker);
 }
 
 void AUnit::Die()
