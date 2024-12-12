@@ -20,9 +20,6 @@ class UDamageable : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
 class PROJECT_IK_API IDamageable
 {
 	GENERATED_BODY()

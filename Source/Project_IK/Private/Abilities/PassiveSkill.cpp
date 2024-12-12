@@ -65,7 +65,6 @@ void APassiveSkill::Tick(float DeltaTime)
 		if(left_time_ > 0.f)
 		{
 			left_time_ -= DeltaTime;
-			UE_LOG(LogTemp, Warning, TEXT("Passive Left Cool Time: %f"), left_time_);
 		}
 	}
 }

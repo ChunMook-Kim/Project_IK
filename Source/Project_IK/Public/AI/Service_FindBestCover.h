@@ -13,6 +13,8 @@ See LICENSE file in the project root for full license information.
 #include "BehaviorTree/BTService.h"
 #include "Service_FindBestCover.generated.h"
 
+class ACover;
+
 UCLASS()
 class PROJECT_IK_API UService_FindBestCover : public UBTService
 {
@@ -21,11 +23,13 @@ class PROJECT_IK_API UService_FindBestCover : public UBTService
 public:
 	UService_FindBestCover();
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard", meta = (AllowPrivateAccess = "true"))
 	FBlackboardKeySelector owned_cover_key_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard", meta = (AllowPrivateAccess = "true"))
 	FBlackboardKeySelector attack_target_key_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard", meta = (AllowPrivateAccess = "true"))
+	FBlackboardKeySelector unit_state_key_;
 };

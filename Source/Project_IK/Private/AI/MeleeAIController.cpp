@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 AMeleeAIController::AMeleeAIController()
 {
 	target_class_key_name_ = TEXT("TargetClass");
+	unit_state_key_name_ = TEXT("UnitState");
 }
 
 void AMeleeAIController::OnPossess(APawn* InPawn)
@@ -35,6 +36,29 @@ void AMeleeAIController::OnPossess(APawn* InPawn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target class key name is wrong!"));
 	}
+	if(GetBlackboardComponent()->IsValidKey(GetBlackboardComponent()->GetKeyID(unit_state_key_name_)))
+	{
+		GetBlackboardComponent()->SetValueAsEnum(unit_state_key_name_, static_cast<uint8>(EUnitState::Forwarding));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("unit state enum key name is wrong!"));
+	}
+}
+
+void AMeleeAIController::GetStunned(float duration)
+{
+	SetUnitState(EUnitState::Stunned);
+	UE_LOG(LogTemp, Warning, TEXT("Character Stunned!"));
+	GetWorldTimerManager().SetTimer(timer_handle_,
+		FTimerDelegate::CreateLambda([this] { SetUnitState(EUnitState::Forwarding); 	UE_LOG(LogTemp, Warning, TEXT("Finish Stunned!"));
+}),
+		duration, false);
+}
+
+void AMeleeAIController::SetUnitState(EUnitState new_state)
+{
+	GetBlackboardComponent()->SetValueAsEnum(unit_state_key_name_, static_cast<uint8>(new_state));
 }
 
 void AMeleeAIController::OnDie()

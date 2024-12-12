@@ -21,3 +21,13 @@ enum class EDPType : uint8
 	FireRange UMETA(DisplayName = "Fire Range"),
 	INVALID UMETA(DisplayName = "Invalid")
 };
+
+UENUM(BlueprintType)
+enum class EUnitState  : uint8
+{
+	Forwarding UMETA(DisplayName = "Forwarding"),
+	HeadingToEnemy UMETA(DisplayName = "Heading To Enemy"),
+	HeadingToCover UMETA(DisplayName = "Heading To Cover"),
+	Attacking UMETA(DisplayName = "Attacking"),
+	Stunned UMETA(DisplayName = "Stunned"),
+};

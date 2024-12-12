@@ -14,8 +14,9 @@ See LICENSE file in the project root for full license information.
 #include "Characters/Unit.h"
 #include "Components/CharacterStatComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Engine/OverlapResult.h"
+#include "Managers/CommonFunctions.h"
 #include "Environments/Cover.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UService_FindBestCover::UService_FindBestCover()
 {
@@ -44,44 +45,20 @@ void UService_FindBestCover::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 			AUnit* casted_gunner = Cast<AUnit>(OwnerComp.GetAIOwner()->GetPawn());
 			FVector attack_target_pos = attack_target->GetActorLocation();
 			
-			TArray<FOverlapResult> overlap_results;
-			FCollisionQueryParams CollisionQueryParam(NAME_None, false, casted_gunner);
+			TArray<AActor*> ignore_actors;
+			TArray<AActor*> out_actors;
+			TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
+			traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
 			
-			bool result = GetWorld()->OverlapMultiByChannel(
-			overlap_results,
-			casted_gunner->GetActorLocation(),
-			FQuat::Identity,
-			ECollisionChannel::ECC_WorldStatic,
-			FCollisionShape::MakeSphere(casted_gunner->GetCharacterStat()->GetSightRange()),
-			CollisionQueryParam
-			);
+			UKismetSystemLibrary::SphereOverlapActors(GetWorld(), casted_gunner->GetActorLocation(),
+				casted_gunner->GetCharacterStat()->GetSightRange(),
+				traceObjectTypes, ACover::StaticClass(), ignore_actors, out_actors);
 			
-			ACover* best_cover = nullptr;
-			for(const auto& elem : overlap_results)
-			{
-				if(ACover* casted_cover = Cast<ACover>(elem.GetActor()))
-				{
-					//만약 cover가 부서져있거나 이미 다른 주인이 있다면 넘어간다.
-					if(casted_cover->IsBroken() || casted_cover->HasCoveringOwner()) continue;
-					
-					FVector cover_pos = elem.GetActor()->GetActorLocation();
-					//만약 엄폐물에서의 위치와 가장 가까운 적의 거리가 사거리 보다 길다면 넘어간다.
-					if(FVector::Dist2D(cover_pos, attack_target_pos) >
-						casted_gunner->GetCharacterStat()->GetFireRange()) continue;
-
-					FVector cover_to_target = attack_target_pos - cover_pos;
-					cover_to_target.Normalize();
-					
-					float angle_similarity = FVector::DotProduct(cover_to_target, casted_cover->GetActorForwardVector());
-					if(angle_similarity < 0.5) continue;
-					
-					best_cover = casted_cover;
-				}
-			}
-			if(best_cover)
+			if(ACover* best_cover = CommonFunctions::FindBestCover(out_actors, attack_target_pos, casted_gunner->GetCharacterStat()->GetFireRange()))
 			{
 				best_cover->SetCoveringOwner(true);
 				blackboard->SetValueAsObject(owned_cover_key_.SelectedKeyName, best_cover);
+				blackboard->SetValueAsEnum(unit_state_key_.SelectedKeyName, static_cast<uint8>(EUnitState::HeadingToCover));
 			}
 		}
 	}
