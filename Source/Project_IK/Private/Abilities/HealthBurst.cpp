@@ -28,7 +28,6 @@ void AHealthBurst::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	if(activated_ && left_duration_ > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AHealthBurst::Activated"));
 		unit_caster_ = Cast<AUnit>(caster_);
 		if(unit_caster_)
 		{
@@ -38,7 +37,6 @@ void AHealthBurst::Tick(float DeltaSeconds)
 
 	if(activated_ && left_duration_ <= 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AHealthBurst::Finish"));
 		FinishPassiveSkill();
 	}
 }

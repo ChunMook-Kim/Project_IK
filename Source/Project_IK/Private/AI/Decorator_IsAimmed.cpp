@@ -32,8 +32,6 @@ bool UDecorator_IsAimmed::CalculateRawConditionValue(UBehaviorTreeComponent& Own
 		FVector owner_to_target = attack_target->GetActorLocation() - casted_pawn->GetActorLocation();
 		owner_to_target.Normalize();
 		return FVector::DotProduct(owner_to_target, casted_pawn->GetActorForwardVector()) >= 0.9999;
-	}else
-	{
-		return false;
 	}
+	return false;
 }

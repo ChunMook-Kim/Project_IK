@@ -41,13 +41,11 @@ void ASelfExplosionEnemy::Explosion()
 	
 	UClass* seek_class = nullptr;
 	TArray<AActor*> ignore_actors;
-
 	TArray<AActor*> out_actors;
 
 	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(),
 		explosion_radius_, traceObjectTypes, seek_class, ignore_actors, out_actors);
 
-	// Optional: Use to have a visual representation of the SphereOverlapActors
 	DrawDebugSphere(GetWorld(), GetActorLocation(), explosion_radius_, 12, FColor::Red, false, 1.0f);
 	for (AActor* overlappedActor : out_actors) {
 		if(auto casted = Cast<IDamageable>(overlappedActor))
