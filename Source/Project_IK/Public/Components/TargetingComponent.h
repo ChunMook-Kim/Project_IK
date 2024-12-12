@@ -34,21 +34,6 @@ enum class ETargetType : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FTargetResult
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
-	TArray<AActor*> target_actors_= TArray<AActor*>();
-
-	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
-	FVector target_location_ = FVector::ZeroVector;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
-	FRotator target_rotation_ = FRotator::ZeroRotator;
-};
-
-USTRUCT(BlueprintType)
 struct FTargetParameters
 {
 	GENERATED_BODY()
@@ -70,6 +55,24 @@ struct FTargetParameters
 	// A radius of selected area, an arc width for direction mode
 	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
 	float radius_;
+};
+
+USTRUCT(BlueprintType)
+struct FTargetResult
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
+	TArray<AActor*> target_actors_ = TArray<AActor*>();
+
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
+	FVector target_location_ = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
+	FRotator target_rotation_ = FRotator::ZeroRotator;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Targeting")
+	FTargetParameters target_parameters_;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetResultSelected, const FTargetResult&, TargetResult);

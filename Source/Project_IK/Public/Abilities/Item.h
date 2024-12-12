@@ -29,7 +29,7 @@ public:
 	void InitializeItemUsingData(FItemData item_data);
 
 	UFUNCTION()
-	void UseItem(const FTargetResult& TargetResult);
+	void UseItem(UWorld* world, const FTargetResult& TargetResult);
 
 	UFUNCTION()
 	FItemData GetData() const;
@@ -43,5 +43,5 @@ private:
 	void RestoreHP(TArray<AActor*> actors);
 	void LaunchMissile(TArray<AActor*> actors);
 	void AttackSpeedStimuli(TArray<AActor*> actors);
-	void SmokeGrenade(TArray<AActor*> actors);
+	void SmokeGrenade(UWorld* World, FVector TargetLocation, float Radius);
 };

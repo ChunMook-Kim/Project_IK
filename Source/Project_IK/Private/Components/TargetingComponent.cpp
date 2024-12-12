@@ -101,6 +101,7 @@ void UTargetingComponent::StartSkillTargeting(AActor* invoker, FTargetParameters
 	invoker_ = invoker;
 	target_parameters_ = TargetParams;
 	current_target_result_.target_actors_.Empty();
+	current_target_result_.target_parameters_ = target_parameters_;
 
 
 	range_decal_->DecalSize = FVector(target_parameters_.range_);
@@ -145,6 +146,7 @@ void UTargetingComponent::StartItemTargeting(FTargetParameters TargetParams)
 	invoker_ = nullptr;
 	target_parameters_ = TargetParams;
 	current_target_result_.target_actors_.Empty();
+	current_target_result_.target_parameters_ = target_parameters_;
 
 
 	range_decal_->DecalSize = FVector(target_parameters_.range_);

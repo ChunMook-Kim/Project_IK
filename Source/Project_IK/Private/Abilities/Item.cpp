@@ -25,12 +25,14 @@ See LICENSE file in the project root for full license information.
 
 #include "Interfaces/Damageable.h"
 
+#include "Abilities/SmokeRegion.h"
+
 void UItem::InitializeItemUsingData(FItemData item_data)
 {
 	item_data_ = item_data;
 }
 
-void UItem::UseItem(const FTargetResult& TargetResult)
+void UItem::UseItem(UWorld* world, const FTargetResult& TargetResult)
 {
 	switch (item_data_.item_logic_)
 	{
@@ -46,7 +48,7 @@ void UItem::UseItem(const FTargetResult& TargetResult)
 		AttackSpeedStimuli(TargetResult.target_actors_);
 		break;
 	case EItemLogicType::SmokeGrenade:
-		SmokeGrenade(TargetResult.target_actors_);
+		SmokeGrenade(world, TargetResult.target_location_, TargetResult.target_parameters_.radius_);
 		break;
 	default:
 		break;
@@ -132,14 +134,19 @@ void UItem::AttackSpeedStimuli(TArray<AActor*> actors)
 
 }
 
-void UItem::SmokeGrenade(TArray<AActor*> actors)
+void UItem::SmokeGrenade(UWorld* World, FVector TargetLocation, float Radius)
 {
-	for (int32 i = 0; i < actors.Num(); i++)
+	if (World)
 	{
-		AUnit* unit = Cast<AUnit>(actors[i]);
-		if (unit)
+		FActorSpawnParameters spawn_params;
+		spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		ASmokeRegion* spawned_smoke = World->SpawnActor<ASmokeRegion>(ASmokeRegion::StaticClass(), TargetLocation, FRotator::ZeroRotator, spawn_params);
+		if (spawned_smoke)
 		{
-			unit->GetCharacterStat()->ApplyBuff(FBuff(TEXT("Item_SmokeGrenade"),ECharacterStatType::Evasion, 0.5f, false, 10.f));
+			spawned_smoke->SetLifeSpan(10.f);
+			spawned_smoke->SetSphereRadius(Radius);
+			
 		}
 	}
 }

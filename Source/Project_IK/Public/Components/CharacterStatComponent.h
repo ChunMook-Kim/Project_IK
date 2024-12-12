@@ -156,6 +156,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ApplyBuff(FBuff buff);
 
+	UFUNCTION(BlueprintCallable)
+	bool RemoveBuff(FName BuffName);
+
 	UFUNCTION(BlueprintPure)
 	TArray<FBuff> GetBuffs() const;
 

@@ -391,6 +391,21 @@ void UCharacterStatComponent::ApplyBuff(FBuff buff)
 	buffs_.Add(buff);
 }
 
+bool UCharacterStatComponent::RemoveBuff(FName BuffName)
+{
+	int32 found_index = buffs_.IndexOfByPredicate([BuffName](const FBuff& buff) {
+		return buff.buff_name_ == BuffName;
+		});
+
+	if (found_index != INDEX_NONE)
+	{
+		buffs_.RemoveAt(found_index);
+		return true;
+	}
+
+	return false;
+}
+
 TArray<FBuff> UCharacterStatComponent::GetBuffs() const
 {
 	return buffs_;
