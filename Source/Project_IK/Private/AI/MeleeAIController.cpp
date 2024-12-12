@@ -46,6 +46,16 @@ void AMeleeAIController::OnPossess(APawn* InPawn)
 	}
 }
 
+void AMeleeAIController::GetStunned(float duration)
+{
+	SetUnitState(EUnitState::Stunned);
+	UE_LOG(LogTemp, Warning, TEXT("Character Stunned!"));
+	GetWorldTimerManager().SetTimer(timer_handle_,
+		FTimerDelegate::CreateLambda([this] { SetUnitState(EUnitState::Forwarding); 	UE_LOG(LogTemp, Warning, TEXT("Finish Stunned!"));
+}),
+		duration, false);
+}
+
 void AMeleeAIController::SetUnitState(EUnitState new_state)
 {
 	GetBlackboardComponent()->SetValueAsEnum(unit_state_key_name_, static_cast<uint8>(new_state));

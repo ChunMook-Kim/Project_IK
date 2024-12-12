@@ -22,6 +22,10 @@ public:
 	AMeleeAIController();
 	virtual void OnDie();
 	virtual void OnPossess(APawn* InPawn) override;
+
+	UFUNCTION(Blueprintable, BlueprintCallable, Category = "AI")
+	virtual void GetStunned(float duration);
+	
 	UFUNCTION(Blueprintable)
 	void SetUnitState(EUnitState new_state);
 	
@@ -37,4 +41,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true", BindWidget))
 	FName unit_state_key_name_;
+
+private:
+	FTimerHandle timer_handle_;
 };
