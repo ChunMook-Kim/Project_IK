@@ -38,7 +38,7 @@ void ADPI_FireRange::StartPassiveSkill()
 	unit_caster_ = Cast<AUnit>(caster_);
 	if(unit_caster_)
 	{
-		unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(ECharacterStatType::FireRange, buff_amount_, false, 9999.f));
+		unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(TEXT("Drone_FireRange"), ECharacterStatType::FireRange, buff_amount_, false, true));
 	}
 }
 

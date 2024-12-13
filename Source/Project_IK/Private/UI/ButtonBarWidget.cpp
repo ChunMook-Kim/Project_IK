@@ -245,7 +245,7 @@ void UButtonBarWidget::InvokeSkills(const FTargetResult& TargetResult)
 {
 	if (caster_ < 0)
 	{
-		item_inventory_->GetItem(selected_item_index_)->UseItem(TargetResult);
+		item_inventory_->GetItem(selected_item_index_)->UseItem(GetWorld(), TargetResult);
 		item_inventory_->RemoveItem(selected_item_index_);
 
 		switch (selected_item_index_)
