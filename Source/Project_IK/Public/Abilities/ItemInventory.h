@@ -21,7 +21,7 @@ struct FItemData;
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PROJECT_IK_API UItemInventory : public UObject
 {
 	GENERATED_BODY()

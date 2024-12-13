@@ -28,7 +28,7 @@ ASmokeRegion::ASmokeRegion()
 	sphere_ = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	RootComponent = sphere_;
 	sphere_->InitSphereRadius(0.f);
-	sphere_->SetCollisionProfileName(TEXT("OverlapAll"));
+	sphere_->SetCollisionProfileName(TEXT("OverlapOnlyUnits"));
 	sphere_->SetGenerateOverlapEvents(true);
 
 	// Bind overlap events

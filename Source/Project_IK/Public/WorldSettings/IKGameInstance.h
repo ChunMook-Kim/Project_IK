@@ -72,7 +72,7 @@ private:
 	class UItemDataManager* item_data_manager_;
 	UPROPERTY()
 	class UCharacterDataManager* character_data_manager_;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UItemInventory* item_inventory_;
 
 	UPROPERTY()
