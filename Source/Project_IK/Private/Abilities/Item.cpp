@@ -11,7 +11,6 @@ See LICENSE file in the project root for full license information.
 
 #include "Abilities/Item.h"
 
-#include "Managers/ItemDataManager.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "WorldSettings/IKGameInstance.h"
@@ -26,6 +25,8 @@ See LICENSE file in the project root for full license information.
 #include "Interfaces/Damageable.h"
 
 #include "Abilities/SmokeRegion.h"
+
+#include "AI/MeleeAIController.h"
 
 void UItem::InitializeItemUsingData(FItemData item_data)
 {
@@ -49,6 +50,9 @@ void UItem::UseItem(UWorld* world, const FTargetResult& TargetResult)
 		break;
 	case EItemLogicType::SmokeGrenade:
 		SmokeGrenade(world, TargetResult.target_location_, TargetResult.target_parameters_.radius_);
+		break;
+	case EItemLogicType::Flashbang:
+		Flashbang(TargetResult.target_actors_);
 		break;
 	default:
 		break;
@@ -149,4 +153,21 @@ void UItem::SmokeGrenade(UWorld* World, FVector TargetLocation, float Radius)
 			
 		}
 	}
+}
+
+void UItem::Flashbang(TArray<AActor*> actors)
+{
+	for (int32 i = 0; i < actors.Num(); i++)
+	{
+		AUnit* unit = Cast<AUnit>(actors[i]);
+		if (unit)
+		{
+			AMeleeAIController* controller = Cast<AMeleeAIController>(unit->GetController());
+			if (IsValid(controller))
+			{
+				controller->GetStunned(6.f);
+			}
+		}
+	}
+
 }
