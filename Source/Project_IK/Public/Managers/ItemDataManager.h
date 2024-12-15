@@ -24,7 +24,8 @@ enum class EItemLogicType : uint8
 	RestoreHP UMETA(DisplayName = "RestoreHP"),
 	LaunchMissile UMETA(DisplayName = "LaunchMissile"),
 	AttackSpeedStimuli UMETA(DisplayName = "AttackSpeedStimuli"),
-	SmokeGrenade UMETA(DisplayName = "SmokeGrenade")
+	SmokeGrenade UMETA(DisplayName = "SmokeGrenade"),
+	Flashbang UMETA(DisplayName = "Flashbang"),
 };
 
 USTRUCT(BlueprintType)

@@ -90,7 +90,7 @@ void UIKGameInstance::InitializeCharacterDataManager()
 
 void UIKGameInstance::InitializeItemInventory()
 {
-	item_inventory_ = NewObject<UItemInventory>();
+	item_inventory_ = NewObject<UItemInventory>(this, item_inventory_class_);
 }
 
 void UIKGameInstance::InitializeMaps()

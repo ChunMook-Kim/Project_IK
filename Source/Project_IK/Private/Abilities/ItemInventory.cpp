@@ -30,7 +30,7 @@ void UItemInventory::AddItem(FItemData item_data)
 
 	if (item_inventory_.Num() < 3)
 	{
-		UItem* item = NewObject<UItem>();
+		UItem* item = NewObject<UItem>(this, item_class_);
 		item->InitializeItemUsingData(item_data);
 
 		item_inventory_.Add(item);

@@ -22,7 +22,7 @@ See LICENSE file in the project root for full license information.
 // Sets default values
 ASmokeRegion::ASmokeRegion()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	sphere_ = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
@@ -38,12 +38,10 @@ ASmokeRegion::ASmokeRegion()
 	decal_ = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComp"));
 	decal_->SetupAttachment(RootComponent);
 	decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
-	
-	// @@ TODO: Avoid using ConstructorHelpers as much as possible as recommended by UE guidelines.
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> DecalMatFinder(TEXT("/Game/Materials/TargetingDecal.TargetingDecal"));
-	if (DecalMatFinder.Succeeded())
+
+	if (visual_material_)
 	{
-		decal_->SetDecalMaterial(DecalMatFinder.Object);
+		decal_->SetDecalMaterial(visual_material_);
 	}
 }
 
@@ -55,11 +53,6 @@ void ASmokeRegion::SetSphereRadius(float Radius)
 	float sphere_radius = sphere_->GetScaledSphereRadius();
 	decal_->DecalSize = FVector(sphere_radius);
 	decal_->MarkRenderStateDirty();
- }
-
-void ASmokeRegion::SetMaterial(UMaterialInterface* decal_material_)
-{
-	decal_->SetDecalMaterial(decal_material_);
 }
 
 // Called when the game starts or when spawned

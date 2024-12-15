@@ -19,7 +19,7 @@ class USphereComponent;
 class UDecalComponent;
 class AUnit;
 
-UCLASS()
+UCLASS(Blueprintable)
 class PROJECT_IK_API ASmokeRegion : public AActor
 {
 	GENERATED_BODY()
@@ -31,8 +31,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSphereRadius(float Radius);
 
-	UFUNCTION(BlueprintCallable)
-	void SetMaterial(UMaterialInterface* decal_material_);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visuals")
+	UMaterialInterface* visual_material_;
 
 protected:
 	// Called when the game starts or when spawned
