@@ -145,7 +145,7 @@ void UItem::SmokeGrenade(UWorld* World, FVector TargetLocation, float Radius)
 		FActorSpawnParameters spawn_params;
 		spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		ASmokeRegion* spawned_smoke = World->SpawnActor<ASmokeRegion>(ASmokeRegion::StaticClass(), TargetLocation, FRotator::ZeroRotator, spawn_params);
+		ASmokeRegion* spawned_smoke = World->SpawnActor<ASmokeRegion>(smoke_region_class_, TargetLocation, FRotator::ZeroRotator, spawn_params);
 		if (spawned_smoke)
 		{
 			spawned_smoke->SetLifeSpan(10.f);

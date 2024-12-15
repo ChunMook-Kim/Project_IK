@@ -36,7 +36,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveItem(int32 index);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	TSubclassOf<UItem> item_class_;
+
 protected:
+
 	UPROPERTY(VisibleAnywhere)
 	TArray<UItem*> item_inventory_;
 };

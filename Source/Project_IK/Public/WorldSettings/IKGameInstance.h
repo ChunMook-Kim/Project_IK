@@ -27,7 +27,7 @@ class UTextureManager;
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PROJECT_IK_API UIKGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
@@ -59,6 +59,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelTransition")
 	TSubclassOf<AActor> enemy_blueprint_;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemInventory")
+	TSubclassOf<UItemInventory> item_inventory_class_;
+
 private:
 	void InitializeItemDataManager();
 	void InitializeCharacterDataManager();
@@ -72,7 +75,8 @@ private:
 	class UItemDataManager* item_data_manager_;
 	UPROPERTY()
 	class UCharacterDataManager* character_data_manager_;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+
+	UPROPERTY()
 	class UItemInventory* item_inventory_;
 
 	UPROPERTY()

@@ -16,11 +16,12 @@ See LICENSE file in the project root for full license information.
 #include "Item.generated.h"
 
 struct FTargetResult;
+class ASmokeRegion;
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PROJECT_IK_API UItem : public UObject
 {
 	GENERATED_BODY()
@@ -36,6 +37,10 @@ public:
 
 	UFUNCTION()
 	FTargetParameters GetTargetParameters() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+	TSubclassOf<ASmokeRegion> smoke_region_class_;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	FItemData item_data_;
