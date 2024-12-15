@@ -38,11 +38,6 @@ ASmokeRegion::ASmokeRegion()
 	decal_ = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComp"));
 	decal_->SetupAttachment(RootComponent);
 	decal_->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
-
-	if (visual_material_)
-	{
-		decal_->SetDecalMaterial(visual_material_);
-	}
 }
 
 void ASmokeRegion::SetSphereRadius(float Radius)
@@ -59,6 +54,11 @@ void ASmokeRegion::SetSphereRadius(float Radius)
 void ASmokeRegion::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (visual_material_)
+	{
+		decal_->SetDecalMaterial(visual_material_);
+	}
 }
 
 void ASmokeRegion::EndPlay(const EEndPlayReason::Type EndPlayReason)
