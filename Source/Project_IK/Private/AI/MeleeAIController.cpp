@@ -63,5 +63,5 @@ void AMeleeAIController::SetUnitState(EUnitState new_state)
 
 void AMeleeAIController::OnDie()
 {
-	
+	GetWorldTimerManager().ClearTimer(timer_handle_);
 }

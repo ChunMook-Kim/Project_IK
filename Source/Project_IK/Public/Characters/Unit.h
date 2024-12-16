@@ -33,6 +33,9 @@ public:
 	
 	UFUNCTION()
 	virtual void GetDamage(float damage, TWeakObjectPtr<AActor> attacker) override;
+
+	UFUNCTION()
+	virtual void GetStunned();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -49,4 +52,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	FVector forward_dir_;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true", BindWidget))
+	UAnimMontage* stunned_montage_;
 };
