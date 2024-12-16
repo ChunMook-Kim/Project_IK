@@ -63,6 +63,11 @@ void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 	character_stat_component_->GetDamage(damage, attacker);
 }
 
+void AUnit::GetStunned()
+{
+	PlayAnimMontage(stunned_montage_);
+}
+
 void AUnit::Die()
 {
 	Destroy();
