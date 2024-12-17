@@ -18,6 +18,12 @@ AMeleeAIController::AMeleeAIController()
 	stun_state_key_name_ = TEXT("StunState");
 }
 
+void AMeleeAIController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(timer_handle_);
+	Super::EndPlay(EndPlayReason);
+}
+
 void AMeleeAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
@@ -56,9 +62,7 @@ void AMeleeAIController::GetStunned(float duration)
 
 void AMeleeAIController::FinishStun()
 {
-	SetUnitState(EUnitState::Forwarding);
-	SetStunState(EStunState::BeginStun);
-	UE_LOG(LogTemp, Warning, TEXT("Finish Stunned!"));
+	SetStunState(EStunState::FinishStun);
 }
 
 void AMeleeAIController::SetUnitState(EUnitState new_state)

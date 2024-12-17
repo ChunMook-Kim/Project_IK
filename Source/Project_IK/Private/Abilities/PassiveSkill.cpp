@@ -42,6 +42,12 @@ void APassiveSkill::BeginPlay()
 	
 }
 
+void APassiveSkill::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	OnDestroy();
+	Super::EndPlay(EndPlayReason);
+}
+
 void APassiveSkill::StartPassiveSkill()
 {
 	is_available = false;

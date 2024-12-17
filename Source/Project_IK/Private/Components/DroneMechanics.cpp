@@ -26,6 +26,12 @@ void UDroneMechanics::BeginPlay()
 	Super::BeginPlay();
 }
 
+void UDroneMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
+	Super::EndPlay(EndPlayReason);
+}
+
 void UDroneMechanics::Initialize(AActor* hero)
 {
 	hero_ref_ = hero;

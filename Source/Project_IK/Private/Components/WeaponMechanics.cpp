@@ -43,6 +43,13 @@ void UWeaponMechanics::BeginPlay()
 	EquipWeapon();
 }
 
+void UWeaponMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(fire_timer_handle_);
+	GetWorld()->GetTimerManager().ClearTimer(reload_timer_handle_);
+	Super::EndPlay(EndPlayReason);
+}
+
 void UWeaponMechanics::FireWeapon(AActor* target, float damage)
 {
 	if(weapon_ref_)

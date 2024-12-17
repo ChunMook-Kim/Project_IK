@@ -22,6 +22,7 @@ public:
 	AMeleeAIController();
 	virtual void OnDie();
 	virtual void OnPossess(APawn* InPawn) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UFUNCTION(Blueprintable, BlueprintCallable, Category = "AI")
 	virtual void GetStunned(float duration);

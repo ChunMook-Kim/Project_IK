@@ -34,7 +34,12 @@ void UPassiveMechanics::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("PassiveMechanics::BeginPlay Error. Passive class should be setted"));
 	}
-	
+}
+
+void UPassiveMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
+	Super::EndPlay(EndPlayReason);
 }
 
 void UPassiveMechanics::ActivatePassiveSkill()

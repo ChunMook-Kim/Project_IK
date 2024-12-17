@@ -24,7 +24,7 @@ public:
 	// Sets default values for this component's properties
 	UPassiveMechanics();
 	virtual void BeginPlay() override;
-
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:
 	void ActivatePassiveSkill();
 	void WaitingHoldTime();

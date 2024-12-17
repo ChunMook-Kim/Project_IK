@@ -69,12 +69,16 @@ void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 
 void AUnit::GetStunned()
 {
+	GetMesh()->SetMaterial(0, test_stun_material_);
 	PlayAnimMontage(stun_montage_);
 	Cast<AMeleeAIController>(Controller)->SetStunState(EStunState::WaitingStun);
 }
 
 void AUnit::FinishStun()
 {
+	GetMesh()->SetMaterial(0, original_material);
+	Cast<AMeleeAIController>(Controller)->SetStunState(EStunState::BeginStun);
+	Cast<AMeleeAIController>(Controller)->SetUnitState(EUnitState::Forwarding);
 }
 
 void AUnit::Die()
