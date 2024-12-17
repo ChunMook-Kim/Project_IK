@@ -38,7 +38,8 @@ enum class ECharacterStatType : uint8
 	FireRange UMETA(DisplayName = "FireRange"),
 	MoveSpeed UMETA(DisplayName = "MoveSpeed"),
 	SightRange UMETA(DisplayName = "SightRange"),
-	Evasion UMETA(DisplayName = "SightRange"),
+	Evasion UMETA(DisplayName = "Evasion"),
+	Shield UMETA(DisplayName = "Shield"),
 };
 
 USTRUCT(BlueprintType)
@@ -101,6 +102,9 @@ public:
 	bool GetDamage(float DamageAmount, TWeakObjectPtr <AActor> Attacker = nullptr);
 	UFUNCTION(BlueprintCallable)
 	void Heal(float HealAmount);
+	UFUNCTION(BlueprintCallable)
+	void AcquireShield(float ShieldAmount, float Duration);
+	void DestroyShield();
 
 	// Getters&Setters of member variables
 	UFUNCTION(BlueprintPure)
@@ -121,12 +125,18 @@ public:
 	float GetSightRange() const noexcept;
 	UFUNCTION(BlueprintPure)
 	float GetEvasion() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetShield() const noexcept;
 
 	UFUNCTION(BlueprintPure)
 	float GetHPRatio() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetShieldRatio() const noexcept;
 
 	UFUNCTION(BlueprintPure)
 	float GetMaxHitPoint() const noexcept;
+	UFUNCTION(BlueprintPure)
+	float GetMaxShield() const noexcept;
 
 	UFUNCTION(BlueprintPure)
 	FCharacterData GetCharacterData() const noexcept;
@@ -171,6 +181,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	ECharacterID character_id_;
@@ -193,6 +204,8 @@ protected:
 	void SetMoveSpeed(float move_speed) noexcept;
 	UFUNCTION(BlueprintCallable)
 	void SetSightRange(float sight_range) noexcept;
+	UFUNCTION(BlueprintCallable)
+	void SetShield(float shield) noexcept;
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UDamageUI> damage_UI_class_;
@@ -200,6 +213,11 @@ private:
 	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
 	FCharacterData stat_;
 
+	UPROPERTY(VisibleInstanceOnly, Category = Stats, meta = (AllowPrivateAccess = true))
+	float shield_;
+
+	float max_shield_;
+	FTimerHandle shield_timer_;
 
 	float max_hit_points_;
 
