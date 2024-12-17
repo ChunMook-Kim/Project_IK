@@ -19,6 +19,7 @@ enum class EDPType : uint8
 	Empty UMETA(DisplayName = "Empty"),
 	FireRateBurst UMETA(DisplayName = "Fire Rate"),
 	FireRange UMETA(DisplayName = "Fire Range"),
+	HealingWaves UMETA(DisplayName = "Healing Waves"),
 	INVALID UMETA(DisplayName = "Invalid")
 };
 

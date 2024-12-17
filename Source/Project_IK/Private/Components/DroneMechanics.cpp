@@ -87,6 +87,7 @@ void UDroneMechanics::AddPeriodicPlugIn(UClass* plugin_type)
 			if(periodic_plugin_) RemovePeriodicPlugIn();
 			periodic_plugin_ = spawned_dp;
 			periodic_plugin_->Initialize(hero_ref_);
+			periodic_plugin_->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		}
 	}
 }
@@ -115,6 +116,7 @@ void UDroneMechanics::AddGeneralPlugIn(UClass* plugin_type)
 			general_plugin_ = spawned_dp;
 			general_plugin_->Initialize(hero_ref_);
 			general_plugin_->StartPassiveSkill();
+			general_plugin_->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		}
 	}
 }
