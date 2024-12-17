@@ -55,3 +55,11 @@ enum class EPassiveState  : uint8
 	WaitingHoldTime UMETA(DisplayName = "WaitingHoldTime"),
 	FinishHoldTime UMETA(DisplayName = "FinishHoldTime")
 };
+
+UENUM(BlueprintType)
+enum class EStunState  : uint8
+{
+	BeginStun UMETA(DisplayName = "BeginStun"),
+	WaitingStun UMETA(DisplayName = "WaitingStun"),
+	FinishStun UMETA(DisplayName = "FinishStun")
+};

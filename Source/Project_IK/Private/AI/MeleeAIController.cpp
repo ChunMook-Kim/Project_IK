@@ -15,6 +15,7 @@ AMeleeAIController::AMeleeAIController()
 {
 	target_class_key_name_ = TEXT("TargetClass");
 	unit_state_key_name_ = TEXT("UnitState");
+	stun_state_key_name_ = TEXT("StunState");
 }
 
 void AMeleeAIController::OnPossess(APawn* InPawn)
@@ -49,15 +50,25 @@ void AMeleeAIController::OnPossess(APawn* InPawn)
 void AMeleeAIController::GetStunned(float duration)
 {
 	SetUnitState(EUnitState::Stunned);
-	GetWorldTimerManager().SetTimer(timer_handle_,
-		FTimerDelegate::CreateLambda([this] { SetUnitState(EUnitState::Forwarding); 	UE_LOG(LogTemp, Warning, TEXT("Finish Stunned!"));
-}),
-		duration, false);
+	SetStunState(EStunState::BeginStun);
+	GetWorldTimerManager().SetTimer(timer_handle_,this, &AMeleeAIController::FinishStun, duration, false);
+}
+
+void AMeleeAIController::FinishStun()
+{
+	SetUnitState(EUnitState::Forwarding);
+	SetStunState(EStunState::BeginStun);
+	UE_LOG(LogTemp, Warning, TEXT("Finish Stunned!"));
 }
 
 void AMeleeAIController::SetUnitState(EUnitState new_state)
 {
 	GetBlackboardComponent()->SetValueAsEnum(unit_state_key_name_, static_cast<uint8>(new_state));
+}
+
+void AMeleeAIController::SetStunState(EStunState new_state)
+{
+	GetBlackboardComponent()->SetValueAsEnum(stun_state_key_name_, static_cast<uint8>(new_state));
 }
 
 void AMeleeAIController::OnDie()

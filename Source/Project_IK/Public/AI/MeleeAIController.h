@@ -25,22 +25,30 @@ public:
 
 	UFUNCTION(Blueprintable, BlueprintCallable, Category = "AI")
 	virtual void GetStunned(float duration);
+	virtual void FinishStun();
 	
 	UFUNCTION(Blueprintable)
 	void SetUnitState(EUnitState new_state);
+
+	UFUNCTION(Blueprintable)
+	void SetStunState(EStunState new_state);
 	
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true", BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MeleeAI", meta = (AllowPrivateAccess = "true", BindWidget))
 	UBehaviorTree* behavior_tree_;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true", AllowedClass = "HeroBase, EnemyBase", BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MeleeAI", meta = (AllowPrivateAccess = "true", AllowedClass = "HeroBase, EnemyBase", BindWidget))
 	UClass* target_class_;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true", BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MeleeAI", meta = (AllowPrivateAccess = "true", BindWidget))
 	FName target_class_key_name_;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true", BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MeleeAI", meta = (AllowPrivateAccess = "true", BindWidget))
 	FName unit_state_key_name_;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MeleeAI", meta = (AllowPrivateAccess = "true", BindWidget))
+	FName stun_state_key_name_;
+
 
 private:
 	FTimerHandle timer_handle_;

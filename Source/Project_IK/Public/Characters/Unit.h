@@ -33,6 +33,12 @@ public:
 	
 	UFUNCTION()
 	virtual void GetDamage(float damage, TWeakObjectPtr<AActor> attacker) override;
+
+	UFUNCTION()
+	virtual void GetStunned();
+	
+	UFUNCTION()
+	virtual void FinishStun();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -41,12 +47,15 @@ protected:
 	virtual void Die() override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))
 	UCharacterStatComponent* character_stat_component_;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))
+	UAnimMontage* stun_montage_;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))
 	UWidgetComponent* hp_UI_;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))
 	FVector forward_dir_;
 };

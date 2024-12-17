@@ -9,6 +9,10 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 #include "Characters/Unit.h"
+
+#include "AIController.h"
+#include "AI/MeleeAIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CharacterStatComponent.h"
 #include "Components/WidgetComponent.h"
 
@@ -61,6 +65,16 @@ void AUnit::BeginPlay()
 void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 {
 	character_stat_component_->GetDamage(damage, attacker);
+}
+
+void AUnit::GetStunned()
+{
+	PlayAnimMontage(stun_montage_);
+	Cast<AMeleeAIController>(Controller)->SetStunState(EStunState::WaitingStun);
+}
+
+void AUnit::FinishStun()
+{
 }
 
 void AUnit::Die()
