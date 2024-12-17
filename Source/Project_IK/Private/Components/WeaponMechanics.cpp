@@ -9,6 +9,7 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 #include "Components/WeaponMechanics.h"
 #include "AIController.h"
+#include "AI/GunnerAIController.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
 #include "Weapons/Gun.h"
@@ -42,6 +43,13 @@ void UWeaponMechanics::BeginPlay()
 	EquipWeapon();
 }
 
+void UWeaponMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(fire_timer_handle_);
+	GetWorld()->GetTimerManager().ClearTimer(reload_timer_handle_);
+	Super::EndPlay(EndPlayReason);
+}
+
 void UWeaponMechanics::FireWeapon(AActor* target, float damage)
 {
 	if(weapon_ref_)
@@ -64,17 +72,61 @@ void UWeaponMechanics::FireWeapon(AActor* target, float damage)
 		{
 			weapon_ref_->FireWeapon(target->GetActorLocation(), damage);
 		}
+
+		if(auto gunner_controller = Cast<AGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
+		{
+			gunner_controller->SetFireState(EFireState::WaitingFire);
+		}
+	}
+}
+
+void UWeaponMechanics::WaitNextFire()
+{
+	if(GetWorld()->GetTimerManager().IsTimerActive(fire_timer_handle_) == false)
+	{
+		GetWorld()->GetTimerManager().SetTimer(fire_timer_handle_, this, &UWeaponMechanics::FinishFire, weapon_ref_->GetFireInterval());
+	}
+}
+
+void UWeaponMechanics::FinishFire()
+{
+	if(auto gunner_controller = Cast<AGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
+	{
+		gunner_controller->SetFireState(EFireState::BeginFire);
+		GetWorld()->GetTimerManager().ClearTimer(fire_timer_handle_);
+	}
+}
+void UWeaponMechanics::Reload()
+{
+	if(auto gunner_controller = Cast<AGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
+	{
+		gunner_controller->SetReloadState(EReloadState::WaitingReload);
+	}
+}
+
+void UWeaponMechanics::WaitReload()
+{
+	if(GetWorld()->GetTimerManager().IsTimerActive(reload_timer_handle_) == false)
+	{
+		GetWorld()->GetTimerManager().SetTimer(reload_timer_handle_, this, &UWeaponMechanics::FinishReload, weapon_ref_->GetReloadDuration());
+	}
+}
+
+void UWeaponMechanics::FinishReload()
+{
+	//실제 장전 애니메이션이 끝나면 총알을 채워넣는다.
+	if(weapon_ref_) weapon_ref_->Reload();
+	if(auto gunner_controller = Cast<AGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
+	{
+		gunner_controller->SetReloadState(EReloadState::BeginReload);
+
+		GetWorld()->GetTimerManager().ClearTimer(reload_timer_handle_);
 	}
 }
 
 void UWeaponMechanics::OnDestroy()
 {
 	if(weapon_ref_) weapon_ref_->Destroy();
-}
-
-void UWeaponMechanics::Reload()
-{
-	if(weapon_ref_) weapon_ref_->Reload();
 }
 
 bool UWeaponMechanics::IsMagazineEmpty() const

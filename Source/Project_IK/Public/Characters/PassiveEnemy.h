@@ -27,7 +27,11 @@ public:
 	virtual void ActivatePassive() override;
 	virtual bool IsPassiveAvailable() override;
 	virtual float GetPassiveHoldTime() override;
+	virtual void WaitForHoldTime() override;
+	virtual void FinishPassive() override;
+
 	
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UPassiveMechanics* passive_mechanics_;

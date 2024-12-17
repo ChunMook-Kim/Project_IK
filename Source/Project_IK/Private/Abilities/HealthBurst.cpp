@@ -26,17 +26,12 @@ void AHealthBurst::BeginPlay()
 void AHealthBurst::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if(activated_ && left_duration_ > 0)
+	if(on_passive_skill_)
 	{
 		unit_caster_ = Cast<AUnit>(caster_);
 		if(unit_caster_)
 		{
 			unit_caster_->GetCharacterStat()->Heal(DeltaSeconds * heal_amount_);
 		}
-	}
-
-	if(activated_ && left_duration_ <= 0)
-	{
-		FinishPassiveSkill();
 	}
 }

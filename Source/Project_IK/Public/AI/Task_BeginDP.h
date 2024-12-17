@@ -1,8 +1,8 @@
 /******************************************************************************
 Copyright(C) 2024
 Author: chunmook.kim(chunmook.kim97@gmail.com)
-Creation Date : 11.06.2024
-Summary : Header file for activate passive skill task.
+Creation Date : 12.17.2024
+Summary : Header file for BeginDP Task.
 
 Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
@@ -11,14 +11,13 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "Task_ActivatePassive.generated.h"
+#include "Task_BeginDP.generated.h"
 
-UCLASS(MinimalAPI)
-class UTask_ActivatePassive : public UBTTaskNode
+UCLASS()
+class PROJECT_IK_API UTask_BeginDP : public UBTTaskNode
 {
-	GENERATED_UCLASS_BODY()
-
+	GENERATED_BODY()
 public:
+	UTask_BeginDP();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

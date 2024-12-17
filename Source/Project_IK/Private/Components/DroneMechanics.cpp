@@ -12,6 +12,7 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/PassiveSkill.h"
 #include "Abilities/DPI_FireRange.h"
 #include "Abilities/DPI_FireRateBurst.h"
+#include "AI/DroneAIC.h"
 
 // Sets default values for this component's properties
 UDroneMechanics::UDroneMechanics()
@@ -25,30 +26,15 @@ void UDroneMechanics::BeginPlay()
 	Super::BeginPlay();
 }
 
+void UDroneMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
+	Super::EndPlay(EndPlayReason);
+}
+
 void UDroneMechanics::Initialize(AActor* hero)
 {
 	hero_ref_ = hero;
-}
-
-void UDroneMechanics::ActivatePeriodicDronePlugin()
-{
-	if(periodic_plugin_ != nullptr)
-	{
-		periodic_plugin_->StartPassiveSkill();
-	}
-}
-
-//만약 패시브를 사용 중 사망, 혹은 레벨 클리어 시 강제로 DP를 끝낼 때 사용된다.
-void UDroneMechanics::ForceDeactivatePeriodicPlugin()
-{
-	if(periodic_plugin_ != nullptr)
-	{
-		if(periodic_plugin_->IsActivated() == true)
-		{
-			periodic_plugin_->FinishPassiveSkill();
-			periodic_plugin_->SetActivated(false);
-		}
-	}
 }
 
 float UDroneMechanics::GetPeriodicPluginHoldTime() const
@@ -67,9 +53,42 @@ bool UDroneMechanics::IsPeriodicPluginAvailable() const
 	{
 		return periodic_plugin_->IsPassiveAvailable();
 	}
-	else
+	return false;
+}
+
+void UDroneMechanics::ActivatePeriodicDronePlugin()
+{
+	if(periodic_plugin_ != nullptr)
 	{
-		return false;
+		periodic_plugin_->StartPassiveSkill();
+		if(auto ai_controller = Cast<ADroneAIC>(Cast<APawn>(GetOwner())->Controller))
+		{
+			ai_controller->SetDPState(EDPState::WaitingDP);
+		}
+	}
+}
+
+void UDroneMechanics::WaitForHoldTime()
+{
+	if(GetWorld()->GetTimerManager().IsTimerActive(hold_time_handle_) == false)
+	{
+		if(GetPeriodicPluginHoldTime() == 0.f)
+		{
+			FinishHoldTime();
+		}
+		else
+		{
+			GetWorld()->GetTimerManager().SetTimer(hold_time_handle_, this, &UDroneMechanics::FinishHoldTime, GetPeriodicPluginHoldTime());
+		}
+	}
+}
+
+void UDroneMechanics::FinishHoldTime()
+{
+	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
+	if(auto ai_controller = Cast<ADroneAIC>(Cast<APawn>(GetOwner())->Controller))
+	{
+		ai_controller->SetDPState(EDPState::BeginDP);
 	}
 }
 
@@ -125,7 +144,6 @@ void UDroneMechanics::RemoveGeneralPlugIn()
 {
 	if(general_plugin_ != nullptr)
 	{
-		general_plugin_->FinishPassiveSkill();
 		general_plugin_->Destroy();
 	}
 	general_plugin_ = nullptr;

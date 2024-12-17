@@ -15,19 +15,24 @@ APassiveSkill::APassiveSkill()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	left_time_ = cool_time_;
-	left_time_ = duration_;
+	is_available = true;
+	on_cool_down_ = false;
+	on_passive_skill_ = false;
 }
 
 void APassiveSkill::Initialize(AActor* caster)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	caster_ = caster;
+	is_available = true;
+	on_cool_down_ = false;
+	on_passive_skill_ = false;
+}
 
-	//Scene이 load되고 최초 한번은 패시브 지속 시간, duration을 0으로 하고 스킬을 발동하는 것으로 쿨타임만 돌린다.
-	activated_ = true;
-	left_duration_ = 0.f;
-	left_time_ = cool_time_;
+void APassiveSkill::OnDestroy()
+{
+	GetWorld()->GetTimerManager().ClearTimer(cool_time_handle_);
+	GetWorld()->GetTimerManager().ClearTimer(duration_handle_);
 }
 
 // Called when the game starts or when spawned
@@ -37,36 +42,40 @@ void APassiveSkill::BeginPlay()
 	
 }
 
-void APassiveSkill::StartPassiveSkill()
+void APassiveSkill::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	left_time_ = cool_time_;
-	left_duration_ = duration_;
-	activated_ = true;
+	OnDestroy();
+	Super::EndPlay(EndPlayReason);
 }
 
-void APassiveSkill::FinishPassiveSkill()
+void APassiveSkill::StartPassiveSkill()
 {
-	activated_ = false;
+	is_available = false;
+	on_cool_down_ = false;
+	on_passive_skill_ = true;
+	GetWorld()->GetTimerManager().SetTimer(duration_handle_, this, &APassiveSkill::FinishPassiveSkillAndStartCoolDown, duration_);
+}
+
+void APassiveSkill::FinishPassiveSkillAndStartCoolDown()
+{
+	on_cool_down_ = true;
+	on_passive_skill_ = false;
+	GetWorld()->GetTimerManager().ClearTimer(duration_handle_);
+	GetWorld()->GetTimerManager().SetTimer(cool_time_handle_, this, &APassiveSkill::FinishCoolDown, cool_time_);
+}
+
+void APassiveSkill::FinishCoolDown()
+{
+	is_available = true;
+	on_cool_down_ = false;
+	on_passive_skill_ = false;
+	GetWorld()->GetTimerManager().ClearTimer(cool_time_handle_);
 }
 
 // Called every frame
 void APassiveSkill::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if(activated_)
-	{
-		if(left_duration_ > 0.f)
-		{
-			left_duration_ -= DeltaTime;
-		}
-	}
-	else
-	{
-		if(left_time_ > 0.f)
-		{
-			left_time_ -= DeltaTime;
-		}
-	}
 }
 
 float APassiveSkill::GetCoolTime() const
@@ -89,16 +98,6 @@ void APassiveSkill::SetHoldTime(float Hold_Time)
 	hold_time_ = Hold_Time;
 }
 
-bool APassiveSkill::IsActivated() const
-{
-	return activated_;
-}
-
-void APassiveSkill::SetActivated(bool bActivated)
-{
-	activated_ = bActivated;
-}
-
 float APassiveSkill::GetDuration() const
 {
 	return duration_;
@@ -111,5 +110,5 @@ void APassiveSkill::SetDuration(float Duration)
 
 bool APassiveSkill::IsPassiveAvailable() const
 {
-	return left_time_ <= 0;
+	return is_available;
 }

@@ -24,7 +24,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void StartPassiveSkill() override;
-	virtual void FinishPassiveSkill() override;
 	
 private:
 	float buff_amount_;
