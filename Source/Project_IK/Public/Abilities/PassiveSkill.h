@@ -18,15 +18,12 @@ UCLASS()
 class PROJECT_IK_API APassiveSkill : public AActor
 {
 	GENERATED_BODY()
-	enum PassiveState
-	{
-	
-	};
 public:	
 	// Sets default values for this actor's properties
 	APassiveSkill();
 	
 	virtual void Initialize(AActor* caster);
+	virtual void OnDestroy();
 
 	virtual void StartPassiveSkill();
 	virtual void FinishPassiveSkillAndStartCoolDown();

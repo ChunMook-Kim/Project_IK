@@ -32,10 +32,12 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//AI에서 Periodic plugin을 control하기 위한 함수들.
-	void ActivatePeriodicDronePlugin();
-	void ForceDeactivatePeriodicPlugin();
 	float GetPeriodicPluginHoldTime() const;
 	bool IsPeriodicPluginAvailable() const;
+
+	void ActivatePeriodicDronePlugin();
+	void WaitForHoldTime();
+	void FinishHoldTime();
 	
 	void AddPeriodicPlugIn(UClass* plugin_type);
 	void RemovePeriodicPlugIn();
@@ -51,4 +53,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DroneMechanics", meta = (AllowPrivateAccess = "true"))
 	ADronePlugIn* general_plugin_;
+
+	UPROPERTY(Transient)
+	FTimerHandle hold_time_handle_;
 };

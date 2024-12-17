@@ -55,6 +55,10 @@ void ADrone::ActivateDronePlugin()
 	drone_mechanics_->ActivatePeriodicDronePlugin();
 }
 
+void ADrone::WaitForHoldTime()
+{
+	drone_mechanics_->WaitForHoldTime();
+}
 
 void ADrone::SetPlugins(EDPType p_dp_id, EDPType g_dp_id)
 {

@@ -19,8 +19,8 @@ See LICENSE file in the project root for full license information.
 ADPI_FireRateBurst::ADPI_FireRateBurst()
 {
 	is_periodic_ = true;
-	cool_time_ = 5.f;
-	duration_ = 5.f;
+	cool_time_ = 3.f;
+	duration_ = 3.f;
 	hold_time_ = 0.f;
 	accelerate_amount_ = 2.f;
 }

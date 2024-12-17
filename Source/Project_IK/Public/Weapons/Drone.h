@@ -35,6 +35,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void ActivateDronePlugin();
+	virtual void WaitForHoldTime();
 	void SetPlugins(EDPType p_dp_data, EDPType g_dp_data);
 	float GetDronePluginHoldTime() const;
 	bool IsPluginAvailable() const;

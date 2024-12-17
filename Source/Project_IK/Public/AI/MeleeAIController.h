@@ -49,7 +49,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MeleeAI", meta = (AllowPrivateAccess = "true", BindWidget))
 	FName stun_state_key_name_;
 
-
 private:
 	FTimerHandle timer_handle_;
 };

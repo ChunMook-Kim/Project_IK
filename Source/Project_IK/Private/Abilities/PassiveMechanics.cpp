@@ -39,8 +39,6 @@ void UPassiveMechanics::BeginPlay()
 
 void UPassiveMechanics::ActivatePassiveSkill()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Start Passive"));
-
 	passive_ref_->StartPassiveSkill();
 	if(auto ai_controller = Cast<APassiveGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
 	{

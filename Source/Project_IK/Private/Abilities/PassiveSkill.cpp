@@ -29,6 +29,12 @@ void APassiveSkill::Initialize(AActor* caster)
 	on_passive_skill_ = false;
 }
 
+void APassiveSkill::OnDestroy()
+{
+	GetWorld()->GetTimerManager().ClearTimer(cool_time_handle_);
+	GetWorld()->GetTimerManager().ClearTimer(duration_handle_);
+}
+
 // Called when the game starts or when spawned
 void APassiveSkill::BeginPlay()
 {

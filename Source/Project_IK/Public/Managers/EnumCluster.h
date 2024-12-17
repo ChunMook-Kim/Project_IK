@@ -63,3 +63,19 @@ enum class EStunState  : uint8
 	WaitingStun UMETA(DisplayName = "WaitingStun"),
 	FinishStun UMETA(DisplayName = "FinishStun")
 };
+
+UENUM(BlueprintType)
+enum class EDPState  : uint8
+{
+	BeginDP UMETA(DisplayName = "BeginDP"),
+	WaitingDP UMETA(DisplayName = "WaitingDP"),
+	FinishDP UMETA(DisplayName = "FinishDP")
+};
+
+UENUM(BlueprintType)
+enum class EDroneState  : uint8
+{
+	Idle UMETA(DisplayName = "Idle"),
+	UsingPeriodicDP UMETA(DisplayName = "UsingPeriodicDP"),
+	UsingGeneralDP UMETA(DisplayName = "UsingGeneralDP")
+};
