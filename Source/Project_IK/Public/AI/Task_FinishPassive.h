@@ -1,8 +1,8 @@
 /******************************************************************************
 Copyright(C) 2024
 Author: chunmook.kim(chunmook.kim97@gmail.com)
-Creation Date : 11.12.2024
-Summary : Header file for activate drone plugin by AI Task node. 
+Creation Date : 12.17.2024
+Summary : Header file for Finish Passive Skill Task.
 
 Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
@@ -11,14 +11,13 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "Task_ActivateDronePlugIn.generated.h"
+#include "Task_FinishPassive.generated.h"
 
-UCLASS(MinimalAPI)
-class UTask_ActivateDronePlugIn : public UBTTaskNode
+UCLASS()
+class PROJECT_IK_API UTask_FinishPassive : public UBTTaskNode
 {
-	GENERATED_UCLASS_BODY()
-	
+	GENERATED_BODY()
+
 public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

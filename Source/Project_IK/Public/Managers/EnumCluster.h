@@ -31,3 +31,27 @@ enum class EUnitState  : uint8
 	Attacking UMETA(DisplayName = "Attacking"),
 	Stunned UMETA(DisplayName = "Stunned"),
 };
+
+UENUM(BlueprintType)
+enum class EFireState  : uint8
+{
+	BeginFire UMETA(DisplayName = "BeginFire"),
+	WaitingFire UMETA(DisplayName = "WaitingFire"),
+	FinishFire UMETA(DisplayName = "FinishFire")
+};
+
+UENUM(BlueprintType)
+enum class EReloadState  : uint8
+{
+	BeginReload UMETA(DisplayName = "BeginReload"),
+	WaitingReload UMETA(DisplayName = "WaitingReload"),
+	FinishReload UMETA(DisplayName = "FinishReload")
+};
+
+UENUM(BlueprintType)
+enum class EPassiveState  : uint8
+{
+	BeginPassive UMETA(DisplayName = "BeginPassive"),
+	WaitingHoldTime UMETA(DisplayName = "WaitingHoldTime"),
+	FinishHoldTime UMETA(DisplayName = "FinishHoldTime")
+};

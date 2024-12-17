@@ -8,7 +8,11 @@ Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
 ******************************************************************************/
 #include "Abilities/PassiveMechanics.h"
+
+#include "AIController.h"
 #include "Abilities/PassiveSkill.h"
+#include "AI/PassiveGunnerAIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values for this component's properties
 UPassiveMechanics::UPassiveMechanics()
@@ -33,15 +37,40 @@ void UPassiveMechanics::BeginPlay()
 	
 }
 
-void UPassiveMechanics::ActivePassiveSkill()
+void UPassiveMechanics::ActivatePassiveSkill()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Start Passive"));
+
 	passive_ref_->StartPassiveSkill();
+	if(auto ai_controller = Cast<APassiveGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
+	{
+		ai_controller->SetPassiveState(EPassiveState::WaitingHoldTime);
+	}
 }
 
-//Passive skill의 Finish Passive Skill은 Passive Skill의 마지막 틱에 자동으로 호출된다.
-void UPassiveMechanics::FinishPassiveSkill()
+void UPassiveMechanics::WaitingHoldTime()
 {
-	passive_ref_->FinishPassiveSkill();
+	if(GetWorld()->GetTimerManager().IsTimerActive(hold_time_handle_) == false)
+	{
+		if(GetHoldTime() == 0.f)
+		{
+			FinishHoldTime();
+		}
+		else
+		{
+			GetWorld()->GetTimerManager().SetTimer(hold_time_handle_, this, &UPassiveMechanics::FinishHoldTime, GetHoldTime());
+		}
+	}
+}
+
+void UPassiveMechanics::FinishHoldTime()
+{
+	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
+	if(auto ai_controller = Cast<APassiveGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Finish Hold Time"));
+		ai_controller->SetPassiveState(EPassiveState::BeginPassive);
+	}
 }
 
 bool UPassiveMechanics::IsPassiveAvailable() const

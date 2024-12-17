@@ -26,10 +26,9 @@ public:
 	virtual void BeginPlay() override;
 
 public:
-	// Called when the game starts
-	
-	void ActivePassiveSkill();
-	void FinishPassiveSkill();
+	void ActivatePassiveSkill();
+	void WaitingHoldTime();
+	void FinishHoldTime();
 	bool IsPassiveAvailable() const;
 	float GetHoldTime() const;
 
@@ -39,4 +38,7 @@ private:
 
 	UPROPERTY(Transient)
 	APassiveSkill* passive_ref_ = nullptr;
+	
+	UPROPERTY(Transient)
+	FTimerHandle hold_time_handle_;
 };

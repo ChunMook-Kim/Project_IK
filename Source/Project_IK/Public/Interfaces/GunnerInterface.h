@@ -26,8 +26,12 @@ class PROJECT_IK_API IGunnerInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Reload() = 0;
 	virtual void Fire(AActor* target) = 0;
+	virtual void WaitNextFire() = 0;
+	virtual void FinishFire() = 0;
+	virtual void Reload() = 0;
+	virtual void WaitForDuration() = 0;
+	virtual void FinishReload() = 0;
 	virtual bool IsMagazineEmpty() const = 0;
 	virtual float GetFireInterval() const = 0;
 	virtual float GetReloadDuration() const = 0;

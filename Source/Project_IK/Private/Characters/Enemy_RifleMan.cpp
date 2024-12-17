@@ -30,10 +30,30 @@ void AEnemy_RifleMan::Reload()
 	PlayAnimMontage(reload_montage_);
 }
 
+void AEnemy_RifleMan::WaitForDuration()
+{
+	weapon_mechanics_->WaitReload();
+}
+
+void AEnemy_RifleMan::FinishReload()
+{
+	weapon_mechanics_->FinishReload();
+}
+
 void AEnemy_RifleMan::Fire(AActor* target)
 {
 	weapon_mechanics_->FireWeapon(target, character_stat_component_->GetAttack());
 	PlayAnimMontage(fire_montage_);
+}
+
+void AEnemy_RifleMan::WaitNextFire()
+{
+	weapon_mechanics_->WaitNextFire();
+}
+
+void AEnemy_RifleMan::FinishFire()
+{
+	weapon_mechanics_->FinishFire();
 }
 
 bool AEnemy_RifleMan::IsMagazineEmpty() const

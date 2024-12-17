@@ -27,6 +27,8 @@ class PROJECT_IK_API IPassiveCaster
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void ActivatePassive() = 0;
+	virtual void WaitForHoldTime() = 0;
+	virtual void FinishPassive() = 0;
 	virtual bool IsPassiveAvailable() = 0;
 	virtual float GetPassiveHoldTime() = 0;
 };

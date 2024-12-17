@@ -43,11 +43,11 @@ void UDroneMechanics::ForceDeactivatePeriodicPlugin()
 {
 	if(periodic_plugin_ != nullptr)
 	{
-		if(periodic_plugin_->IsActivated() == true)
-		{
-			periodic_plugin_->FinishPassiveSkill();
-			periodic_plugin_->SetActivated(false);
-		}
+		// if(periodic_plugin_->IsActivated() == true)
+		// {
+		// 	periodic_plugin_->FinishPassiveSkill();
+		// 	periodic_plugin_->SetActivated(false);
+		// }
 	}
 }
 
@@ -123,7 +123,7 @@ void UDroneMechanics::RemoveGeneralPlugIn()
 {
 	if(general_plugin_ != nullptr)
 	{
-		general_plugin_->FinishPassiveSkill();
+		//general_plugin_->FinishPassiveSkill();
 		general_plugin_->Destroy();
 	}
 	general_plugin_ = nullptr;

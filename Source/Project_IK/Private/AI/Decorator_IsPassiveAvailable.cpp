@@ -20,8 +20,7 @@ UDecorator_IsPassiveAvailable::UDecorator_IsPassiveAvailable()
 
 bool UDecorator_IsPassiveAvailable::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	IPassiveCaster* casted_passive_caster = Cast<IPassiveCaster>(OwnerComp.GetAIOwner()->GetPawn());
-	if(casted_passive_caster)
+	if(	IPassiveCaster* casted_passive_caster = Cast<IPassiveCaster>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
 		return casted_passive_caster->IsPassiveAvailable();
 	}

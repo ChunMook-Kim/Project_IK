@@ -28,11 +28,17 @@ public:
 	virtual void Die() override;
 	
 	virtual void Reload() override;
+	virtual void WaitForDuration() override;
+	virtual void FinishReload() override;
+	
 	virtual void Fire(AActor* target) override;
+	virtual void WaitNextFire() override;
+	virtual void FinishFire() override;
+	
 	virtual bool IsMagazineEmpty() const override;
 	virtual float GetFireInterval() const override;
 	virtual float GetReloadDuration() const override;
-	
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UWeaponMechanics* weapon_mechanics_;

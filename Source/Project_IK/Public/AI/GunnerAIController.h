@@ -20,10 +20,19 @@ class PROJECT_IK_API AGunnerAIController : public AMeleeAIController
 	GENERATED_BODY()
 public:
 	AGunnerAIController();
-	void OnDie();
+	void OnDie() override;
 	virtual void OnPossess(APawn* InPawn) override;
-
+	UFUNCTION(Blueprintable)
+	void SetFireState(EFireState new_state);
+	UFUNCTION(Blueprintable)
+	void SetReloadState(EReloadState new_state);
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
 	FName owned_cover_key_name_;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
+	FName fire_state_key_name_;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
+	FName reload_state_key_name_;
 };

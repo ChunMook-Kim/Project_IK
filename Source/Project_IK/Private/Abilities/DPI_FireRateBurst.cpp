@@ -33,10 +33,6 @@ void ADPI_FireRateBurst::BeginPlay()
 void ADPI_FireRateBurst::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if(activated_ && left_duration_ <= 0)
-	{
-		FinishPassiveSkill();
-	}
 }
 
 void ADPI_FireRateBurst::StartPassiveSkill()
@@ -47,9 +43,4 @@ void ADPI_FireRateBurst::StartPassiveSkill()
 	{
 		unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(TEXT("Drone_FireRateBurst"), ECharacterStatType::AttackSpeed, 1.f - (1.f / accelerate_amount_), true, duration_));
 	}
-}
-
-void ADPI_FireRateBurst::FinishPassiveSkill()
-{
-	Super::FinishPassiveSkill();
 }

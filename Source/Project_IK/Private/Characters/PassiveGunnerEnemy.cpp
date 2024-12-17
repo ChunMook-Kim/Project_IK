@@ -37,10 +37,30 @@ void APassiveGunnerEnemy::Reload()
 	PlayAnimMontage(reload_montage_);
 }
 
+void APassiveGunnerEnemy::WaitForDuration()
+{
+	weapon_mechanics_->WaitReload();
+}
+
+void APassiveGunnerEnemy::FinishReload()
+{
+	weapon_mechanics_->FinishReload();
+}
+
 void APassiveGunnerEnemy::Fire(AActor* target)
 {
 	weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
 	PlayAnimMontage(fire_montage_);
+}
+
+void APassiveGunnerEnemy::WaitNextFire()
+{
+	weapon_mechanics_->WaitNextFire();
+}
+
+void APassiveGunnerEnemy::FinishFire()
+{
+	weapon_mechanics_->FinishFire();
 }
 
 bool APassiveGunnerEnemy::IsMagazineEmpty() const

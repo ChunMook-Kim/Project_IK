@@ -31,7 +31,11 @@ public:
 public:
 	void OnDestroy();
 	void FireWeapon(AActor* target, float damage);
+	void WaitNextFire();
+	void FinishFire();
 	void Reload();
+	void WaitReload();
+	void FinishReload();
 	bool IsMagazineEmpty() const;
 	float GetFireInterval() const;
 	float GetReloadDuration() const;
@@ -54,7 +58,16 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponMechanics", meta = (AllowPrivateAccess = "true"))
 	FName owned_cover_key_name_;
+
+	UPROPERTY(Transient)
+	FTimerHandle fire_timer_handle_;
+
+	UPROPERTY(Transient)
+	FTimerHandle reload_timer_handle_;
 	
+	UPROPERTY(Transient)
 	AGun* weapon_ref_ = nullptr;
+	
+	UPROPERTY(Transient)
 	ACharacter* character_ref_ = nullptr;
 };
