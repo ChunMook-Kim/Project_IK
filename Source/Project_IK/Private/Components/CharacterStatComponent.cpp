@@ -60,8 +60,6 @@ void UCharacterStatComponent::InitializeComponent()
 void UCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	AcquireShield(40.f, 5.f);
 }
 
 void UCharacterStatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -195,7 +193,7 @@ void UCharacterStatComponent::Heal(float HealAmount)
 
 void UCharacterStatComponent::AcquireShield(float ShieldAmount, float Duration)
 {
-	shield_ = ShieldAmount;
+	SetShield(ShieldAmount);
 	max_shield_ = ShieldAmount;
 
 	UWorld* world = GetWorld();
@@ -209,7 +207,7 @@ void UCharacterStatComponent::AcquireShield(float ShieldAmount, float Duration)
 
 void UCharacterStatComponent::DestroyShield()
 {
-	shield_ = 0.f;
+	SetShield(0.f);
 }
 
 float UCharacterStatComponent::GetAbilityPower() const noexcept
@@ -312,6 +310,7 @@ void UCharacterStatComponent::SetSightRange(float sight_range) noexcept
 void UCharacterStatComponent::SetShield(float shield) noexcept
 {
 	shield_ = shield;
+	OnShieldChanged.Broadcast();
 }
 
 float UCharacterStatComponent::GetHPRatio() const noexcept

@@ -30,6 +30,7 @@ void UHitPointsUI::BindCharacterStat(UCharacterStatComponent* NewCharacterStat)
 		character_stat_ = NewCharacterStat;
 
 		character_stat_->OnHPChanged.AddDynamic(this, &UHitPointsUI::UpdateHPWidget);
+		character_stat_->OnShieldChanged.AddDynamic(this, &UHitPointsUI::UpdateShieldWidget);
 	}
 }
 
@@ -40,6 +41,7 @@ void UHitPointsUI::NativeConstruct()
 	InitializeImages();
 
 	UpdateHPWidget();
+	UpdateShieldWidget();
 
 	texture_manager_ = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GetTextureManager();
 }
@@ -56,6 +58,29 @@ void UHitPointsUI::UpdateHPWidget()
 		if (hp_progress_bar_.Get())
 		{
 			hp_progress_bar_->SetPercent(character_stat_->GetHPRatio());
+		}
+	}
+}
+
+void UHitPointsUI::UpdateShieldWidget()
+{
+	if (character_stat_.IsValid())
+	{
+		if (shield_progress_bar_.Get())
+		{
+			if (character_stat_->GetShield() <= 0.f)
+			{
+				shield_progress_bar_->SetVisibility(ESlateVisibility::Hidden);
+			}
+			else
+			{
+				shield_progress_bar_->SetPercent(character_stat_->GetShieldRatio());
+				if (shield_progress_bar_->GetVisibility() != ESlateVisibility::Visible)
+				{
+					shield_progress_bar_->SetVisibility(ESlateVisibility::Visible);
+				}
+			}
+
 		}
 	}
 }

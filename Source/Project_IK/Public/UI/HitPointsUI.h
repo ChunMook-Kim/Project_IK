@@ -31,6 +31,9 @@ protected:
 	void UpdateHPWidget();
 
 	UFUNCTION()
+	void UpdateShieldWidget();
+
+	UFUNCTION()
 	void UpdateBuffWidgets();
 
 	UFUNCTION()
@@ -38,6 +41,9 @@ protected:
 
 private:
 	TWeakObjectPtr<class UCharacterStatComponent> character_stat_;
+
+	UPROPERTY(meta = (BindWidget))
+	TWeakObjectPtr<UProgressBar> shield_progress_bar_;
 
 	UPROPERTY(meta = (BindWidget))
 	TWeakObjectPtr<UProgressBar> hp_progress_bar_;
