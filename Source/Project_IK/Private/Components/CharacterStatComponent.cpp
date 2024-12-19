@@ -108,10 +108,10 @@ bool UCharacterStatComponent::GetDamage(float DamageAmount, TWeakObjectPtr<AActo
 	// Display damage amount when damaged
 	if (damage_UI_class_)
 	{
-		UDamageUI* damage_UI = CreateWidget<UDamageUI>(GetWorld(), damage_UI_class_);
+		ADamageUI* damage_UI = GetWorld()->SpawnActor<ADamageUI>(damage_UI_class_, GetOwner()->GetActorLocation(), FRotator::ZeroRotator);
+
 		if (damage_UI)
 		{
-			damage_UI->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f));
 			if (is_evaded)
 			{
 				damage_UI->SetMissed();
@@ -120,18 +120,6 @@ bool UCharacterStatComponent::GetDamage(float DamageAmount, TWeakObjectPtr<AActo
 			{
 				damage_UI->SetDamageAmount(DamageAmount);
 			}
-			damage_UI->AddToViewport();
-
-			FVector2D screen_position;
-			UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), GetOwner()->GetActorLocation(), screen_position);
-			damage_UI->SetPositionInViewport(screen_position);
-
-			// Add an animation to remove it after seconds.
-			FTimerHandle timer_handle;
-			GetWorld()->GetTimerManager().SetTimer(timer_handle, [damage_UI]()
-				{
-					damage_UI->RemoveFromParent();
-				}, 0.75f, false);
 		}
 	}
 
@@ -159,33 +147,17 @@ bool UCharacterStatComponent::GetDamage(float DamageAmount, TWeakObjectPtr<AActo
 
 	SetHitPoint(GetHitPoint() - remaining_damage);
 
-	
+
 	return true;
 }
 
 void UCharacterStatComponent::Heal(float HealAmount)
 {
-	// Display damage amount when damaged
+	// Display heal amounts
 	if (damage_UI_class_)
 	{
-		UDamageUI* damage_UI = CreateWidget<UDamageUI>(GetWorld(), damage_UI_class_);
-		if (damage_UI)
-		{
-			damage_UI->SetColorAndOpacity(FLinearColor(0.f, 1.f, 0.f));
-			damage_UI->SetDamageAmount(HealAmount);
-			damage_UI->AddToViewport();
-
-			FVector2D screen_position;
-			UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), GetOwner()->GetActorLocation(), screen_position);
-			damage_UI->SetPositionInViewport(screen_position);
-
-			// Add an animation to remove it after seconds.
-			FTimerHandle timer_handle;
-			GetWorld()->GetTimerManager().SetTimer(timer_handle, [damage_UI]()
-				{
-					damage_UI->RemoveFromParent();
-				}, 0.75f, false);
-		}
+		ADamageUI* damage_UI = GetWorld()->SpawnActor<ADamageUI>(damage_UI_class_, GetOwner()->GetActorLocation(), FRotator::ZeroRotator);
+		damage_UI->SetHealAmount(HealAmount);
 	}
 
 	SetHitPoint(GetHitPoint() + HealAmount);

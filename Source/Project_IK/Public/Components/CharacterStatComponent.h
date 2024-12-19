@@ -15,7 +15,7 @@ See LICENSE file in the project root for full license information.
 #include "Managers/CharacterDataManager.h"
 #include "CharacterStatComponent.generated.h"
 
-class UDamageUI;
+class ADamageUI;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDieDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChangedDelegate);
@@ -212,7 +212,7 @@ protected:
 	void SetShield(float shield) noexcept;
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UDamageUI> damage_UI_class_;
+	TSubclassOf<ADamageUI> damage_UI_class_;
 
 	UPROPERTY(VisibleInstanceOnly, Category = Stats, Meta = (AllowPrivateAccess = true))
 	FCharacterData stat_;
