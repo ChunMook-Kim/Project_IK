@@ -25,6 +25,7 @@ class PROJECT_IK_API ADamageUI : public APooledActor
 public:
 	// Sets default values for this actor's properties
 	ADamageUI();
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
 	void SetHealAmount(float HealAmount);
@@ -40,6 +41,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage UI")
 	TSubclassOf<UDamageWidget> damage_widget_class_;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage UI", meta = (AllowPrivateAccess = true))
+	FVector initial_velocity_;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage UI", meta = (AllowPrivateAccess = true))
+	FVector gravity_;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -47,4 +54,5 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage UI", meta = (AllowPrivateAccess = true))
 	UWidgetComponent* widget_component_;
 
+	FVector velocity_;
 };

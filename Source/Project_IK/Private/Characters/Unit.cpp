@@ -66,7 +66,7 @@ void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 {
 	bool is_damaged = character_stat_component_->GetDamage(damage, attacker);
 
-	ADamageUI* ui = Cast<ADamageUI>(object_pool_component_->SpawnFromPool(GetActorTransform()));
+	ADamageUI* ui = Cast<ADamageUI>(object_pool_component_->SpawnFromPool(GetActorTransformForDamageUI()));
 	if (ui)
 	{
 		if (is_damaged)
@@ -84,7 +84,7 @@ void AUnit::Heal(float heal)
 {
 	character_stat_component_->Heal(heal);
 
-	ADamageUI* ui = Cast<ADamageUI>(object_pool_component_->SpawnFromPool(GetActorTransform()));
+	ADamageUI* ui = Cast<ADamageUI>(object_pool_component_->SpawnFromPool(GetActorTransformForDamageUI()));
 	if (ui)
 	{
 			ui->SetHealAmount(heal);
@@ -109,4 +109,12 @@ void AUnit::GetStunned()
 void AUnit::Die()
 {
 	Destroy();
+}
+
+FTransform AUnit::GetActorTransformForDamageUI() const noexcept
+{
+	// Randomize spawn locations
+	FTransform transform = GetActorTransform();
+	transform.SetLocation(transform.GetLocation() + FVector(10.f, 0.f, 0.f) + FVector(FMath::RandRange(0.f, 10.f), 0.f, FMath::RandRange(0.f, 10.f)));
+	return transform;
 }

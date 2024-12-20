@@ -54,6 +54,8 @@ protected:
 	UFUNCTION()
 	virtual void Die() override;
 
+	FTransform GetActorTransformForDamageUI() const noexcept;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UCharacterStatComponent* character_stat_component_;

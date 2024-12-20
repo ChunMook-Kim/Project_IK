@@ -18,14 +18,29 @@ See LICENSE file in the project root for full license information.
 ADamageUI::ADamageUI()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	widget_component_ = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget Component"));
 	SetRootComponent(widget_component_);
 	widget_component_->SetWidgetSpace(EWidgetSpace::Screen);
 	widget_component_->SetDrawSize(FVector2D(100.0));
 
+	initial_velocity_ = FVector(20.f, 0.f, 50.f);
+	velocity_ = initial_velocity_;
+	gravity_ = FVector(0.f, 0.f, -98.f);
+
 	time_to_live_ = 0.75f;
+}
+
+void ADamageUI::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	velocity_ += gravity_ * DeltaTime;
+
+	FVector location = GetActorLocation();
+	location += velocity_ * DeltaTime;
+	SetActorLocation(location);
 }
 
 void ADamageUI::SetHealAmount(float HealAmount)
@@ -60,6 +75,7 @@ void ADamageUI::SetMissed()
 void ADamageUI::SetInUse(bool in_use)
 {
 	Super::SetInUse(in_use);
+	velocity_ = initial_velocity_;
 }
 
 // Called when the game starts or when spawned
