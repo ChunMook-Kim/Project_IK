@@ -37,5 +37,5 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TWeakObjectPtr<UTextBlock> damage_text_;
 
-	float opacity;
+	float opacity_;
 };

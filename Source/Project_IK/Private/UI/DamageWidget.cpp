@@ -16,18 +16,23 @@ See LICENSE file in the project root for full license information.
 void UDamageWidget::SetDamageAmount(float DamageAmount)
 {
 	damage_text_->SetText(FText::FromString(FString::Printf(TEXT("%.1f"), DamageAmount)));
-	opacity = 1.f;
+	opacity_ = 1.f;
 }
 
 void UDamageWidget::SetMissed()
 {
 	damage_text_->SetText(FText::FromString("Missed"));
-	opacity = 1.f;
+	opacity_ = 1.f;
 }
 
 void UDamageWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
+	if (opacity_ <= 0.f)
+	{
+		return;
+	}
+
 	static constexpr float speed = 1.f / 0.75f;
-	opacity -= InDeltaTime * speed;
-	SetRenderOpacity(opacity);
+	opacity_ -= InDeltaTime * speed;
+	SetRenderOpacity(opacity_);
 }

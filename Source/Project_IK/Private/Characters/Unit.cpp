@@ -13,6 +13,8 @@ See LICENSE file in the project root for full license information.
 #include "Components/WidgetComponent.h"
 
 #include "UI/HitPointsUI.h"
+#include "Components/ObjectPoolComponent.h"
+#include "UI/DamageUI.h"
 
 // Sets default values
 AUnit::AUnit()
@@ -34,9 +36,11 @@ AUnit::AUnit()
 	{
 		hp_UI_->SetWidgetClass(UI_BP.Class);
 	}
+
+	object_pool_component_ = CreateDefaultSubobject<UObjectPoolComponent>(TEXT("ObjectPool"));
 }
 
-UCharacterStatComponent* AUnit::GetCharacterStat() const
+const UCharacterStatComponent* AUnit::GetCharacterStat() const
 {
 	return character_stat_component_;
 }
@@ -60,7 +64,41 @@ void AUnit::BeginPlay()
 
 void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
 {
-	character_stat_component_->GetDamage(damage, attacker);
+	bool is_damaged = character_stat_component_->GetDamage(damage, attacker);
+
+	ADamageUI* ui = Cast<ADamageUI>(object_pool_component_->SpawnFromPool(GetActorTransform()));
+	if (ui)
+	{
+		if (is_damaged)
+		{
+			ui->SetDamageAmount(damage);
+		}
+		else
+		{
+			ui->SetMissed();
+		}
+	}
+}
+
+void AUnit::Heal(float heal)
+{
+	character_stat_component_->Heal(heal);
+
+	ADamageUI* ui = Cast<ADamageUI>(object_pool_component_->SpawnFromPool(GetActorTransform()));
+	if (ui)
+	{
+			ui->SetHealAmount(heal);
+	}
+}
+
+void AUnit::ApplyBuff(FBuff buff)
+{
+	character_stat_component_->ApplyBuff(buff);
+}
+
+bool AUnit::RemoveBuff(FName BuffName)
+{
+	return character_stat_component_->RemoveBuff(BuffName);
 }
 
 void AUnit::GetStunned()

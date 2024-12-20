@@ -104,7 +104,7 @@ void ADPI_HealingWaves::PulseWave()
 			if (distance_to_actor <= wave_radius_)
 			{
 				AUnit* unit = Cast<AUnit>(actor);
-				unit->GetCharacterStat()->Heal(heal_amount_);
+				unit->Heal(heal_amount_);
 			}
 		}
 	}

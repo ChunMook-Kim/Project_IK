@@ -11,14 +11,14 @@ See LICENSE file in the project root for full license information.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "../Weapons/PooledActor.h"
 #include "DamageUI.generated.h"
 
 class UDamageWidget;
 class UWidgetComponent;
 
 UCLASS(Blueprintable)
-class PROJECT_IK_API ADamageUI : public AActor
+class PROJECT_IK_API ADamageUI : public APooledActor
 {
 	GENERATED_BODY()
 
@@ -34,6 +34,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetMissed();
+
+	virtual void SetInUse(bool in_use) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage UI")
 	TSubclassOf<UDamageWidget> damage_widget_class_;

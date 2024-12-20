@@ -17,6 +17,7 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameModeBase.h"
 
 #include "UI/DamageUI.h"
+#include "Components/ObjectPoolComponent.h"
 
 
 // Sets default values
@@ -105,24 +106,6 @@ bool UCharacterStatComponent::GetDamage(float DamageAmount, TWeakObjectPtr<AActo
 		game_mode->RecordDamage(DamageAmount, Attacker);
 	}
 
-	// Display damage amount when damaged
-	if (damage_UI_class_)
-	{
-		ADamageUI* damage_UI = GetWorld()->SpawnActor<ADamageUI>(damage_UI_class_, GetOwner()->GetActorLocation(), FRotator::ZeroRotator);
-
-		if (damage_UI)
-		{
-			if (is_evaded)
-			{
-				damage_UI->SetMissed();
-			}
-			else
-			{
-				damage_UI->SetDamageAmount(DamageAmount);
-			}
-		}
-	}
-
 	if (is_evaded)
 	{
 		return false;
@@ -153,13 +136,6 @@ bool UCharacterStatComponent::GetDamage(float DamageAmount, TWeakObjectPtr<AActo
 
 void UCharacterStatComponent::Heal(float HealAmount)
 {
-	// Display heal amounts
-	if (damage_UI_class_)
-	{
-		ADamageUI* damage_UI = GetWorld()->SpawnActor<ADamageUI>(damage_UI_class_, GetOwner()->GetActorLocation(), FRotator::ZeroRotator);
-		damage_UI->SetHealAmount(HealAmount);
-	}
-
 	SetHitPoint(GetHitPoint() + HealAmount);
 }
 

@@ -63,7 +63,7 @@ void ULevelTransitionManager::SaveData(UWorld* world)
 		for (int32 i = 0; i < heroes.Num(); i++)
 		{
 			AHeroBase* hero = Cast<AHeroBase>(heroes[i]);
-			UCharacterStatComponent* stat_component = hero->GetCharacterStat();
+			const UCharacterStatComponent* stat_component = hero->GetCharacterStat();
 
 			// @@ TODO: Need to save proper data.
 			data_.Add(stat_component->GetCharacterData());
