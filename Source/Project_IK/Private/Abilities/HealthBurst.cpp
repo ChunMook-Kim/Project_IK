@@ -31,7 +31,7 @@ void AHealthBurst::Tick(float DeltaSeconds)
 		unit_caster_ = Cast<AUnit>(caster_);
 		if(unit_caster_)
 		{
-			unit_caster_->GetCharacterStat()->Heal(DeltaSeconds * heal_amount_);
+			unit_caster_->Heal(DeltaSeconds * heal_amount_);
 		}
 	}
 }

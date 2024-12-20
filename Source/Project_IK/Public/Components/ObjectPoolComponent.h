@@ -29,13 +29,13 @@ public:
 	virtual void BeginPlay() override;
 	void InitializePool();
 	APooledActor* SpawnFromPool(FTransform spawn_transform);
-	UClass* GetObjectClass() const;
+	TSubclassOf<APooledActor> GetObjectClass() const;
 
 private:
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
-	UClass* pooled_actor_class_;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	TSubclassOf<APooledActor> pooled_actor_class_;
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta = (AllowPrivateAccess = true, BindWidget))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	int pool_size_;
 
 	UPROPERTY(Transient)

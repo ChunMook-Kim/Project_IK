@@ -15,7 +15,7 @@ UObjectPoolComponent::UObjectPoolComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -67,7 +67,7 @@ APooledActor* UObjectPoolComponent::SpawnFromPool(FTransform spawn_transform)
 	return nullptr;
 }
 
-UClass* UObjectPoolComponent::GetObjectClass() const
+TSubclassOf<APooledActor> UObjectPoolComponent::GetObjectClass() const
 {
 	return pooled_actor_class_;
 }

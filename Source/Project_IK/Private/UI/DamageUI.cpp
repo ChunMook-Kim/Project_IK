@@ -1,8 +1,8 @@
 /******************************************************************************
 Copyright(C) 2024
 Author: sinil.kang(rtd99062@gmail.com)
-Creation Date : 12.02.2024
-Summary : Source file for UI to display how much damage dealt.
+Creation Date : 12.19.2024
+Summary : Source file for an actor that holds damage UI.
 
 Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
@@ -11,23 +11,81 @@ See LICENSE file in the project root for full license information.
 
 #include "UI/DamageUI.h"
 
-#include "Components/TextBlock.h"
+#include "Components/WidgetComponent.h"
+#include "UI/DamageWidget.h"
 
-void UDamageUI::SetDamageAmount(float DamageAmount)
+// Sets default values
+ADamageUI::ADamageUI()
 {
-	damage_text_->SetText(FText::FromString(FString::Printf(TEXT("%.1f"), DamageAmount)));
-	opacity = 1.f;
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	widget_component_ = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget Component"));
+	SetRootComponent(widget_component_);
+	widget_component_->SetWidgetSpace(EWidgetSpace::Screen);
+	widget_component_->SetDrawSize(FVector2D(100.0));
+
+	initial_velocity_ = FVector(20.f, 0.f, 50.f);
+	velocity_ = initial_velocity_;
+	gravity_ = FVector(0.f, 0.f, -98.f);
+
+	time_to_live_ = 0.75f;
 }
 
-void UDamageUI::SetMissed()
+void ADamageUI::Tick(float DeltaTime)
 {
-	damage_text_->SetText(FText::FromString("Missed"));
-	opacity = 1.f;
+	Super::Tick(DeltaTime);
+
+	velocity_ += gravity_ * DeltaTime;
+
+	FVector location = GetActorLocation();
+	location += velocity_ * DeltaTime;
+	SetActorLocation(location);
 }
 
-void UDamageUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void ADamageUI::SetHealAmount(float HealAmount)
 {
-	static constexpr float speed = 1.f / 0.75f;
-	opacity -= InDeltaTime * speed;
-	SetRenderOpacity(opacity);
+	if (widget_component_)
+	{
+		UDamageWidget* widget = Cast<UDamageWidget>(widget_component_->GetWidget());
+		widget->SetColorAndOpacity(FLinearColor(0.f, 1.f, 0.f));
+		widget->SetDamageAmount(HealAmount);
+	}
 }
+
+void ADamageUI::SetDamageAmount(float DamageAmount)
+{
+	if (widget_component_)
+	{
+		UDamageWidget* widget = Cast<UDamageWidget>(widget_component_->GetWidget());
+		widget->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f));
+		widget->SetDamageAmount(DamageAmount);
+	}
+}
+
+void ADamageUI::SetMissed()
+{
+	if (widget_component_)
+	{
+		UDamageWidget* widget = Cast<UDamageWidget>(widget_component_->GetWidget());
+		widget->SetMissed();
+	}
+}
+
+void ADamageUI::SetInUse(bool in_use)
+{
+	Super::SetInUse(in_use);
+	velocity_ = initial_velocity_;
+}
+
+// Called when the game starts or when spawned
+void ADamageUI::BeginPlay()
+{
+	Super::BeginPlay();
+	if (damage_widget_class_)
+	{
+		UUserWidget* widget = CreateWidget<UDamageWidget>(GetWorld(), damage_widget_class_);
+		widget_component_->SetWidget(widget);
+	}
+}
+

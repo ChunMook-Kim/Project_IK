@@ -17,6 +17,7 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameModeBase.h"
 
 #include "UI/DamageUI.h"
+#include "Components/ObjectPoolComponent.h"
 
 
 // Sets default values
@@ -51,6 +52,8 @@ void UCharacterStatComponent::InitializeComponent()
 
 		// They are initial data of each attributes. Theoretical limitation will be implemented later
 		max_hit_points_ = stat_.hit_point_;
+		shield_ = 0.f;
+		max_shield_ = 100.f;
 	}
 }
 
@@ -58,7 +61,13 @@ void UCharacterStatComponent::InitializeComponent()
 void UCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
+void UCharacterStatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearTimer(shield_timer_);
 }
 
 // Called every frame
@@ -89,82 +98,64 @@ bool UCharacterStatComponent::GetDamage(float DamageAmount, AActor* Attacker)
 bool UCharacterStatComponent::GetDamage(float DamageAmount, TWeakObjectPtr<AActor> Attacker)
 {
 	float evasion_rand = FMath::RandRange(0.f, 1.f);
-	bool is_damaged = evasion_rand >= GetEvasion();
+	bool is_evaded = evasion_rand < GetEvasion();
 
-	if (is_damaged && Attacker.IsValid())
+	if (!is_evaded && Attacker.IsValid())
 	{
 		AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 		game_mode->RecordDamage(DamageAmount, Attacker);
 	}
 
-	// Display damage amount when damaged
-	if (damage_UI_class_)
-	{
-		UDamageUI* damage_UI = CreateWidget<UDamageUI>(GetWorld(), damage_UI_class_);
-		if (damage_UI)
-		{
-			damage_UI->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f));
-			if (is_damaged)
-			{
-				damage_UI->SetDamageAmount(DamageAmount);
-			}
-			else
-			{
-				damage_UI->SetMissed();
-			}
-			damage_UI->AddToViewport();
-
-			FVector2D screen_position;
-			UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), GetOwner()->GetActorLocation(), screen_position);
-			damage_UI->SetPositionInViewport(screen_position);
-
-			// Add an animation to remove it after seconds.
-			FTimerHandle timer_handle;
-			GetWorld()->GetTimerManager().SetTimer(timer_handle, [damage_UI]()
-				{
-					damage_UI->RemoveFromParent();
-				}, 0.75f, false);
-		}
-	}
-
-
-	if (!is_damaged)
+	if (is_evaded)
 	{
 		return false;
 	}
 
-	SetHitPoint(GetHitPoint() - DamageAmount);
+	// Calculation of shields
+	float remaining_damage = DamageAmount;
 
-	
+	if (shield_ > 0.f)
+	{
+		float damage_to_shield = FMath::Min(remaining_damage, shield_);
+		SetShield(shield_ - damage_to_shield);
+		remaining_damage -= damage_to_shield;
+
+		if (shield_ <= 0.f)
+		{
+			DestroyShield();
+			GetWorld()->GetTimerManager().ClearTimer(shield_timer_);
+		}
+
+	}
+
+	SetHitPoint(GetHitPoint() - remaining_damage);
+
+
 	return true;
 }
 
 void UCharacterStatComponent::Heal(float HealAmount)
 {
-	// Display damage amount when damaged
-	if (damage_UI_class_)
-	{
-		UDamageUI* damage_UI = CreateWidget<UDamageUI>(GetWorld(), damage_UI_class_);
-		if (damage_UI)
-		{
-			damage_UI->SetColorAndOpacity(FLinearColor(0.f, 1.f, 0.f));
-			damage_UI->SetDamageAmount(HealAmount);
-			damage_UI->AddToViewport();
-
-			FVector2D screen_position;
-			UGameplayStatics::ProjectWorldToScreen(UGameplayStatics::GetPlayerController(GetWorld(), 0), GetOwner()->GetActorLocation(), screen_position);
-			damage_UI->SetPositionInViewport(screen_position);
-
-			// Add an animation to remove it after seconds.
-			FTimerHandle timer_handle;
-			GetWorld()->GetTimerManager().SetTimer(timer_handle, [damage_UI]()
-				{
-					damage_UI->RemoveFromParent();
-				}, 0.75f, false);
-		}
-	}
-
 	SetHitPoint(GetHitPoint() + HealAmount);
+}
+
+void UCharacterStatComponent::AcquireShield(float ShieldAmount, float Duration)
+{
+	SetShield(ShieldAmount);
+	max_shield_ = ShieldAmount;
+
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		FTimerManager& timer_manager = world->GetTimerManager();
+		timer_manager.ClearTimer(shield_timer_);
+		timer_manager.SetTimer(shield_timer_, this, &UCharacterStatComponent::DestroyShield, Duration);
+	}
+}
+
+void UCharacterStatComponent::DestroyShield()
+{
+	SetShield(0.f);
 }
 
 float UCharacterStatComponent::GetAbilityPower() const noexcept
@@ -210,6 +201,11 @@ float UCharacterStatComponent::GetSightRange() const noexcept
 float UCharacterStatComponent::GetEvasion() const noexcept
 {
 	return CalculateStat(ECharacterStatType::Evasion);
+}
+
+float UCharacterStatComponent::GetShield() const noexcept
+{
+	return CalculateStat(ECharacterStatType::Shield);
 }
 
 void UCharacterStatComponent::SetAbilityPower(float ability_power) noexcept
@@ -259,6 +255,12 @@ void UCharacterStatComponent::SetSightRange(float sight_range) noexcept
 	stat_.sight_range_ = sight_range;
 }
 
+void UCharacterStatComponent::SetShield(float shield) noexcept
+{
+	shield_ = shield;
+	OnShieldChanged.Broadcast();
+}
+
 float UCharacterStatComponent::GetHPRatio() const noexcept
 {	// Don't calculate buffs because it calculates RATIO. The number caused by buffs will be simplified.
 	if (max_hit_points_ < KINDA_SMALL_NUMBER)
@@ -271,6 +273,18 @@ float UCharacterStatComponent::GetHPRatio() const noexcept
 	}
 }
 
+float UCharacterStatComponent::GetShieldRatio() const noexcept
+{
+	if (max_shield_ < KINDA_SMALL_NUMBER)
+	{
+		return 0.f;
+	}
+	else
+	{
+		return shield_ / max_shield_;
+	}
+}
+
 float UCharacterStatComponent::GetMaxHitPoint() const noexcept
 {
 	float stat = max_hit_points_;
@@ -280,6 +294,30 @@ float UCharacterStatComponent::GetMaxHitPoint() const noexcept
 	for (const FBuff& buff : buffs_)
 	{
 		if (buff.stat_type_ == ECharacterStatType::HitPoints)
+		{
+			if (buff.is_percentage_)
+			{
+				percentage_bonus += buff.value_;
+			}
+			else
+			{
+				value_bonus += buff.value_;
+			}
+		}
+	}
+
+	return (stat + value_bonus) * (1.f + percentage_bonus);
+}
+
+float UCharacterStatComponent::GetMaxShield() const noexcept
+{
+	float stat = max_shield_;
+	float percentage_bonus = 0.f;
+	float value_bonus = 0.f;
+
+	for (const FBuff& buff : buffs_)
+	{
+		if (buff.stat_type_ == ECharacterStatType::Shield)
 		{
 			if (buff.is_percentage_)
 			{
@@ -380,6 +418,8 @@ float UCharacterStatComponent::GetBaseStat(ECharacterStatType StatType) const
 		break;
 	case ECharacterStatType::Evasion:
 		return stat_.evasion_;
+	case ECharacterStatType::Shield:
+		return shield_;
 	default:
 		break;
 	}
@@ -387,7 +427,7 @@ float UCharacterStatComponent::GetBaseStat(ECharacterStatType StatType) const
 }
 
 void UCharacterStatComponent::ApplyBuff(FBuff buff)
-{	// @@ TODO: Implement here to distinguish stackable vs non-stackable buffs.
+{
 	buffs_.Add(buff);
 }
 

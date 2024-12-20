@@ -41,6 +41,6 @@ void ADPI_FireRateBurst::StartPassiveSkill()
 	unit_caster_ = Cast<AUnit>(caster_);
 	if(unit_caster_)
 	{
-		unit_caster_->GetCharacterStat()->ApplyBuff(FBuff(TEXT("Drone_FireRateBurst"), ECharacterStatType::AttackSpeed, 1.f - (1.f / accelerate_amount_), true, duration_));
+		unit_caster_->ApplyBuff(FBuff(TEXT("Drone_FireRateBurst"), ECharacterStatType::AttackSpeed, 1.f - (1.f / accelerate_amount_), true, duration_));
 	}
 }

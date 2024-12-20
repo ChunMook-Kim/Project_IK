@@ -77,7 +77,7 @@ void UCombatResultUI::UpdateResults(const TArray<AActor*>& heroes, const TMap<TW
 		if (hero)
 		{
 			blocks_[i]->SetVisibility(ESlateVisibility::Visible);
-			UCharacterStatComponent* hero_stat = hero->GetCharacterStat();
+			const UCharacterStatComponent* hero_stat = hero->GetCharacterStat();
 			hp_ratio_after_.Add(hero_stat->GetHPRatio());
 			if (damage_map.Contains(hero))
 			{
