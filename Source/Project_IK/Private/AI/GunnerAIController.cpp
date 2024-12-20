@@ -15,6 +15,8 @@ See LICENSE file in the project root for full license information.
 AGunnerAIController::AGunnerAIController()
 {
 	owned_cover_key_name_ = TEXT("OwnedCover");
+	fire_state_key_name_ = TEXT("FireState");
+	reload_state_key_name_ = TEXT("ReloadState");
 }
 
 void AGunnerAIController::OnPossess(APawn* InPawn)
@@ -32,4 +34,14 @@ void AGunnerAIController::OnDie()
 		casted_cover->SetIsBroken(false);
 		casted_cover->SetCoveringOwner(false);
 	}
+}
+
+void AGunnerAIController::SetFireState(EFireState new_state)
+{
+	GetBlackboardComponent()->SetValueAsEnum(fire_state_key_name_, static_cast<uint8>(new_state));
+}
+
+void AGunnerAIController::SetReloadState(EReloadState new_state)
+{
+	GetBlackboardComponent()->SetValueAsEnum(reload_state_key_name_, static_cast<uint8>(new_state));
 }

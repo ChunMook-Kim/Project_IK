@@ -23,7 +23,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void StartPassiveSkill() override;
-	virtual void FinishPassiveSkill() override;
 	
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "PassiveSkill", meta = (AllowPrivateAccess = "true"))

@@ -21,6 +21,8 @@ See LICENSE file in the project root for full license information.
 
 ADPI_HealingWaves::ADPI_HealingWaves()
 {
+	PrimaryActorTick.bCanEverTick = false;
+
 	is_periodic_ = true;
 	cool_time_ = 5.f;
 	duration_ = 1.f;
@@ -53,11 +55,6 @@ void ADPI_HealingWaves::BeginPlay()
 void ADPI_HealingWaves::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	if (activated_ && left_duration_ <= 0)
-	{
-		FinishPassiveSkill();
-	}
 }
 
 void ADPI_HealingWaves::StartPassiveSkill()
@@ -72,14 +69,18 @@ void ADPI_HealingWaves::StartPassiveSkill()
 	PulseWave();
 }
 
-void ADPI_HealingWaves::FinishPassiveSkill()
+void ADPI_HealingWaves::FinishPassiveSkillAndStartCoolDown()
 {
-	Super::FinishPassiveSkill();
-
+	Super::FinishPassiveSkillAndStartCoolDown();
 	if (decal_)
 	{
 		decal_->SetVisibility(false);
 	}
+}
+
+void ADPI_HealingWaves::FinishCoolDown()
+{
+	Super::FinishCoolDown();
 }
 
 void ADPI_HealingWaves::PulseWave()

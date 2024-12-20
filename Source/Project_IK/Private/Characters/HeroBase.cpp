@@ -80,15 +80,35 @@ void AHeroBase::Die()
 }
 
 void AHeroBase::Reload()
-{
-	weapon_mechanics_->Reload();
+{	UE_LOG(LogTemp, Warning, TEXT("Reloaded"));
 	PlayAnimMontage(reload_montage_);
+	weapon_mechanics_->Reload();
+}
+
+void AHeroBase::WaitForDuration()
+{
+	weapon_mechanics_->WaitReload();
+}
+
+void AHeroBase::FinishReload()
+{
+	weapon_mechanics_->FinishReload();
 }
 
 void AHeroBase::Fire(AActor* target)
 {
 	weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
 	PlayAnimMontage(fire_montage_);
+}
+
+void AHeroBase::WaitNextFire()
+{
+	weapon_mechanics_->WaitNextFire();
+}
+
+void AHeroBase::FinishFire()
+{
+	weapon_mechanics_->FinishFire();
 }
 
 bool AHeroBase::IsMagazineEmpty() const
@@ -108,7 +128,16 @@ float AHeroBase::GetReloadDuration() const
 
 void AHeroBase::ActivatePassive()
 {
-	passive_mechanics_->ActivePassiveSkill();
+	passive_mechanics_->ActivatePassiveSkill();
+}
+
+void AHeroBase::WaitForHoldTime()
+{
+	passive_mechanics_->WaitingHoldTime();
+}
+
+void AHeroBase::FinishPassive()
+{
 }
 
 bool AHeroBase::IsPassiveAvailable()

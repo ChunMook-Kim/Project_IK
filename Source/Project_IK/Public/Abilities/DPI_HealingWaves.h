@@ -27,7 +27,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void StartPassiveSkill() override;
-	virtual void FinishPassiveSkill() override;
+	virtual void FinishPassiveSkillAndStartCoolDown() override;
+	virtual void FinishCoolDown() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealingWaves")
 	UMaterialInterface* visual_material_;

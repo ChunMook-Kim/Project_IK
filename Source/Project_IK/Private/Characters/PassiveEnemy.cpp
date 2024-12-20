@@ -24,7 +24,7 @@ void APassiveEnemy::Die()
 
 void APassiveEnemy::ActivatePassive()
 {
-	passive_mechanics_->ActivePassiveSkill();
+	passive_mechanics_->ActivatePassiveSkill();
 }
 
 bool APassiveEnemy::IsPassiveAvailable()
@@ -35,4 +35,13 @@ bool APassiveEnemy::IsPassiveAvailable()
 float APassiveEnemy::GetPassiveHoldTime()
 {
 	return passive_mechanics_->GetHoldTime();
+}
+
+void APassiveEnemy::WaitForHoldTime()
+{
+	passive_mechanics_->WaitingHoldTime();
+}
+
+void APassiveEnemy::FinishPassive()
+{
 }
