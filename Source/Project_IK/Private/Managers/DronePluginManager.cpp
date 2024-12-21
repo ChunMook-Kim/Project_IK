@@ -45,6 +45,9 @@ FString UDronePluginManager::EnumToString(EDPType dp_type) const
 	case EDPType::HealingWaves:
 		dp_string = TEXT("HealingWaves");
 		break;
+	case EDPType::LaserBeam:
+		dp_string = TEXT("LaserBeam");
+		break;
 	default:
 		dp_string = TEXT("Empty");
 		break;

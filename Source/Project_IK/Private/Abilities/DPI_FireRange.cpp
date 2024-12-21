@@ -18,6 +18,7 @@ See LICENSE file in the project root for full license information.
 
 ADPI_FireRange::ADPI_FireRange()
 {
+	PrimaryActorTick.bCanEverTick = false;
 	is_periodic_ = false;
 	buff_amount_ = 200.f;
 }
@@ -25,11 +26,6 @@ ADPI_FireRange::ADPI_FireRange()
 void ADPI_FireRange::BeginPlay()
 {
 	Super::BeginPlay();
-}
-
-void ADPI_FireRange::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
 }
 
 void ADPI_FireRange::StartPassiveSkill()

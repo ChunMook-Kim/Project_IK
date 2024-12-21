@@ -18,6 +18,7 @@ See LICENSE file in the project root for full license information.
 
 ADPI_FireRateBurst::ADPI_FireRateBurst()
 {
+	PrimaryActorTick.bCanEverTick = false;
 	is_periodic_ = true;
 	cool_time_ = 3.f;
 	duration_ = 3.f;
@@ -28,11 +29,6 @@ ADPI_FireRateBurst::ADPI_FireRateBurst()
 void ADPI_FireRateBurst::BeginPlay()
 {
 	Super::BeginPlay();
-}
-
-void ADPI_FireRateBurst::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
 }
 
 void ADPI_FireRateBurst::StartPassiveSkill()

@@ -25,7 +25,6 @@ class PROJECT_IK_API ADPI_HealingWaves : public ADronePlugIn
 public:
 	ADPI_HealingWaves();
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
 	virtual void StartPassiveSkill() override;
 	virtual void FinishPassiveSkillAndStartCoolDown() override;
 	virtual void FinishCoolDown() override;
