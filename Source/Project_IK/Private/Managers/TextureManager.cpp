@@ -50,6 +50,7 @@ UTexture2D* UTextureManager::GetBuffTexture(ECharacterStatType StatType) const
 		return textures_["fire_range"];
 		break;
 	case ECharacterStatType::MoveSpeed:
+		return textures_["move_speed"];
 		break;
 	case ECharacterStatType::SightRange:
 		break;

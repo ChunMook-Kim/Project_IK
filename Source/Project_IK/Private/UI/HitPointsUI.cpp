@@ -112,6 +112,7 @@ void UHitPointsUI::UpdateBuffWidgets()
 				buff_displayers_[i]->SetVisibility(ESlateVisibility::Visible);
 			}
 			buff_displayers_[i]->SetImage(texture_manager_->GetBuffTexture(buff_count.Key));
+			buff_displayers_[i]->SetBackground(FLinearColor::Green);
 			
 			if (buff_count.Value > 1)
 			{
@@ -138,7 +139,7 @@ void UHitPointsUI::InitializeImages()
 {
 	for (int32 i = 0; i < DISPLAYER_SIZE; i++)
 	{
-		UBuffDisplayer* buff_displayer = WidgetTree->ConstructWidget<UBuffDisplayer>();
+		UBuffDisplayer* buff_displayer = WidgetTree->ConstructWidget<UBuffDisplayer>(buff_displayer_class_);
 		UHorizontalBoxSlot* displayer_slot = buffs_container_->AddChildToHorizontalBox(buff_displayer);
 
 		buff_displayers_.Add(buff_displayer);
