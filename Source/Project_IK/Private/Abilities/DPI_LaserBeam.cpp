@@ -115,6 +115,12 @@ void ADPI_LaserBeam::FireLaserBeam()
 				nearest_distance_squared = distance_squared_to_actor;
 			}
 		}
+		
+		// Cleanup pre-targeted unit
+		if (IsValid(nearest_unit_))
+		{
+			nearest_unit_->RemoveBuff(TEXT("LaserMovementReduction"));
+		}
 
 		// Fire laser beam
 		// Reduce movement speed
@@ -123,7 +129,7 @@ void ADPI_LaserBeam::FireLaserBeam()
 		{
 			// @@ TODO: Set attacker
 			nearest_unit_->GetDamage(damage_, nullptr);
-			nearest_unit_->ApplyBuff(FBuff(TEXT("LaserMovementReduction"), ECharacterStatType::MoveSpeed, movement_speed_reduction_amount_, true, fire_rate_));
+			nearest_unit_->ApplyBuff(FBuff(TEXT("LaserMovementReduction"), ECharacterStatType::MoveSpeed, movement_speed_reduction_amount_, true, true));
 		}
 	}
 }
