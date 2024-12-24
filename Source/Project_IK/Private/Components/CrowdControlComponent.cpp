@@ -11,6 +11,9 @@ See LICENSE file in the project root for full license information.
 
 #include "Components/CrowdControlComponent.h"
 
+#include "Characters/Unit.h"
+#include "AI/MeleeAIController.h"
+
 // Sets default values for this component's properties
 UCrowdControlComponent::UCrowdControlComponent()
 {
@@ -48,6 +51,24 @@ void UCrowdControlComponent::ApplyCrowdControl(ECCType cc_type, float duration)
 			CC_timers_.Add(cc_type, timer_handle);
 		}
 	}
+
+	switch (cc_type)
+	{
+	case ECCType::DroneJamming:
+		DroneJamming();
+		break;
+	case ECCType::Silence:
+		Silence();
+		break;
+	case ECCType::ItemDisabled:
+		ItemDisabled();
+		break;
+	case ECCType::Stun:
+		Stun();
+		break;
+	default:
+		break;
+	}
 }
 
 void UCrowdControlComponent::RemoveCrowdControl(ECCType cc_type)
@@ -68,12 +89,16 @@ void UCrowdControlComponent::RemoveCrowdControl(ECCType cc_type)
 	switch (cc_type)
 	{
 	case ECCType::DroneJamming:
+		DroneJamming(false);
 		break;
 	case ECCType::Silence:
+		Silence(false);
 		break;
 	case ECCType::ItemDisabled:
+		ItemDisabled(false);
 		break;
 	case ECCType::Stun:
+		Stun(false);
 		break;
 	default:
 		break;
@@ -107,5 +132,54 @@ void UCrowdControlComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		// Clear timer
 		timer_manager.ClearTimer(pair.Value);
+	}
+}
+
+void UCrowdControlComponent::DroneJamming(bool is_applying)
+{
+	if (is_applying)
+	{
+		// @@ TODO: Applying jamming drone
+	}
+	else
+	{
+		// @@ TODO: Removing jamming drone
+	}
+}
+
+void UCrowdControlComponent::Silence(bool is_applying)
+{
+	if (is_applying)
+	{
+	}
+	else
+	{
+		// @@ TODO: Removing silence
+	}
+}
+
+void UCrowdControlComponent::ItemDisabled(bool is_applying)
+{
+	if (is_applying)
+	{
+		// @@ TODO: Applying ItemDisabled
+	}
+	else
+	{
+		// @@ TODO: Removing ItemDisabled
+	}
+}
+
+void UCrowdControlComponent::Stun(float duration, bool is_applying)
+{
+	if (is_applying)
+	{
+		AUnit* unit = Cast<AUnit>(GetOwner());
+		AMeleeAIController* controller = Cast<AMeleeAIController>(unit->GetController());
+		controller->GetStunned(duration);
+	}
+	else
+	{
+		// @@ TODO: Removing Stun
 	}
 }

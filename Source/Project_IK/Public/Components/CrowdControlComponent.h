@@ -47,6 +47,11 @@ public:
 protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
+	void DroneJamming(bool is_applying = true);
+	void Silence(bool is_applying = true);
+	void ItemDisabled(bool is_applying = true);
+	void Stun(float duration, bool is_applying = true);
+
 	UPROPERTY()
 	TMap<ECCType, FTimerHandle> CC_timers_;
 };
