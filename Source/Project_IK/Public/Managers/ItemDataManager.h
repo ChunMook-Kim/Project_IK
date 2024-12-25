@@ -16,17 +16,7 @@ See LICENSE file in the project root for full license information.
 
 enum class ETargetingMode : uint8;
 enum class ETargetType : uint8;
-
-UENUM(BlueprintType)
-enum class EItemLogicType : uint8
-{
-	None UMETA(DisplayName = "None"),
-	RestoreHP UMETA(DisplayName = "RestoreHP"),
-	LaunchMissile UMETA(DisplayName = "LaunchMissile"),
-	AttackSpeedStimuli UMETA(DisplayName = "AttackSpeedStimuli"),
-	SmokeGrenade UMETA(DisplayName = "SmokeGrenade"),
-	Flashbang UMETA(DisplayName = "Flashbang"),
-};
+enum class EItemLogicType : uint8;
 
 USTRUCT(BlueprintType)
 struct FItemData : public FTableRowBase

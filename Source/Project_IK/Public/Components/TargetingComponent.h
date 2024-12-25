@@ -15,23 +15,10 @@ See LICENSE file in the project root for full license information.
 #include "Components/ActorComponent.h"
 #include "TargetingComponent.generated.h"
 
-UENUM(BlueprintType)
-enum class ETargetingMode : uint8
-{
-	None UMETA(DisplayName = "None"),
-	Actor UMETA(DisplayName = "Actor"),
-	Location UMETA(DisplayName = "Location"),
-	Direction UMETA(DisplayName = "Direction"),
-};
+#include "Managers/EnumCluster.h"
 
-UENUM(BlueprintType)
-enum class ETargetType : uint8
-{
-	None UMETA(DisplayName = "None"),
-	Allies UMETA(DisplayName = "Allies"),
-	Opponents UMETA(DisplayName = "Opponents"),
-	All UMETA(DisplayName = "All"),
-};
+enum class ETargetingMode : uint8;
+enum class ETargetType : uint8;
 
 USTRUCT(BlueprintType)
 struct FTargetParameters
@@ -110,6 +97,10 @@ public:
 	void StartItemTargeting(FTargetParameters TargetParams);
 	UFUNCTION(BlueprintCallable, Category="Targeting")
 	void StopTargeting();
+	UFUNCTION()
+	void StopTargetingIfInvokerIs(AActor* invoker);
+	UFUNCTION()
+	void StopItemTargeting();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
 	UMaterialInterface* range_material_;

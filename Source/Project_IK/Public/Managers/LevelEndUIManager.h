@@ -14,14 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "UObject/NoExportTypes.h"
 #include "LevelEndUIManager.generated.h"
 
-UENUM(BlueprintType)
-enum class ELevelEndState : uint8
-{
-	ShowingCombatResultUI UMETA(DisplayName = "ShowingCombatResultUI"),
-	ShowingItemPickerUI UMETA(DisplayName = "ShowingItemPickerUI"),
-	ShowingMapUI UMETA(DisplayName = "ShowingMapUI"),
-};
-
+enum class ELevelEndState : uint8;
 /**
  * 
  */

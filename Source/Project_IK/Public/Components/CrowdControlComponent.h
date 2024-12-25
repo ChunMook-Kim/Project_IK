@@ -12,16 +12,8 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Managers/EnumCluster.h"
 #include "CrowdControlComponent.generated.h"
-
-UENUM(BlueprintType)
-enum class ECCType : uint8
-{
-	DroneJamming UMETA(DisplayName = "DroneJamming"),
-	Silence UMETA(DisplayName = "Silence"),
-	ItemDisabled UMETA(DisplayName = "ItemDisabled"),
-	Stun UMETA(DisplayName = "Stun"),
-};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_IK_API UCrowdControlComponent : public UActorComponent
@@ -49,7 +41,7 @@ protected:
 
 	void DroneJamming(bool is_applying = true);
 	void Silence(bool is_applying = true);
-	void ItemDisabled(bool is_applying = true);
+	void MuteItems(bool is_applying = true);
 	void Stun(float duration, bool is_applying = true);
 
 	UPROPERTY()

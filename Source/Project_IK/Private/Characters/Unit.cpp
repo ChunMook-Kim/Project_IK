@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "AI/MeleeAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CharacterStatComponent.h"
+#include "Components/CrowdControlComponent.h"
 #include "Components/WidgetComponent.h"
 
 #include "UI/HitPointsUI.h"
@@ -33,6 +34,8 @@ AUnit::AUnit()
 	hp_UI_->SetupAttachment(RootComponent);
 
 	character_stat_component_->Die.AddDynamic(this, &AUnit::Die);
+
+	cc_component_ = CreateDefaultSubobject<UCrowdControlComponent>(TEXT("CC Component"));
 
 	//UI를 위한 경로가 문자열로 되어있으므로, UI BP의 경로 변경시 같이 변경해야 한다.
 	static ConstructorHelpers::FClassFinder<UHitPointsUI> UI_BP(TEXT("/Game/__BluePrints/BP_HitPointsUI"));
@@ -103,6 +106,11 @@ void AUnit::ApplyBuff(FBuff buff)
 bool AUnit::RemoveBuff(FName BuffName)
 {
 	return character_stat_component_->RemoveBuff(BuffName);
+}
+
+void AUnit::ApplyCrowdControl(ECCType cc_type, float duration)
+{
+	cc_component_->ApplyCrowdControl(cc_type, duration);
 }
 
 void AUnit::GetStunned()

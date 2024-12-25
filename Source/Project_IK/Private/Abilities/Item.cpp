@@ -16,6 +16,8 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameInstance.h"
 #include "Managers/TextureManager.h"
 
+#include "Managers/EnumCluster.h"
+
 #include "Characters/Unit.h"
 
 #include "Components/TargetingComponent.h"
@@ -162,11 +164,7 @@ void UItem::Flashbang(TArray<AActor*> actors)
 		AUnit* unit = Cast<AUnit>(actors[i]);
 		if (unit)
 		{
-			AMeleeAIController* controller = Cast<AMeleeAIController>(unit->GetController());
-			if (IsValid(controller))
-			{
-				controller->GetStunned(6.f);
-			}
+			unit->ApplyCrowdControl(ECCType::Stun, 5.f);
 		}
 	}
 

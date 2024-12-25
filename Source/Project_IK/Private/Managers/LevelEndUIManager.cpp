@@ -12,6 +12,7 @@ See LICENSE file in the project root for full license information.
 #include "Managers/LevelEndUIManager.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Managers/EnumCluster.h"
 
 #include "WorldSettings/IKGameModeBase.h"
 #include "UI/CombatResultUI.h"

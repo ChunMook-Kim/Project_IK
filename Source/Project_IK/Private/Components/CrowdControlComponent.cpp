@@ -11,6 +11,9 @@ See LICENSE file in the project root for full license information.
 
 #include "Components/CrowdControlComponent.h"
 
+#include "GameFramework/PlayerController.h"
+#include "UI/IKHUD.h"
+
 #include "Characters/Unit.h"
 #include "AI/MeleeAIController.h"
 
@@ -60,11 +63,11 @@ void UCrowdControlComponent::ApplyCrowdControl(ECCType cc_type, float duration)
 	case ECCType::Silence:
 		Silence();
 		break;
-	case ECCType::ItemDisabled:
-		ItemDisabled();
+	case ECCType::MuteItems:
+		MuteItems();
 		break;
 	case ECCType::Stun:
-		Stun();
+		Stun(duration);
 		break;
 	default:
 		break;
@@ -94,8 +97,8 @@ void UCrowdControlComponent::RemoveCrowdControl(ECCType cc_type)
 	case ECCType::Silence:
 		Silence(false);
 		break;
-	case ECCType::ItemDisabled:
-		ItemDisabled(false);
+	case ECCType::MuteItems:
+		MuteItems(false);
 		break;
 	case ECCType::Stun:
 		Stun(false);
@@ -149,24 +152,43 @@ void UCrowdControlComponent::DroneJamming(bool is_applying)
 
 void UCrowdControlComponent::Silence(bool is_applying)
 {
-	if (is_applying)
+	UWorld* world = GetWorld();
+	if (world)
 	{
-	}
-	else
-	{
-		// @@ TODO: Removing silence
+		APlayerController* player_controller = world->GetFirstPlayerController();
+		if (player_controller)
+		{
+			AIKHUD* HUD = Cast<AIKHUD>(player_controller->GetHUD());
+			if (is_applying)
+			{
+				HUD->SilenceSkill(GetOwner());
+			}
+			else
+			{
+				HUD->UnsilenceSkill(GetOwner());
+			}
+		}
 	}
 }
 
-void UCrowdControlComponent::ItemDisabled(bool is_applying)
+void UCrowdControlComponent::MuteItems(bool is_applying)
 {
-	if (is_applying)
+	UWorld* world = GetWorld();
+	if (world)
 	{
-		// @@ TODO: Applying ItemDisabled
-	}
-	else
-	{
-		// @@ TODO: Removing ItemDisabled
+		APlayerController* player_controller = world->GetFirstPlayerController();
+		if (player_controller)
+		{
+			AIKHUD* HUD = Cast<AIKHUD>(player_controller->GetHUD());
+			if (is_applying)
+			{
+				HUD->MuteItems();
+			}
+			else
+			{
+				HUD->UnmuteItems();
+			}
+		}
 	}
 }
 

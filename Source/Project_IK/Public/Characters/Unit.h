@@ -19,6 +19,7 @@ See LICENSE file in the project root for full license information.
 class UObjectPoolComponent;
 class UWidgetComponent;
 class UCharacterStatComponent;
+class UCrowdControlComponent;
 class UDamageUI;
 
 UCLASS()
@@ -45,6 +46,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool RemoveBuff(FName BuffName);
 
+	UFUNCTION(BlueprintCallable)
+	void ApplyCrowdControl(ECCType cc_type, float duration);
+
 	UFUNCTION()
 	virtual void GetStunned();
 
@@ -62,6 +66,9 @@ protected:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))
 	UCharacterStatComponent* character_stat_component_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Unit")
+	UCrowdControlComponent* cc_component_;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))
 	UAnimMontage* stun_montage_;

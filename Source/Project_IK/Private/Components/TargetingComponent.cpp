@@ -12,7 +12,6 @@ See LICENSE file in the project root for full license information.
 
 #include "Components/TargetingComponent.h"
 
-
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/PlayerController.h"
@@ -188,6 +187,28 @@ void UTargetingComponent::StopTargeting()
 	target_parameters_.current_mode_ = ETargetingMode::None;
 	player_controller_->CurrentMouseCursor = EMouseCursor::Default;
 	CleanupTargetingVisuals();
+}
+
+void UTargetingComponent::StopTargetingIfInvokerIs(AActor* invoker)
+{
+	if (is_targeting_)
+	{
+		if (invoker_ == invoker)
+		{
+			StopTargeting();
+		}
+	}
+}
+
+void UTargetingComponent::StopItemTargeting()
+{
+	if (is_targeting_)
+	{
+		if (invoker_ == nullptr)
+		{
+			StopTargeting();
+		}
+	}
 }
 
 void UTargetingComponent::HandleActorTargeting()
