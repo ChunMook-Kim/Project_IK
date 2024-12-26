@@ -16,6 +16,7 @@ See LICENSE file in the project root for full license information.
 #include "Unit.generated.h"
 
 
+class UHitPointsUI;
 class UObjectPoolComponent;
 class UWidgetComponent;
 class UCharacterStatComponent;
@@ -54,6 +55,9 @@ public:
 
 	UFUNCTION()
 	virtual void FinishStun();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UHitPointsUI> hp_UI_class_;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -81,7 +85,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))
 	UMaterial* test_stun_material_;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))
 	UWidgetComponent* hp_UI_;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Unit", meta = (AllowPrivateAccess = "true", BindWidget))

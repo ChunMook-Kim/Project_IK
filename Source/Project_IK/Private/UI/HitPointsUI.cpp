@@ -46,6 +46,11 @@ void UHitPointsUI::NativeConstruct()
 	InitializeImages();
 
 	UpdateHPWidget();
+
+	if (shield_progress_bar_.Get())
+	{
+		shield_progress_bar_->SetVisibility(ESlateVisibility::Hidden);
+	}
 	UpdateShieldWidget();
 
 	texture_manager_ = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GetTextureManager();
@@ -102,7 +107,7 @@ void UHitPointsUI::UpdateBuffWidgets()
 		{
 			// Buff if greater than 0 on raw data, greater than 1 on percentage data
 			TMap<ECharacterStatType, int32>& target_map = (buff.is_percentage_) ? ((buff.value_ > 1.f) ? buff_counts : debuff_counts) : ((buff.value_ > 0.f) ? buff_counts : debuff_counts);
-			
+
 			// Find the value associated with a specified key, or if none exists, 
 			// adds a value using the default constructor.
 			// Increase value of TPair
