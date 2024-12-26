@@ -23,6 +23,7 @@ class UItemDataManager;
 class ULevelTransitionManager;
 class UDronePluginManager;
 class UTextureManager;
+class UDialogueEventManager;
 
 /**
  * 
@@ -51,6 +52,8 @@ public:
 	const class UDronePluginManager* GetDronePluginManager() noexcept;
 	UFUNCTION(BlueprintPure)
 	const class UTextureManager* GetTextureManager() const noexcept;
+	UFUNCTION(BlueprintPure)
+	const class UDialogueEventManager* GetDialogueEventManager() const noexcept;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelTransition")
@@ -70,7 +73,8 @@ private:
 	void InitializeLevelTransitionManager();
 	void InitializeDronePluginManager();
 	void InitializeTextureManager();
-
+	void InitializeDialogueEventManager();
+	
 	UPROPERTY()
 	class UItemDataManager* item_data_manager_;
 	UPROPERTY()
@@ -86,7 +90,10 @@ private:
 	class ULevelTransitionManager* level_transition_manager_;
 
 	UPROPERTY()
-	class UDronePluginManager* drone_plugin_manager;
+	class UDronePluginManager* drone_plugin_manager_;
+
+	UPROPERTY()
+	class UDialogueEventManager* dialogue_event_manager_;
 
 	UPROPERTY()
 	class UTextureManager* texture_manager_;
