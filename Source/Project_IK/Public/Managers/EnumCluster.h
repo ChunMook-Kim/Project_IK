@@ -80,3 +80,13 @@ enum class EDroneState  : uint8
 	UsingPeriodicDP UMETA(DisplayName = "UsingPeriodicDP"),
 	UsingGeneralDP UMETA(DisplayName = "UsingGeneralDP")
 };
+
+UENUM(BlueprintType)
+enum class EDialogueEventType  : uint8
+{
+	GetRandomItem UMETA(DisplayName = "GetRandomItem"),
+	GetRandomDP UMETA(DisplayName = "GetRandomDP"),
+	GetFireRateBurstDP UMETA(DisplayName = "GetFireRateBurstDP"),
+	GetFireRangeDP UMETA(DisplayName = "GetFireRangeDP")
+};
+
