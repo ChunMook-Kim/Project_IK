@@ -135,3 +135,13 @@ enum class ETargetType : uint8
 	Opponents UMETA(DisplayName = "Opponents"),
 	All UMETA(DisplayName = "All"),
 };
+
+UENUM(BlueprintType)
+enum class EDialogueEventType  : uint8
+{
+	GetRandomItem UMETA(DisplayName = "GetRandomItem"),
+	GetRandomDP UMETA(DisplayName = "GetRandomDP"),
+	GetFireRateBurstDP UMETA(DisplayName = "GetFireRateBurstDP"),
+	GetFireRangeDP UMETA(DisplayName = "GetFireRangeDP")
+};
+
