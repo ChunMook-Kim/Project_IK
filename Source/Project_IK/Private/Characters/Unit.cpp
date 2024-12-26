@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "AI/MeleeAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CharacterStatComponent.h"
+#include "Components/CrowdControlComponent.h"
 #include "Components/WidgetComponent.h"
 
 #include "UI/HitPointsUI.h"
@@ -34,12 +35,8 @@ AUnit::AUnit()
 
 	character_stat_component_->Die.AddDynamic(this, &AUnit::Die);
 
-	//UI를 위한 경로가 문자열로 되어있으므로, UI BP의 경로 변경시 같이 변경해야 한다.
-	static ConstructorHelpers::FClassFinder<UHitPointsUI> UI_BP(TEXT("/Game/__BluePrints/BP_HitPointsUI"));
-	if(UI_BP.Succeeded() && UI_BP.Class != nullptr)
-	{
-		hp_UI_->SetWidgetClass(UI_BP.Class);
-	}
+
+	cc_component_ = CreateDefaultSubobject<UCrowdControlComponent>(TEXT("CC Component"));
 
 	object_pool_component_ = CreateDefaultSubobject<UObjectPoolComponent>(TEXT("ObjectPool"));
 }
@@ -63,7 +60,12 @@ void AUnit::SetForwardDir(const FVector& Forward_Dir)
 void AUnit::BeginPlay()
 {
 	Super::BeginPlay();
-	Cast<UHitPointsUI>(hp_UI_->GetWidget())->BindCharacterStat(character_stat_component_);
+
+	if (hp_UI_class_)
+	{
+		hp_UI_->SetWidgetClass(hp_UI_class_);
+	}
+	Cast<UHitPointsUI>(hp_UI_->GetWidget())->BindNecessaryComponents(character_stat_component_, cc_component_);
 }
 
 void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)
@@ -103,6 +105,11 @@ void AUnit::ApplyBuff(FBuff buff)
 bool AUnit::RemoveBuff(FName BuffName)
 {
 	return character_stat_component_->RemoveBuff(BuffName);
+}
+
+void AUnit::ApplyCrowdControl(ECCType cc_type, float duration)
+{
+	cc_component_->ApplyCrowdControl(cc_type, duration);
 }
 
 void AUnit::GetStunned()

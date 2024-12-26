@@ -20,6 +20,7 @@ enum class EDPType : uint8
 	FireRateBurst UMETA(DisplayName = "Fire Rate"),
 	FireRange UMETA(DisplayName = "Fire Range"),
 	HealingWaves UMETA(DisplayName = "Healing Waves"),
+	LaserBeam UMETA(DisplayName = "LaserBeam"),
 	INVALID UMETA(DisplayName = "Invalid")
 };
 
@@ -79,6 +80,60 @@ enum class EDroneState  : uint8
 	Idle UMETA(DisplayName = "Idle"),
 	UsingPeriodicDP UMETA(DisplayName = "UsingPeriodicDP"),
 	UsingGeneralDP UMETA(DisplayName = "UsingGeneralDP")
+};
+
+
+UENUM(BlueprintType)
+enum class ECCType : uint8
+{
+	DroneJamming UMETA(DisplayName = "DroneJamming"),
+	Silence UMETA(DisplayName = "Silence"),
+	MuteItems UMETA(DisplayName = "MuteItems"),
+	Stun UMETA(DisplayName = "Stun"),
+};
+
+UENUM(BlueprintType)
+enum class NodeType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Enemy UMETA(DisplayName = "Enemy"),
+};
+
+UENUM(BlueprintType)
+enum class ELevelEndState : uint8
+{
+	ShowingCombatResultUI UMETA(DisplayName = "ShowingCombatResultUI"),
+	ShowingItemPickerUI UMETA(DisplayName = "ShowingItemPickerUI"),
+	ShowingMapUI UMETA(DisplayName = "ShowingMapUI"),
+};
+
+UENUM(BlueprintType)
+enum class EItemLogicType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	RestoreHP UMETA(DisplayName = "RestoreHP"),
+	LaunchMissile UMETA(DisplayName = "LaunchMissile"),
+	AttackSpeedStimuli UMETA(DisplayName = "AttackSpeedStimuli"),
+	SmokeGrenade UMETA(DisplayName = "SmokeGrenade"),
+	Flashbang UMETA(DisplayName = "Flashbang"),
+};
+
+UENUM(BlueprintType)
+enum class ETargetingMode : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Actor UMETA(DisplayName = "Actor"),
+	Location UMETA(DisplayName = "Location"),
+	Direction UMETA(DisplayName = "Direction"),
+};
+
+UENUM(BlueprintType)
+enum class ETargetType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Allies UMETA(DisplayName = "Allies"),
+	Opponents UMETA(DisplayName = "Opponents"),
+	All UMETA(DisplayName = "All"),
 };
 
 UENUM(BlueprintType)

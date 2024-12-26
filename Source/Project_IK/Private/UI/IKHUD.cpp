@@ -42,6 +42,38 @@ void AIKHUD::SynchroItemButtons()
 	}
 }
 
+void AIKHUD::SilenceSkill(AActor* character)
+{
+	if (button_widget_)
+	{
+		button_widget_->SilenceSkill(character);
+	}
+}
+
+void AIKHUD::UnsilenceSkill(AActor* character)
+{
+	if (button_widget_)
+	{
+		button_widget_->UnsilenceSkill(character);
+	}
+}
+
+void AIKHUD::MuteItems()
+{
+	if (button_widget_)
+	{
+		button_widget_->MuteItems();
+	}
+}
+
+void AIKHUD::UnmuteItems()
+{
+	if (button_widget_)
+	{
+		button_widget_->UnmuteItems();
+	}
+}
+
 void AIKHUD::BeginPlay()
 {
 	Super::BeginPlay();

@@ -31,6 +31,15 @@ class PROJECT_IK_API UButtonBarWidget : public UUserWidget
 public:
 	UFUNCTION()
 	void SynchroItemButtons();
+
+	UFUNCTION()
+	void SilenceSkill(AActor* character);
+	void UnsilenceSkill(AActor* character);
+
+	UFUNCTION()
+	void MuteItems();
+	UFUNCTION()
+	void UnmuteItems();
 	
 protected:
 
@@ -99,4 +108,6 @@ private:
 
 	UPROPERTY()
 	UTexture2D* empty_item_icon;
+
+	bool is_item_muted_;
 };

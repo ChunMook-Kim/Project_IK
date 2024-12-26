@@ -18,11 +18,13 @@ class UOverlay;
 class UImage;
 class UTextBlock;
 class UTexture2D;
+class UMaterialInterface;
+class UMaterialInstanceDynamic;
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PROJECT_IK_API UBuffDisplayer : public UUserWidget
 {
 	GENERATED_BODY()
@@ -32,15 +34,23 @@ public:
 	UFUNCTION()
 	void SetImage(UTexture2D* Texture);
 	UFUNCTION()
+	void SetBackground(FLinearColor color);
+	UFUNCTION()
 	void SetDuplicatedText(int32 Duplicated);
 	UFUNCTION()
 	void HideText() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BuffDisplayer")
+	UMaterialInterface* image_material_;
 
 protected:
 	virtual void NativeConstruct() override;
 
 	void InitializeRootWidget();
 	void InitializeChildWidgets();
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* dynamic_material_;
 
 	UPROPERTY()
 	TWeakObjectPtr<UOverlay> root_widget_;

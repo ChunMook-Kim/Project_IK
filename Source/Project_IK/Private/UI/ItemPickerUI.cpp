@@ -11,6 +11,8 @@ See LICENSE file in the project root for full license information.
 
 #include "UI/ItemPickerUI.h"
 
+#include "Managers/EnumCluster.h"
+
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"

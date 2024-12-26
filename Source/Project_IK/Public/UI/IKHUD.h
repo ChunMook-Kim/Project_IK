@@ -39,6 +39,15 @@ public:
 	UFUNCTION()
 	void SynchroItemButtons();
 
+	UFUNCTION()
+	void SilenceSkill(AActor* character);
+	void UnsilenceSkill(AActor* character);
+
+	UFUNCTION()
+	void MuteItems();
+	UFUNCTION()
+	void UnmuteItems();
+
 protected:
 	// Reference to the Widget Blueprint class to create
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")

@@ -52,11 +52,6 @@ void ADPI_HealingWaves::BeginPlay()
 	}
 }
 
-void ADPI_HealingWaves::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-}
-
 void ADPI_HealingWaves::StartPassiveSkill()
 {
 	Super::StartPassiveSkill();
@@ -89,6 +84,8 @@ void ADPI_HealingWaves::PulseWave()
 
 	UWorld* world = GetWorld();
 
+	const float wave_radius_squared = wave_radius_ * wave_radius_;
+
 	// Pulses waves that heals collided characters.
 	if (world)
 	{
@@ -101,8 +98,8 @@ void ADPI_HealingWaves::PulseWave()
 			// Do not consider Z component to calculate distance.
 			to_actor.Z = 0.f;
 
-			float distance_to_actor = to_actor.Size();
-			if (distance_to_actor <= wave_radius_)
+			float distance_to_actor = to_actor.SizeSquared();
+			if (distance_to_actor <= wave_radius_squared)
 			{
 				AUnit* unit = Cast<AUnit>(actor);
 				unit->Heal(heal_amount_);

@@ -32,7 +32,18 @@ bool UBuffDisplayer::Initialize()
 
 void UBuffDisplayer::SetImage(UTexture2D* Texture)
 {
-	buff_image_->SetBrushFromTexture(Texture);
+	if (dynamic_material_)
+	{
+		dynamic_material_->SetTextureParameterValue(TEXT("texture"), Texture);
+	}
+}
+
+void UBuffDisplayer::SetBackground(FLinearColor color)
+{
+	if (dynamic_material_)
+	{
+		dynamic_material_->SetVectorParameterValue(TEXT("background"), color);
+	}
 }
 
 void UBuffDisplayer::SetDuplicatedText(int32 Duplicated)
@@ -63,12 +74,15 @@ void UBuffDisplayer::InitializeRootWidget()
 
 void UBuffDisplayer::InitializeChildWidgets()
 {
-	FSlateBrush brush;
-	brush.DrawAs = ESlateBrushDrawType::Image;
-	brush.SetImageSize(FVector2D(32.0));
-
 	buff_image_ = WidgetTree->ConstructWidget<UImage>();
-	buff_image_->SetBrush(brush);
+	if (image_material_)
+	{
+		dynamic_material_ = UMaterialInstanceDynamic::Create(image_material_, this);
+		if (dynamic_material_)
+		{
+			buff_image_->SetBrushFromMaterial(dynamic_material_);
+		}
+	}
 	root_widget_->AddChild(buff_image_.Get());
 
 	duplicated_text_ = WidgetTree->ConstructWidget<UTextBlock>();

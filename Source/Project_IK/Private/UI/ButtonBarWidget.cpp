@@ -24,6 +24,8 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameInstance.h"
 #include "Managers/TextureManager.h"
 
+#include "Characters/Unit.h"
+#include "Components/CrowdControlComponent.h"
 void UButtonBarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -95,6 +97,8 @@ void UButtonBarWidget::NativeConstruct()
 	default:
 		break;
 	}
+
+	is_item_muted_ = false;
 }
 
 void UButtonBarWidget::OnSkillButtonClicked0()
@@ -147,7 +151,7 @@ void UButtonBarWidget::OnSkillButtonClicked3()
 
 void UButtonBarWidget::OnItemButtonClicked0()
 {
-	if (item_inventory_->GetItem(0).IsValid())
+	if (item_inventory_->GetItem(0).IsValid() && !is_item_muted_)
 	{
 		caster_ = -1;
 		selected_item_index_ = 0;
@@ -157,7 +161,7 @@ void UButtonBarWidget::OnItemButtonClicked0()
 
 void UButtonBarWidget::OnItemButtonClicked1()
 {
-	if (item_inventory_->GetItem(1).IsValid())
+	if (item_inventory_->GetItem(1).IsValid() && !is_item_muted_)
 	{
 		caster_ = -1;
 		selected_item_index_ = 1;
@@ -167,7 +171,7 @@ void UButtonBarWidget::OnItemButtonClicked1()
 
 void UButtonBarWidget::OnItemButtonClicked2()
 {
-	if (item_inventory_->GetItem(2).IsValid())
+	if (item_inventory_->GetItem(2).IsValid() && !is_item_muted_)
 	{
 		caster_ = -1;
 		selected_item_index_ = 2;
@@ -177,6 +181,13 @@ void UButtonBarWidget::OnItemButtonClicked2()
 
 void UButtonBarWidget::SynchroItemButtons()
 {
+	if (is_item_muted_)
+	{
+		// Do not synchro if muted.
+		// CC component may synchro it after the effect has expired.
+		return ;
+	}
+
 	FSlateBrush normal_brush;
 	normal_brush.DrawAs = ESlateBrushDrawType::Type::Image;
 	normal_brush.SetImageSize(FVector2D(128.0, 128.0));
@@ -241,6 +252,88 @@ void UButtonBarWidget::SynchroItemButtons()
 	}
 }
 
+void UButtonBarWidget::SilenceSkill(AActor* character)
+{
+	// Disable a button
+	for(int32 i = 0; i < characters_.Num(); ++i)
+	{
+		if (characters_[i] == character)
+		{
+			switch (i)
+			{
+			case 0:
+				skill_button_0_->SetIsEnabled(false);
+				break;
+			case 1:
+				skill_button_1_->SetIsEnabled(false);
+				break;
+			case 2:
+				skill_button_2_->SetIsEnabled(false);
+				break;
+			case 3:
+				skill_button_3_->SetIsEnabled(false);
+				break;
+			default:
+				break;
+			}
+
+			break;
+		}
+	}
+	// Cancel targeting if invoker is the character
+	targeting_component_->StopTargetingIfInvokerIs(character);
+}
+
+void UButtonBarWidget::UnsilenceSkill(AActor* character)
+{
+	// Enable a button
+	// Disable a button
+	for (int32 i = 0; i < characters_.Num(); ++i)
+	{
+		if (characters_[i] == character)
+		{
+			switch (i)
+			{
+			case 0:
+				skill_button_0_->SetIsEnabled(true);
+				break;
+			case 1:
+				skill_button_1_->SetIsEnabled(true);
+				break;
+			case 2:
+				skill_button_2_->SetIsEnabled(true);
+				break;
+			case 3:
+				skill_button_3_->SetIsEnabled(true);
+				break;
+			default:
+				break;
+			}
+
+			break;
+		}
+	}
+}
+
+void UButtonBarWidget::MuteItems()
+{
+	is_item_muted_ = true;
+
+	// Disable item buttons
+	item_button_0_->SetIsEnabled(false);
+	item_button_1_->SetIsEnabled(false);
+	item_button_2_->SetIsEnabled(false);
+	
+	// Cancel if user is targeting by item
+	targeting_component_->StopItemTargeting();
+}
+
+void UButtonBarWidget::UnmuteItems()
+{
+	is_item_muted_ = false;
+	SynchroItemButtons();
+}
+
 void UButtonBarWidget::InvokeSkills(const FTargetResult& TargetResult)
 {
 	if (caster_ < 0)
@@ -248,27 +341,12 @@ void UButtonBarWidget::InvokeSkills(const FTargetResult& TargetResult)
 		item_inventory_->GetItem(selected_item_index_)->UseItem(GetWorld(), TargetResult);
 		item_inventory_->RemoveItem(selected_item_index_);
 
-		switch (selected_item_index_)
-		{
-		case 0:
-			item_button_0_->SetIsEnabled(false);
-			break;
-		case 1:
-			item_button_1_->SetIsEnabled(false);
-			break;
-		case 2:
-			item_button_2_->SetIsEnabled(false);
-			break;
-		default:
-			break;
-		}
+		SynchroItemButtons();
 	}
 	else
 	{
 		skill_containers_[caster_]->InvokeSkills(TargetResult);
 	}
-
-	SynchroItemButtons();
 }
 
 void UButtonBarWidget::FindCharacters()

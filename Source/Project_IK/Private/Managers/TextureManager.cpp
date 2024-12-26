@@ -50,11 +50,34 @@ UTexture2D* UTextureManager::GetBuffTexture(ECharacterStatType StatType) const
 		return textures_["fire_range"];
 		break;
 	case ECharacterStatType::MoveSpeed:
+		return textures_["move_speed"];
 		break;
 	case ECharacterStatType::SightRange:
 		break;
 	case ECharacterStatType::Evasion:
 		return textures_["evasion"];
+		break;
+	default:
+		break;
+	}
+	return nullptr;
+}
+
+UTexture2D* UTextureManager::GetCCTexture(ECCType CCType) const
+{
+	switch (CCType)
+	{
+	case ECCType::DroneJamming:
+		return textures_["drone_jamming"];
+		break;
+	case ECCType::Silence:
+		return textures_["silence"];
+		break;
+	case ECCType::MuteItems:
+		return textures_["mute_items"];
+		break;
+	case ECCType::Stun:
+		return textures_["stun"];
 		break;
 	default:
 		break;

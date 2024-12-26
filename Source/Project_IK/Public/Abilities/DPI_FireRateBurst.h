@@ -21,7 +21,6 @@ class PROJECT_IK_API ADPI_FireRateBurst : public ADronePlugIn
 public:
 	ADPI_FireRateBurst();
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
 	virtual void StartPassiveSkill() override;
 	
 private:

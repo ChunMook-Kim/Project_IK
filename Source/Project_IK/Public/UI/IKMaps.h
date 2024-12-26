@@ -14,14 +14,10 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Managers/EnumCluster.h"
 #include "IKMaps.generated.h"
 
-UENUM(BlueprintType)
-enum class NodeType : uint8
-{
-	None UMETA(DisplayName = "None"),
-	Enemy UMETA(DisplayName = "Enemy"),
-};
+enum class NodeType : uint8;
 
 USTRUCT(BlueprintType)
 struct FMapNode
