@@ -66,7 +66,7 @@ void AUnit::SetForwardDir(const FVector& Forward_Dir)
 void AUnit::BeginPlay()
 {
 	Super::BeginPlay();
-	Cast<UHitPointsUI>(hp_UI_->GetWidget())->BindCharacterStat(character_stat_component_);
+	Cast<UHitPointsUI>(hp_UI_->GetWidget())->BindNecessaryComponents(character_stat_component_, cc_component_);
 }
 
 void AUnit::GetDamage(float damage, TWeakObjectPtr<AActor> attacker)

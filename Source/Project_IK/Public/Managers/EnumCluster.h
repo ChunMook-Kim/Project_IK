@@ -88,7 +88,7 @@ enum class ECCType : uint8
 {
 	DroneJamming UMETA(DisplayName = "DroneJamming"),
 	Silence UMETA(DisplayName = "Silence"),
-	MuteItems UMETA(DisplayName = "ItemDisabled"),
+	MuteItems UMETA(DisplayName = "MuteItems"),
 	Stun UMETA(DisplayName = "Stun"),
 };
 

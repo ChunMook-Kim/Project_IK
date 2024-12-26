@@ -36,6 +36,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool HasCrowdControl(ECCType cc_type) const;
 
+	UFUNCTION(BlueprintCallable)
+	TArray<ECCType> GetAppliedCCArray() const;
+
 protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 

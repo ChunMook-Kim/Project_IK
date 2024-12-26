@@ -14,6 +14,9 @@ See LICENSE file in the project root for full license information.
 #include "Blueprint/UserWidget.h"
 #include "HitPointsUI.generated.h"
 
+enum class ECharacterStatType : uint8;
+class UCharacterStatComponent;
+class UCrowdControlComponent;
 class UProgressBar;
 class UHorizontalBox;
 class UBuffDisplayer;
@@ -29,7 +32,7 @@ class PROJECT_IK_API UHitPointsUI : public UUserWidget
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void BindCharacterStat(class UCharacterStatComponent* NewCharacterStat);
+	void BindNecessaryComponents(UCharacterStatComponent* NewCharacterStat, UCrowdControlComponent* NewCrowdControl);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -47,11 +50,24 @@ protected:
 	UFUNCTION()
 	void InitializeImages();
 
+	UFUNCTION()
+	void UpdateBuffDisplayers(TArray<TWeakObjectPtr<UBuffDisplayer>>& displayers, const TMap<ECharacterStatType, int32>& counts, const FLinearColor& background_color);
+
+	UFUNCTION()
+	void UpdateDebuffDisplayers(TArray<TWeakObjectPtr<UBuffDisplayer>>& displayers, const TMap<ECharacterStatType, int32>& counts, const TArray<ECCType>& appliedCCs, const FLinearColor& background_color);
+
+	UFUNCTION()
+	void UpdateDisplayer(UBuffDisplayer* displayer, UTexture2D* texture, const FLinearColor& color, int32 duplicated_count);
+
+	UFUNCTION()
+	void HideUnusedDisplayers(TArray<TWeakObjectPtr<UBuffDisplayer>>& displayers, int32 start_index);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Buff")
 	TSubclassOf<UBuffDisplayer> buff_displayer_class_;
 
 private:
-	TWeakObjectPtr<class UCharacterStatComponent> character_stat_;
+	TWeakObjectPtr<UCharacterStatComponent> character_stat_;
+	TWeakObjectPtr<UCrowdControlComponent> crowd_control_;
 
 	UPROPERTY(meta = (BindWidget))
 	TWeakObjectPtr<UProgressBar> shield_progress_bar_;
@@ -61,6 +77,12 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	TWeakObjectPtr<UHorizontalBox> buffs_container_;
+
+	UPROPERTY(meta = (BindWidget))
+	TWeakObjectPtr<UHorizontalBox> debuffs_container_;
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<UBuffDisplayer>> debuff_displayers_;
 
 	UPROPERTY()
 	TArray<TWeakObjectPtr<UBuffDisplayer>> buff_displayers_;

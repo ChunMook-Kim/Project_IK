@@ -63,6 +63,28 @@ UTexture2D* UTextureManager::GetBuffTexture(ECharacterStatType StatType) const
 	return nullptr;
 }
 
+UTexture2D* UTextureManager::GetCCTexture(ECCType CCType) const
+{
+	switch (CCType)
+	{
+	case ECCType::DroneJamming:
+		return textures_["drone_jamming"];
+		break;
+	case ECCType::Silence:
+		return textures_["silence"];
+		break;
+	case ECCType::MuteItems:
+		return textures_["mute_items"];
+		break;
+	case ECCType::Stun:
+		return textures_["stun"];
+		break;
+	default:
+		break;
+	}
+	return nullptr;
+}
+
 void UTextureManager::GetAllTexturesInFolder(const FString& FolderPath)
 {
 	FAssetRegistryModule& asset_registry_module = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");

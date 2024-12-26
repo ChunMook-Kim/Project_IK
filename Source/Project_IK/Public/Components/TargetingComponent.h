@@ -13,9 +13,8 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "TargetingComponent.generated.h"
-
 #include "Managers/EnumCluster.h"
+#include "TargetingComponent.generated.h"
 
 enum class ETargetingMode : uint8;
 enum class ETargetType : uint8;

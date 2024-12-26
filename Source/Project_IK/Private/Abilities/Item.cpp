@@ -28,8 +28,6 @@ See LICENSE file in the project root for full license information.
 
 #include "Abilities/SmokeRegion.h"
 
-#include "AI/MeleeAIController.h"
-
 void UItem::InitializeItemUsingData(FItemData item_data)
 {
 	item_data_ = item_data;

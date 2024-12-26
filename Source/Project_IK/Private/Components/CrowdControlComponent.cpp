@@ -86,6 +86,7 @@ void UCrowdControlComponent::RemoveCrowdControl(ECCType cc_type)
 	if (world)
 	{
 		world->GetTimerManager().ClearTimer(CC_timers_[cc_type]);
+		CC_timers_.Remove(cc_type);
 	}
 	
 	// Do something when cc is resolved
@@ -120,6 +121,16 @@ void UCrowdControlComponent::RemoveAllCrowdControl()
 bool UCrowdControlComponent::HasCrowdControl(ECCType cc_type) const
 {
 	return CC_timers_.Contains(cc_type);
+}
+
+TArray<ECCType> UCrowdControlComponent::GetAppliedCCArray() const
+{
+	TArray<ECCType> cc;
+	for (TPair<ECCType, FTimerHandle> pair : CC_timers_)
+	{
+		cc.Add(pair.Key);
+	}
+	return cc;
 }
 
 void UCrowdControlComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)

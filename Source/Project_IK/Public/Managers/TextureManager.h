@@ -17,6 +17,7 @@ See LICENSE file in the project root for full license information.
 #include "TextureManager.generated.h"
 
 enum class ECharacterStatType : uint8;
+enum class ECCType : uint8;
 
 /**
  * 
@@ -30,6 +31,7 @@ public:
 
 	UTexture2D* GetTexture(FString Key) const;
 	UTexture2D* GetBuffTexture(ECharacterStatType StatType) const;
+	UTexture2D* GetCCTexture(ECCType CCType) const;
 private:
 	void GetAllTexturesInFolder(const FString& FolderPath);
 

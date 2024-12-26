@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 
 #include "Blueprint/WidgetTree.h"
 #include "Components/CharacterStatComponent.h"
+#include "Components/CrowdControlComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
@@ -23,7 +24,7 @@ See LICENSE file in the project root for full license information.
 #include "WorldSettings/IKGameInstance.h"
 #include "Managers/TextureManager.h"
 
-void UHitPointsUI::BindCharacterStat(UCharacterStatComponent* NewCharacterStat)
+void UHitPointsUI::BindNecessaryComponents(UCharacterStatComponent* NewCharacterStat, UCrowdControlComponent* NewCrowdControl)
 {
 	if (NewCharacterStat)
 	{
@@ -31,6 +32,10 @@ void UHitPointsUI::BindCharacterStat(UCharacterStatComponent* NewCharacterStat)
 
 		character_stat_->OnHPChanged.AddDynamic(this, &UHitPointsUI::UpdateHPWidget);
 		character_stat_->OnShieldChanged.AddDynamic(this, &UHitPointsUI::UpdateShieldWidget);
+	}
+	if (NewCrowdControl)
+	{
+		crowd_control_ = NewCrowdControl;
 	}
 }
 
@@ -86,52 +91,27 @@ void UHitPointsUI::UpdateShieldWidget()
 }
 
 void UHitPointsUI::UpdateBuffWidgets()
-{
+{	// Display buff icons, hide the rest of them.
 	if (character_stat_.IsValid())
 	{
 		const TArray<FBuff> buffs = character_stat_->GetBuffs();
 
 		TMap<ECharacterStatType, int32> buff_counts;
+		TMap<ECharacterStatType, int32> debuff_counts;
 		for (const FBuff& buff : buffs)
 		{
-			if (buff_counts.Contains(buff.stat_type_))
-			{
-				buff_counts[buff.stat_type_] += 1;
-			}
-			else
-			{
-				buff_counts.Add(buff.stat_type_, 1);
-			}
-		}
-
-		int i = 0;
-		for (auto buff_count : buff_counts)
-		{
-			if (buff_displayers_[i]->GetVisibility() != ESlateVisibility::Visible)
-			{
-				buff_displayers_[i]->SetVisibility(ESlateVisibility::Visible);
-			}
-			buff_displayers_[i]->SetImage(texture_manager_->GetBuffTexture(buff_count.Key));
-			buff_displayers_[i]->SetBackground(FLinearColor::Green);
+			// Buff if greater than 0 on raw data, greater than 1 on percentage data
+			TMap<ECharacterStatType, int32>& target_map = (buff.is_percentage_) ? ((buff.value_ > 1.f) ? buff_counts : debuff_counts) : ((buff.value_ > 0.f) ? buff_counts : debuff_counts);
 			
-			if (buff_count.Value > 1)
-			{
-				buff_displayers_[i]->SetDuplicatedText(buff_count.Value);
-			}
-			else
-			{
-				buff_displayers_[i]->HideText();
-			}
+			// Find the value associated with a specified key, or if none exists, 
+			// adds a value using the default constructor.
+			// Increase value of TPair
+			target_map.FindOrAdd(buff.stat_type_) += 1;
+		}
 
-			++i;
-		}
-		for (; i < DISPLAYER_SIZE; ++i)
-		{
-			if (buff_displayers_[i]->GetVisibility() != ESlateVisibility::Collapsed)
-			{
-				buff_displayers_[i]->SetVisibility(ESlateVisibility::Collapsed);
-			}
-		}
+		UpdateBuffDisplayers(buff_displayers_, buff_counts, FLinearColor::Green);
+
+		UpdateDebuffDisplayers(debuff_displayers_, debuff_counts, crowd_control_->GetAppliedCCArray(), FLinearColor::Red);
 	}
 }
 
@@ -140,8 +120,91 @@ void UHitPointsUI::InitializeImages()
 	for (int32 i = 0; i < DISPLAYER_SIZE; i++)
 	{
 		UBuffDisplayer* buff_displayer = WidgetTree->ConstructWidget<UBuffDisplayer>(buff_displayer_class_);
-		UHorizontalBoxSlot* displayer_slot = buffs_container_->AddChildToHorizontalBox(buff_displayer);
+		buffs_container_->AddChildToHorizontalBox(buff_displayer);
 
 		buff_displayers_.Add(buff_displayer);
+	}
+	for (int32 i = 0; i < DISPLAYER_SIZE; i++)
+	{
+		UBuffDisplayer* debuff_displayer = WidgetTree->ConstructWidget<UBuffDisplayer>(buff_displayer_class_);
+		debuffs_container_->AddChildToHorizontalBox(debuff_displayer);
+
+		debuff_displayers_.Add(debuff_displayer);
+	}
+}
+
+void UHitPointsUI::UpdateBuffDisplayers(TArray<TWeakObjectPtr<UBuffDisplayer>>& displayers, const TMap<ECharacterStatType, int32>& counts, const FLinearColor& background_color)
+{
+	int i = 0;
+	for (const TPair<ECharacterStatType, int32>& pair : counts)
+	{
+		if (i >= DISPLAYER_SIZE)
+		{
+			break;
+		}
+
+		UpdateDisplayer(displayers[i].Get(), texture_manager_->GetBuffTexture(pair.Key), background_color, pair.Value);
+		++i;
+	}
+	HideUnusedDisplayers(displayers, i);
+}
+
+void UHitPointsUI::UpdateDebuffDisplayers(TArray<TWeakObjectPtr<UBuffDisplayer>>& displayers, const TMap<ECharacterStatType, int32>& counts, const TArray<ECCType>& appliedCCs, const FLinearColor& background_color)
+{
+	int i = 0;
+	for (const TPair<ECharacterStatType, int32>& pair : counts)
+	{
+		if (i >= DISPLAYER_SIZE)
+		{
+			break;
+		}
+
+		UpdateDisplayer(displayers[i].Get(), texture_manager_->GetBuffTexture(pair.Key), background_color, pair.Value);
+		++i;
+	}
+	for (ECCType cc_type : appliedCCs)
+	{
+		if (i >= DISPLAYER_SIZE)
+		{
+			break;
+		}
+		UpdateDisplayer(displayers[i].Get(), texture_manager_->GetCCTexture(cc_type), background_color, 0);
+		++i;
+	}
+	HideUnusedDisplayers(displayers, i);
+}
+
+void UHitPointsUI::UpdateDisplayer(UBuffDisplayer* displayer, UTexture2D* texture, const FLinearColor& color, int32 duplicated_count)
+{
+	if (!displayer)
+	{
+		return;
+	}
+
+	if (displayer->GetVisibility() != ESlateVisibility::Visible)
+	{
+		displayer->SetVisibility(ESlateVisibility::Visible);
+	}
+	displayer->SetImage(texture);
+	displayer->SetBackground(color);
+
+	if (duplicated_count > 1)
+	{
+		displayer->SetDuplicatedText(duplicated_count);
+	}
+	else
+	{
+		displayer->HideText();
+	}
+}
+
+void UHitPointsUI::HideUnusedDisplayers(TArray<TWeakObjectPtr<UBuffDisplayer>>& displayers, int32 start_index)
+{
+	for (int32 i = start_index; i < DISPLAYER_SIZE; i++)
+	{
+		if (displayers[i].Get() && displayers[i]->GetVisibility() != ESlateVisibility::Hidden)
+		{
+			displayers[i]->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
