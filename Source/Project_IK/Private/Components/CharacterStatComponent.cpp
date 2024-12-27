@@ -85,9 +85,15 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	}
 
 	buffs_.RemoveAll([](const FBuff& buff)
+	int32 num_removed = buffs_.RemoveAll([](const FBuff& buff)
 		{
 			return buff.is_permanent_ == false && buff.time_remaining_ <= 0.f;
 		});
+
+	if (num_removed > 0)
+	{
+		OnBuffChanged.Broadcast();
+	}
 }
 
 bool UCharacterStatComponent::GetDamage(float DamageAmount, AActor* Attacker)
@@ -341,6 +347,7 @@ FCharacterData UCharacterStatComponent::GetCharacterData() const noexcept
 void UCharacterStatComponent::SetCharacterData(const FCharacterData& character_data) noexcept
 {
 	stat_ = character_data;
+	OnHPChanged.Broadcast();
 }
 
 EDPType UCharacterStatComponent::GetPeriodicDP() const noexcept
@@ -429,6 +436,7 @@ float UCharacterStatComponent::GetBaseStat(ECharacterStatType StatType) const
 void UCharacterStatComponent::ApplyBuff(FBuff buff)
 {
 	buffs_.Add(buff);
+	OnBuffChanged.Broadcast();
 }
 
 bool UCharacterStatComponent::RemoveBuff(FName BuffName)
@@ -440,6 +448,7 @@ bool UCharacterStatComponent::RemoveBuff(FName BuffName)
 	if (found_index != INDEX_NONE)
 	{
 		buffs_.RemoveAt(found_index);
+		OnBuffChanged.Broadcast();
 		return true;
 	}
 
