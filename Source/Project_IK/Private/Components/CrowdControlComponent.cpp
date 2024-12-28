@@ -12,7 +12,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/CrowdControlComponent.h"
 
 #include "GameFramework/PlayerController.h"
-#include "UI/IKHUD.h"
+#include "WorldSettings/IKHUD.h"
 
 #include "Characters/Unit.h"
 #include "AI/MeleeAIController.h"

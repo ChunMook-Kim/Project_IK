@@ -84,7 +84,6 @@ void UCharacterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		buff.time_remaining_ -= DeltaTime;
 	}
 
-	buffs_.RemoveAll([](const FBuff& buff)
 	int32 num_removed = buffs_.RemoveAll([](const FBuff& buff)
 		{
 			return buff.is_permanent_ == false && buff.time_remaining_ <= 0.f;
