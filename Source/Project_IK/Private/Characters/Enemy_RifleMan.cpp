@@ -31,6 +31,7 @@ void AEnemy_RifleMan::Die()
 
 void AEnemy_RifleMan::OnStunned()
 {
+	UE_LOG(LogTemp, Warning, TEXT("AEnemy_RifleMan Stunned"));
 	Super::OnStunned();
 	weapon_mechanics_->OnStunned();
 }

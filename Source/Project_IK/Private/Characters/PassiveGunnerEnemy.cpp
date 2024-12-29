@@ -36,5 +36,6 @@ void APassiveGunnerEnemy::Die()
 
 void APassiveGunnerEnemy::OnStunned()
 {
+	weapon_mechanics_->OnStunned();
 	Super::OnStunned();
 }

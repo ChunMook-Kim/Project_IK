@@ -91,8 +91,8 @@ void AHeroBase::GetStunned(float stun_duration)
 
 void AHeroBase::OnStunned()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Hero Stunned"));
 	Super::OnStunned();
-	//Hero는 Stun될 시, 사격과 패시브를 멈춰야 한다.
 	weapon_mechanics_->OnStunned();
 	passive_mechanics_->OnStunned();
 }
