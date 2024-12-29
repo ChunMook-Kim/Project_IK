@@ -107,30 +107,7 @@ void UWeaponMechanics::FinishFire()
 }
 void UWeaponMechanics::Reload()
 {
-	if(auto gunner_controller = Cast<AGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
-	{
-		gunner_controller->SetReloadState(EReloadState::WaitingReload);
-	}
-}
-
-void UWeaponMechanics::WaitReload()
-{
-	if(GetWorld()->GetTimerManager().IsTimerActive(reload_timer_handle_) == false)
-	{
-		GetWorld()->GetTimerManager().SetTimer(reload_timer_handle_, this, &UWeaponMechanics::FinishReload, weapon_ref_->GetReloadDuration());
-	}
-}
-
-void UWeaponMechanics::FinishReload()
-{
-	//실제 장전 애니메이션이 끝나면 총알을 채워넣는다.
 	if(weapon_ref_) weapon_ref_->Reload();
-	if(auto gunner_controller = Cast<AGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
-	{
-		gunner_controller->SetReloadState(EReloadState::BeginReload);
-
-		GetWorld()->GetTimerManager().ClearTimer(reload_timer_handle_);
-	}
 }
 
 void UWeaponMechanics::OnDestroy()

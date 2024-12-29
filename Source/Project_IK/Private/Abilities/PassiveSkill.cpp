@@ -72,6 +72,17 @@ void APassiveSkill::FinishCoolDown()
 	GetWorld()->GetTimerManager().ClearTimer(cool_time_handle_);
 }
 
+void APassiveSkill::StopPassiveSkill()
+{
+	if(on_passive_skill_)
+	{
+		on_passive_skill_ = false;
+		on_cool_down_ = true;
+		GetWorld()->GetTimerManager().ClearTimer(duration_handle_);
+		GetWorld()->GetTimerManager().SetTimer(cool_time_handle_, this, &APassiveSkill::FinishCoolDown, cool_time_);
+	}
+}
+
 // Called every frame
 void APassiveSkill::Tick(float DeltaTime)
 {

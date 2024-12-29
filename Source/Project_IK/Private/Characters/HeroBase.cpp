@@ -87,19 +87,23 @@ void AHeroBase::Die()
 }
 
 void AHeroBase::Reload()
-{	UE_LOG(LogTemp, Warning, TEXT("Reloaded"));
-	PlayAnimMontage(reload_montage_);
-	weapon_mechanics_->Reload();
+{
+	if(GetWorld()->GetTimerManager().IsTimerActive(reload_timer_) == false)
+	{
+		GetWorld()->GetTimerManager().SetTimer(reload_timer_, this, &AHeroBase::FinishReload, GetReloadDuration());
+		OnReload();
+	}
 }
 
-void AHeroBase::WaitForDuration()
+void AHeroBase::OnReload()
 {
-	weapon_mechanics_->WaitReload();
+	PlayAnimMontage(reload_montage_);
 }
 
 void AHeroBase::FinishReload()
 {
-	weapon_mechanics_->FinishReload();
+	weapon_mechanics_->Reload();
+	Cast<AMeleeAIController>(Controller)->SetUnitState(EUnitState::Forwarding);
 }
 
 void AHeroBase::StartFire(AActor* target)
@@ -149,16 +153,16 @@ float AHeroBase::GetReloadDuration() const
 
 void AHeroBase::ActivatePassive()
 {
-	passive_mechanics_->ActivatePassiveSkill();
+	if(passive_mechanics_->IsPassiveAvailable() == true)
+	{
+		passive_mechanics_->ActivatePassiveSkill();
+		GetWorld()->GetTimerManager().SetTimer(passive_hold_timer_, this, &AHeroBase::FinishPassiveHoldTime, GetPassiveHoldTime());
+	}
 }
 
-void AHeroBase::WaitForHoldTime()
+void AHeroBase::FinishPassiveHoldTime()
 {
-	passive_mechanics_->WaitingHoldTime();
-}
-
-void AHeroBase::FinishPassive()
-{
+	Cast<AMeleeAIController>(Controller)->SetUnitState(EUnitState::Forwarding);
 }
 
 bool AHeroBase::IsPassiveAvailable()
@@ -179,6 +183,9 @@ void AHeroBase::GetStunned(float stun_duration)
 void AHeroBase::OnStunned()
 {
 	Super::OnStunned();
+	UE_LOG(LogTemp, Warning, TEXT("HeroOnStuuned"));
 	//Hero는 Stun될 시, 사격과 패시브를 멈춰야 한다.
 	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
+	GetWorld()->GetTimerManager().ClearTimer(reload_timer_);
+	passive_mechanics_->StopPassiveSkill();
 }

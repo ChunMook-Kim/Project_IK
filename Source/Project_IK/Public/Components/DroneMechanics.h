@@ -37,7 +37,6 @@ public:
 	bool IsPeriodicPluginAvailable() const;
 
 	void ActivatePeriodicDronePlugin();
-	void WaitForHoldTime();
 	void FinishHoldTime();
 	
 	void AddPeriodicPlugIn(UClass* plugin_type);

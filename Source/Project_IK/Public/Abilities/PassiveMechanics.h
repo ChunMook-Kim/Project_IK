@@ -27,9 +27,8 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:
 	void ActivatePassiveSkill();
-	void WaitingHoldTime();
-	void FinishHoldTime();
 	bool IsPassiveAvailable() const;
+	void StopPassiveSkill();
 	float GetHoldTime() const;
 
 private:

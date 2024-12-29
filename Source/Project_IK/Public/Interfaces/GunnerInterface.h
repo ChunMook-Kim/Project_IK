@@ -30,9 +30,11 @@ public:
 	virtual void StartFire(AActor* target) = 0;
 	virtual void OnFire(AActor* target) = 0;
 	virtual void FinishFire() = 0;
+	
 	virtual void Reload() = 0;
-	virtual void WaitForDuration() = 0;
+	virtual void OnReload() = 0;
 	virtual void FinishReload() = 0;
+	
 	virtual bool IsMagazineEmpty() const = 0;
 	virtual float GetFireInterval() const = 0;
 	virtual float GetReloadDuration() const = 0;

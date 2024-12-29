@@ -40,18 +40,21 @@ void APassiveGunnerEnemy::Die()
 
 void APassiveGunnerEnemy::Reload()
 {
-	weapon_mechanics_->Reload();
-	PlayAnimMontage(reload_montage_);
+	if(GetWorld()->GetTimerManager().IsTimerActive(reload_timer_) == false)
+	{
+		GetWorld()->GetTimerManager().SetTimer(reload_timer_, this, &APassiveGunnerEnemy::FinishReload, GetReloadDuration());
+		OnReload();
+	}
 }
 
-void APassiveGunnerEnemy::WaitForDuration()
+void APassiveGunnerEnemy::OnReload()
 {
-	weapon_mechanics_->WaitReload();
+	PlayAnimMontage(reload_montage_);
 }
 
 void APassiveGunnerEnemy::FinishReload()
 {
-	weapon_mechanics_->FinishReload();
+	weapon_mechanics_->Reload();
 }
 
 void APassiveGunnerEnemy::StartFire(AActor* target)

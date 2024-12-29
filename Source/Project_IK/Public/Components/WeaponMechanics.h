@@ -35,8 +35,6 @@ public:
 	void WaitNextFire();
 	void FinishFire();
 	void Reload();
-	void WaitReload();
-	void FinishReload();
 	bool IsMagazineEmpty() const;
 	float GetFireInterval() const;
 	float GetReloadDuration() const;

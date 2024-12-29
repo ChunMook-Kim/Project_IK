@@ -35,7 +35,7 @@ public:
 	virtual void Die() override;
 	
 	virtual void Reload() override;
-	virtual void WaitForDuration() override;
+	virtual void OnReload() override;
 	virtual void FinishReload() override;
 	
 	virtual void StartFire(AActor* target) override;
@@ -48,8 +48,7 @@ public:
 
 	virtual void ActivatePassive() override;
 	virtual bool IsPassiveAvailable() override;
-	virtual void WaitForHoldTime() override;
-	virtual void FinishPassive() override;
+	virtual void FinishPassiveHoldTime() override;
 	virtual float GetPassiveHoldTime() override;
 
 	virtual void GetStunned(float stun_duration) override;
@@ -79,6 +78,12 @@ protected:
 
 	UPROPERTY(Transient)
 	FTimerHandle fire_timer_;
+
+	UPROPERTY(Transient)
+	FTimerHandle reload_timer_;
+	
+	UPROPERTY(Transient)
+	FTimerHandle passive_hold_timer_;
 
 	ADrone* drone_;
 };

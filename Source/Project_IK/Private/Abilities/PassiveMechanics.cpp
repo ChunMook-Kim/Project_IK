@@ -45,35 +45,11 @@ void UPassiveMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void UPassiveMechanics::ActivatePassiveSkill()
 {
 	passive_ref_->StartPassiveSkill();
-	if(auto ai_controller = Cast<APassiveGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
-	{
-		ai_controller->SetPassiveState(EPassiveState::WaitingHoldTime);
-	}
 }
 
-void UPassiveMechanics::WaitingHoldTime()
+void UPassiveMechanics::StopPassiveSkill()
 {
-	if(GetWorld()->GetTimerManager().IsTimerActive(hold_time_handle_) == false)
-	{
-		if(GetHoldTime() == 0.f)
-		{
-			FinishHoldTime();
-		}
-		else
-		{
-			GetWorld()->GetTimerManager().SetTimer(hold_time_handle_, this, &UPassiveMechanics::FinishHoldTime, GetHoldTime());
-		}
-	}
-}
-
-void UPassiveMechanics::FinishHoldTime()
-{
-	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
-	if(auto ai_controller = Cast<APassiveGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Finish Hold Time"));
-		ai_controller->SetPassiveState(EPassiveState::BeginPassive);
-	}
+	passive_ref_->StopPassiveSkill();
 }
 
 bool UPassiveMechanics::IsPassiveAvailable() const

@@ -26,7 +26,7 @@ public:
 	virtual void Die() override;
 	
 	virtual void Reload() override;
-	virtual void WaitForDuration() override;
+	virtual void OnReload() override;
 	virtual void FinishReload() override;
 	virtual void StartFire(AActor* target) override;
 	virtual void OnFire(AActor* target) override;
@@ -49,4 +49,7 @@ private:
 
 	UPROPERTY(Transient)
 	FTimerHandle fire_timer_;
+	
+	UPROPERTY(Transient)
+	FTimerHandle reload_timer_;
 };

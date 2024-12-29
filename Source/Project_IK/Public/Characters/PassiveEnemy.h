@@ -24,14 +24,15 @@ public:
 	APassiveEnemy();
 	virtual void Die() override;
 	
-	virtual void ActivatePassive() override;
 	virtual bool IsPassiveAvailable() override;
 	virtual float GetPassiveHoldTime() override;
-	virtual void WaitForHoldTime() override;
-	virtual void FinishPassive() override;
 
+	virtual void ActivatePassive() override;
+	virtual void FinishPassiveHoldTime() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UPassiveMechanics* passive_mechanics_;
+
+	FTimerHandle passive_hold_timer_;
 };

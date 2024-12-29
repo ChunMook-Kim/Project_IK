@@ -33,18 +33,21 @@ void AEnemy_RifleMan::Die()
 
 void AEnemy_RifleMan::Reload()
 {
-	weapon_mechanics_->Reload();
-	PlayAnimMontage(reload_montage_);
+	if(GetWorld()->GetTimerManager().IsTimerActive(reload_timer_) == false)
+	{
+		GetWorld()->GetTimerManager().SetTimer(reload_timer_, this, &AEnemy_RifleMan::FinishReload, GetReloadDuration());
+		OnReload();
+	}
 }
 
-void AEnemy_RifleMan::WaitForDuration()
+void AEnemy_RifleMan::OnReload()
 {
-	weapon_mechanics_->WaitReload();
+	PlayAnimMontage(reload_montage_);
 }
 
 void AEnemy_RifleMan::FinishReload()
 {
-	weapon_mechanics_->FinishReload();
+	weapon_mechanics_->Reload();
 }
 
 void AEnemy_RifleMan::StartFire(AActor* target)

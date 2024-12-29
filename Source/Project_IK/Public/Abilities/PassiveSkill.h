@@ -29,6 +29,8 @@ public:
 	virtual void FinishPassiveSkillAndStartCoolDown();
 	virtual void FinishCoolDown();
 
+	void StopPassiveSkill();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

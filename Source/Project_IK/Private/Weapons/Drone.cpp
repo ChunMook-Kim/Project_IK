@@ -52,12 +52,16 @@ void ADrone::Tick(float DeltaTime)
 }
 void ADrone::ActivateDronePlugin()
 {
-	drone_mechanics_->ActivatePeriodicDronePlugin();
+	if(drone_mechanics_->IsPeriodicPluginAvailable())
+	{
+		drone_mechanics_->ActivatePeriodicDronePlugin();
+		GetWorld()->GetTimerManager().SetTimer(dp_hold_timer_, this, &ADrone::OnPeriodicDPFinished, GetDronePluginHoldTime());
+	}
 }
 
-void ADrone::WaitForHoldTime()
+void ADrone::OnPeriodicDPFinished()
 {
-	drone_mechanics_->WaitForHoldTime();
+	GetWorld()->GetTimerManager().ClearTimer(dp_hold_timer_);
 }
 
 void ADrone::SetPlugins(EDPType p_dp_id, EDPType g_dp_id)
