@@ -39,6 +39,8 @@ public:
 	virtual float GetFireInterval() const override;
 	virtual float GetReloadDuration() const override;
 
+	virtual void OnStunned() override;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UWeaponMechanics* weapon_mechanics_;

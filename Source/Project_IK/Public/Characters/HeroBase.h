@@ -52,6 +52,9 @@ public:
 	virtual void FinishPassive() override;
 	virtual float GetPassiveHoldTime() override;
 
+	virtual void GetStunned(float stun_duration) override;
+	virtual void OnStunned() override;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	USkillContainer* skill_container_;

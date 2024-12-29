@@ -68,8 +68,15 @@ void APassiveGunnerEnemy::StartFire(AActor* target)
 
 void APassiveGunnerEnemy::OnFire(AActor* target)
 {
-	weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
-	PlayAnimMontage(fire_montage_);
+	if(IsValid(target))
+	{
+		weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
+		PlayAnimMontage(fire_montage_);
+		if(weapon_mechanics_->IsMagazineEmpty())
+		{
+			GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
+		}
+	}
 }
 
 void APassiveGunnerEnemy::FinishFire()
@@ -90,4 +97,10 @@ float APassiveGunnerEnemy::GetFireInterval() const
 float APassiveGunnerEnemy::GetReloadDuration() const
 {
 	return weapon_mechanics_->GetReloadDuration();
+}
+
+void APassiveGunnerEnemy::OnStunned()
+{
+	Super::OnStunned();
+	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
 }

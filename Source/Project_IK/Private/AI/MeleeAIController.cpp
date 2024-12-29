@@ -53,11 +53,9 @@ void AMeleeAIController::OnPossess(APawn* InPawn)
 	}
 }
 
-void AMeleeAIController::GetStunned(float duration)
+void AMeleeAIController::GetStunned()
 {
 	SetUnitState(EUnitState::Stunned);
-	SetStunState(EStunState::BeginStun);
-	GetWorldTimerManager().SetTimer(timer_handle_,this, &AMeleeAIController::FinishStun, duration, false);
 }
 
 void AMeleeAIController::FinishStun()

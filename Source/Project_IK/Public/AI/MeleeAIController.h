@@ -25,7 +25,7 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UFUNCTION(Blueprintable, BlueprintCallable, Category = "AI")
-	virtual void GetStunned(float duration);
+	virtual void GetStunned();
 	virtual void FinishStun();
 	
 	UFUNCTION(Blueprintable)

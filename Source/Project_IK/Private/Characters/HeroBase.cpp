@@ -120,6 +120,10 @@ void AHeroBase::OnFire(AActor* target)
 	{
 		weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
 		PlayAnimMontage(fire_montage_);
+		if(weapon_mechanics_->IsMagazineEmpty())
+		{
+			GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
+		}
 	}
 }
 
@@ -165,4 +169,16 @@ bool AHeroBase::IsPassiveAvailable()
 float AHeroBase::GetPassiveHoldTime()
 {
 	return passive_mechanics_->GetHoldTime();
+}
+
+void AHeroBase::GetStunned(float stun_duration)
+{
+	Super::GetStunned(stun_duration);
+}
+
+void AHeroBase::OnStunned()
+{
+	Super::OnStunned();
+	//Hero는 Stun될 시, 사격과 패시브를 멈춰야 한다.
+	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
 }

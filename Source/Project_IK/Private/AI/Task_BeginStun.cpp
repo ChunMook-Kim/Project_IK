@@ -17,7 +17,6 @@ EBTNodeResult::Type UTask_BeginStun::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 {
 	if(	AUnit* casted_unit = Cast<AUnit>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
-		casted_unit->GetStunned();
 		return EBTNodeResult::Succeeded;
 	}
 	return EBTNodeResult::Failed;

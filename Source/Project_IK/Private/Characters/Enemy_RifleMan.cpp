@@ -61,8 +61,15 @@ void AEnemy_RifleMan::StartFire(AActor* target)
 
 void AEnemy_RifleMan::OnFire(AActor* target)
 {
-	weapon_mechanics_->FireWeapon(target, character_stat_component_->GetAttack());
-	PlayAnimMontage(fire_montage_);
+	if(IsValid(target))
+	{
+		weapon_mechanics_->FireWeapon(target, character_stat_component_->GetAttack());
+		PlayAnimMontage(fire_montage_);
+		if(weapon_mechanics_->IsMagazineEmpty())
+		{
+			GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
+		}
+	}
 }
 
 void AEnemy_RifleMan::FinishFire()
@@ -83,4 +90,10 @@ float AEnemy_RifleMan::GetFireInterval() const
 float AEnemy_RifleMan::GetReloadDuration() const
 {
 	return weapon_mechanics_->GetReloadDuration();
+}
+
+void AEnemy_RifleMan::OnStunned()
+{
+	Super::OnStunned();
+	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
 }

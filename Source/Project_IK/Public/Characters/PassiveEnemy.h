@@ -30,7 +30,6 @@ public:
 	virtual void WaitForHoldTime() override;
 	virtual void FinishPassive() override;
 
-	
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))

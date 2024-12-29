@@ -34,6 +34,8 @@ public:
 	virtual bool IsMagazineEmpty() const override;
 	virtual float GetFireInterval() const override;
 	virtual float GetReloadDuration() const override;
+	
+	virtual void OnStunned() override;
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
