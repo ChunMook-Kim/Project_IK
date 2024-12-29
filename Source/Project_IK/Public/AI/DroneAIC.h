@@ -24,8 +24,6 @@ public:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(Blueprintable)
-	virtual void SetDPState(EDPState new_state);
-	UFUNCTION(Blueprintable)
 	virtual void SetDroneState(EDroneState new_state);
 	
 protected:

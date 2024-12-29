@@ -45,11 +45,6 @@ void ADroneAIC::BeginPlay()
 	}
 }
 
-void ADroneAIC::SetDPState(EDPState new_state)
-{
-	GetBlackboardComponent()->SetValueAsEnum(dp_state_key_name_, static_cast<uint8>(new_state));
-}
-
 void ADroneAIC::SetDroneState(EDroneState new_state)
 {
 	GetBlackboardComponent()->SetValueAsEnum(drone_state_key_name_, static_cast<uint8>(new_state));

@@ -21,11 +21,6 @@ APassiveGunnerAIController::APassiveGunnerAIController()
 	passive_state_key_name_ = TEXT("PassiveState");
 }
 
-void APassiveGunnerAIController::SetPassiveState(EPassiveState new_state)
-{
-	GetBlackboardComponent()->SetValueAsEnum(passive_state_key_name_, static_cast<uint8>(new_state));
-}
-
 // Called when the game starts or when spawned
 void APassiveGunnerAIController::BeginPlay()
 {

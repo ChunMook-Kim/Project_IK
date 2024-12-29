@@ -9,8 +9,6 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 #pragma once
 
-#include "Interfaces/GunnerInterface.h"
-#include "Interfaces/PassiveCaster.h"
 #include "CoreMinimal.h"
 #include "Characters/Unit.h"
 #include "HeroBase.generated.h"
@@ -22,7 +20,7 @@ class UWeaponMechanics;
 class USkillContainer;
 
 UCLASS()
-class PROJECT_IK_API AHeroBase : public AUnit, public IGunnerInterface, public IPassiveCaster
+class PROJECT_IK_API AHeroBase : public AUnit
 {
 	GENERATED_BODY()
 public:
@@ -34,23 +32,6 @@ public:
 	virtual void Initialize();
 	virtual void Die() override;
 	
-	virtual void Reload() override;
-	virtual void OnReload() override;
-	virtual void FinishReload() override;
-	
-	virtual void StartFire(AActor* target) override;
-	virtual void OnFire(AActor* target) override;
-	virtual void FinishFire() override;
-
-	virtual bool IsMagazineEmpty() const override;
-	virtual float GetFireInterval() const override;
-	virtual float GetReloadDuration() const override;
-
-	virtual void ActivatePassive() override;
-	virtual bool IsPassiveAvailable() override;
-	virtual void FinishPassiveHoldTime() override;
-	virtual float GetPassiveHoldTime() override;
-
 	virtual void GetStunned(float stun_duration) override;
 	virtual void OnStunned() override;
 
@@ -64,26 +45,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UPassiveMechanics* passive_mechanics_;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
-	UAnimMontage* fire_montage_;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
-	UAnimMontage* reload_montage_;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero", meta = (AllowPrivateAccess = "true", AllowedClass = "Drone", BindWidget))
 	UClass* drone_bp_class_;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero", meta = (AllowPrivateAccess = "true"))
 	USphereComponent* drone_location_;
-
-	UPROPERTY(Transient)
-	FTimerHandle fire_timer_;
-
-	UPROPERTY(Transient)
-	FTimerHandle reload_timer_;
 	
-	UPROPERTY(Transient)
-	FTimerHandle passive_hold_timer_;
-
 	ADrone* drone_;
 };

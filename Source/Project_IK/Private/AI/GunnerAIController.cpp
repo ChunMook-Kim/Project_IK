@@ -35,13 +35,3 @@ void AGunnerAIController::OnDie()
 		casted_cover->SetCoveringOwner(false);
 	}
 }
-
-void AGunnerAIController::SetFireState(EFireState new_state)
-{
-	GetBlackboardComponent()->SetValueAsEnum(fire_state_key_name_, static_cast<uint8>(new_state));
-}
-
-void AGunnerAIController::SetReloadState(EReloadState new_state)
-{
-	GetBlackboardComponent()->SetValueAsEnum(reload_state_key_name_, static_cast<uint8>(new_state));
-}

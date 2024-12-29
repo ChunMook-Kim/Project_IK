@@ -60,7 +60,6 @@ void AHeroBase::BeginPlay()
 
 void AHeroBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -74,7 +73,6 @@ void AHeroBase::Initialize()
 
 void AHeroBase::Die()
 {
-	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
 	weapon_mechanics_->OnDestroy();
 	Cast<AGunnerAIController>(GetController())->OnDie();
 	if(auto casted_drone = Cast<ADrone>(drone_))
@@ -86,95 +84,6 @@ void AHeroBase::Die()
 	Super::Die();
 }
 
-void AHeroBase::Reload()
-{
-	if(GetWorld()->GetTimerManager().IsTimerActive(reload_timer_) == false)
-	{
-		GetWorld()->GetTimerManager().SetTimer(reload_timer_, this, &AHeroBase::FinishReload, GetReloadDuration());
-		OnReload();
-	}
-}
-
-void AHeroBase::OnReload()
-{
-	PlayAnimMontage(reload_montage_);
-}
-
-void AHeroBase::FinishReload()
-{
-	weapon_mechanics_->Reload();
-	Cast<AMeleeAIController>(Controller)->SetUnitState(EUnitState::Forwarding);
-}
-
-void AHeroBase::StartFire(AActor* target)
-{
-	float gun_as = 1.f / weapon_mechanics_->GetFireInterval();
-	float unit_as = GetCharacterStat()->GetAttackSpeed();
-	float total_as = gun_as / unit_as;
-	if(GetWorld()->GetTimerManager().IsTimerActive(fire_timer_) == false && target)
-	{
-		FTimerDelegate fire_del = FTimerDelegate::CreateUObject(this, &AHeroBase::OnFire, target);
-		GetWorld()->GetTimerManager().SetTimer(fire_timer_, fire_del, total_as, true, 0); 
-	}
-}
-
-void AHeroBase::OnFire(AActor* target)
-{
-	if(IsValid(target))
-	{
-		weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
-		PlayAnimMontage(fire_montage_);
-		if(weapon_mechanics_->IsMagazineEmpty())
-		{
-			GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
-		}
-	}
-}
-
-void AHeroBase::FinishFire()
-{
-	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
-}
-
-bool AHeroBase::IsMagazineEmpty() const
-{
-	return weapon_mechanics_->IsMagazineEmpty();
-}
-
-float AHeroBase::GetFireInterval() const
-{
-	return weapon_mechanics_->GetFireInterval() * character_stat_component_->GetAttackSpeed();
-}
-
-float AHeroBase::GetReloadDuration() const
-{
-	return weapon_mechanics_->GetReloadDuration();
-}
-
-void AHeroBase::ActivatePassive()
-{
-	if(passive_mechanics_->IsPassiveAvailable() == true)
-	{
-		passive_mechanics_->ActivatePassiveSkill();
-		GetWorld()->GetTimerManager().SetTimer(passive_hold_timer_, this, &AHeroBase::FinishPassiveHoldTime, GetPassiveHoldTime());
-	}
-}
-
-void AHeroBase::FinishPassiveHoldTime()
-{
-	Cast<AMeleeAIController>(Controller)->SetUnitState(EUnitState::Forwarding);
-}
-
-bool AHeroBase::IsPassiveAvailable()
-{
-	return passive_mechanics_->IsPassiveAvailable();
-}
-
-float AHeroBase::GetPassiveHoldTime()
-{
-	return passive_mechanics_->GetHoldTime();
-}
-
 void AHeroBase::GetStunned(float stun_duration)
 {
 	Super::GetStunned(stun_duration);
@@ -183,9 +92,7 @@ void AHeroBase::GetStunned(float stun_duration)
 void AHeroBase::OnStunned()
 {
 	Super::OnStunned();
-	UE_LOG(LogTemp, Warning, TEXT("HeroOnStuuned"));
 	//Hero는 Stun될 시, 사격과 패시브를 멈춰야 한다.
-	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
-	GetWorld()->GetTimerManager().ClearTimer(reload_timer_);
-	passive_mechanics_->StopPassiveSkill();
+	weapon_mechanics_->OnStunned();
+	passive_mechanics_->OnStunned();
 }

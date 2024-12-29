@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/PassiveSkill.h"
 #include "AI/PassiveGunnerAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/HeroBase.h"
 
 // Sets default values for this component's properties
 UPassiveMechanics::UPassiveMechanics()
@@ -42,12 +43,26 @@ void UPassiveMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+void UPassiveMechanics::BeginPassive()
+{
+	if(IsPassiveAvailable())
+	{
+		ActivatePassiveSkill();
+		GetWorld()->GetTimerManager().SetTimer(hold_time_handle_, this, &UPassiveMechanics::OnFinishHoldTime , GetHoldTime());
+	}
+}
+
+void UPassiveMechanics::OnFinishHoldTime()
+{
+	Cast<AMeleeAIController>(Cast<APawn>(GetOwner())->Controller)->SetUnitState(EUnitState::Forwarding);
+}
+
 void UPassiveMechanics::ActivatePassiveSkill()
 {
 	passive_ref_->StartPassiveSkill();
 }
 
-void UPassiveMechanics::StopPassiveSkill()
+void UPassiveMechanics::OnStunned()
 {
 	passive_ref_->StopPassiveSkill();
 }

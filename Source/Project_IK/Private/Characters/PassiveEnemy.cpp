@@ -22,27 +22,3 @@ void APassiveEnemy::Die()
 {
 	Super::Die();
 }
-
-void APassiveEnemy::ActivatePassive()
-{
-	if(passive_mechanics_->IsPassiveAvailable() == true)
-	{
-		passive_mechanics_->ActivatePassiveSkill();
-		GetWorld()->GetTimerManager().SetTimer(passive_hold_timer_, this, &APassiveEnemy::FinishPassiveHoldTime, GetPassiveHoldTime());
-	}
-}
-
-void APassiveEnemy::FinishPassiveHoldTime()
-{
-	Cast<AMeleeAIController>(Controller)->SetUnitState(EUnitState::Forwarding);
-}
-
-bool APassiveEnemy::IsPassiveAvailable()
-{
-	return passive_mechanics_->IsPassiveAvailable();
-}
-
-float APassiveEnemy::GetPassiveHoldTime()
-{
-	return passive_mechanics_->GetHoldTime();
-}

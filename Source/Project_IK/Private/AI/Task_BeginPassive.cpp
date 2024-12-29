@@ -12,7 +12,7 @@ See LICENSE file in the project root for full license information.
 #include "AI/Task_BeginPassive.h"
 
 #include "AIController.h"
-#include "Interfaces/PassiveCaster.h"
+#include "Abilities/PassiveMechanics.h"
 
 UTask_BeginPassive::UTask_BeginPassive()
 {
@@ -21,9 +21,11 @@ UTask_BeginPassive::UTask_BeginPassive()
 
 EBTNodeResult::Type UTask_BeginPassive::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if(	IPassiveCaster* casted_gunner = Cast<IPassiveCaster>(OwnerComp.GetAIOwner()->GetPawn()))
+	auto casted_pawn = OwnerComp.GetAIOwner()->GetPawn();
+	auto component = casted_pawn->GetComponentByClass(UPassiveMechanics::StaticClass()); 
+	if(auto casted_component = Cast<UPassiveMechanics>(component))
 	{
-		casted_gunner->ActivatePassive();
+		casted_component->ActivatePassiveSkill();
 		return EBTNodeResult::Succeeded;
 	}
 	return EBTNodeResult::Failed;
