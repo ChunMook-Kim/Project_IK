@@ -23,16 +23,16 @@ class PROJECT_IK_API APassiveGunnerEnemy : public APassiveEnemy, public IGunnerI
 public:
 	APassiveGunnerEnemy();
 	virtual void BeginPlay() override;
-	
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:
 	virtual void Die() override;
 	
 	virtual void Reload() override;
 	virtual void WaitForDuration() override;
 	virtual void FinishReload() override;
-	
-	virtual void Fire(AActor* target) override;
-	virtual void WaitNextFire() override;
+
+	virtual void StartFire(AActor* target) override;
+	virtual void OnFire(AActor* target) override;
 	virtual void FinishFire() override;
 	
 	virtual bool IsMagazineEmpty() const override;
@@ -48,4 +48,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
 	UAnimMontage* reload_montage_;
+
+	UPROPERTY(Transient)
+	FTimerHandle fire_timer_;
 };

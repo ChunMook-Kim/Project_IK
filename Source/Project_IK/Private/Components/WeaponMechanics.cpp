@@ -52,39 +52,48 @@ void UWeaponMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void UWeaponMechanics::FireWeapon(AActor* target, float damage)
 {
-	if(weapon_ref_)
+	if(weapon_ref_ && IsValid(target))
 	{
 		ACharacter* casted_target = Cast<ACharacter>(target);
-		const UBlackboardComponent* blackboard = Cast<AAIController>(casted_target->GetController())->GetBlackboardComponent();
-		UObject* cover = blackboard->GetValueAsObject(owned_cover_key_name_);
-		if(IsValid(cover))
+		if(UBlackboardComponent* blackboard = Cast<AAIController>(casted_target->GetController())->GetBlackboardComponent())
 		{
-			if(FMath::RandRange(0, 100) > 50)
+			UObject* cover = blackboard->GetValueAsObject(owned_cover_key_name_);
+			if(IsValid(cover))
 			{
-				weapon_ref_->FireWeapon(casted_target->GetMesh()->GetSocketLocation(head_socket_name_), damage);
+				if(FMath::RandRange(0, 100) > 50)
+				{
+					weapon_ref_->FireWeapon(casted_target->GetMesh()->GetSocketLocation(head_socket_name_), damage);
+				}
+				else
+				{
+					weapon_ref_->FireWeapon(target->GetActorLocation() - FVector(0, 0, 50), damage);
+				}
 			}
 			else
 			{
-				weapon_ref_->FireWeapon(target->GetActorLocation() - FVector(0, 0, 50), damage);
+				weapon_ref_->FireWeapon(target->GetActorLocation(), damage);
 			}
-		}
-		else
-		{
-			weapon_ref_->FireWeapon(target->GetActorLocation(), damage);
-		}
 
-		if(auto gunner_controller = Cast<AGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
-		{
-			gunner_controller->SetFireState(EFireState::WaitingFire);
+			if(auto gunner_controller = Cast<AGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
+			{
+				gunner_controller->SetFireState(EFireState::WaitingFire);
+			}
 		}
 	}
 }
 
 void UWeaponMechanics::WaitNextFire()
 {
+	//Gun as는 총이 가지고 있는 고유 공격속도이다. 1초에 n발을 발사한다.
+	double gun_as = 1.f / weapon_ref_->GetFireInterval();
+	//Unit_as는 캐릭터가 가지고 있는 공격속도이다. Fire Interval를 n만큼 나눠 공격속도 n배로 만든다.
+	//ex) gun_as가 0.25면, 1초에 4발을 쏜다. unit_as가 2라면 0.25/2 = 0.125가 되어 1초에 8발을 쏜다.
+	double unit_as = Cast<AUnit>(character_ref_)->GetCharacterStat()->GetAttackSpeed();
+	double total_as = gun_as / unit_as;
+	UE_LOG(LogTemp, Warning, TEXT("Term: %f"), total_as);
 	if(GetWorld()->GetTimerManager().IsTimerActive(fire_timer_handle_) == false)
 	{
-		GetWorld()->GetTimerManager().SetTimer(fire_timer_handle_, this, &UWeaponMechanics::FinishFire, weapon_ref_->GetFireInterval());
+		GetWorld()->GetTimerManager().SetTimer(fire_timer_handle_, this, &UWeaponMechanics::FinishFire, total_as);
 	}
 }
 

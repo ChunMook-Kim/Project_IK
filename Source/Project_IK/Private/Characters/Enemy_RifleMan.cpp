@@ -18,8 +18,15 @@ AEnemy_RifleMan::AEnemy_RifleMan()
 	weapon_mechanics_ = CreateDefaultSubobject<UWeaponMechanics>(TEXT("WeaponMechanics"));
 }
 
+void AEnemy_RifleMan::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
+	Super::EndPlay(EndPlayReason);
+}
+
 void AEnemy_RifleMan::Die()
 {
+	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
 	weapon_mechanics_->OnDestroy();
 	Super::Die();
 }
@@ -40,20 +47,27 @@ void AEnemy_RifleMan::FinishReload()
 	weapon_mechanics_->FinishReload();
 }
 
-void AEnemy_RifleMan::Fire(AActor* target)
+void AEnemy_RifleMan::StartFire(AActor* target)
+{
+	float gun_as = 1.f / weapon_mechanics_->GetFireInterval();
+	float unit_as = GetCharacterStat()->GetAttackSpeed();
+	float total_as = gun_as / unit_as;
+	if(GetWorld()->GetTimerManager().IsTimerActive(fire_timer_) == false)
+	{
+		FTimerDelegate fire_del = FTimerDelegate::CreateUObject(this, &AEnemy_RifleMan::OnFire, target);
+		GetWorld()->GetTimerManager().SetTimer(fire_timer_, fire_del, total_as, true, 0); 
+	}
+}
+
+void AEnemy_RifleMan::OnFire(AActor* target)
 {
 	weapon_mechanics_->FireWeapon(target, character_stat_component_->GetAttack());
 	PlayAnimMontage(fire_montage_);
 }
 
-void AEnemy_RifleMan::WaitNextFire()
-{
-	weapon_mechanics_->WaitNextFire();
-}
-
 void AEnemy_RifleMan::FinishFire()
 {
-	weapon_mechanics_->FinishFire();
+	GetWorld()->GetTimerManager().ClearTimer(fire_timer_);
 }
 
 bool AEnemy_RifleMan::IsMagazineEmpty() const

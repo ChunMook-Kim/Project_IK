@@ -15,6 +15,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/CharacterStatComponent.h"
 #include "AI/Service_FindBestCover.h"
 #include "Environments/Cover.h"
+#include "Interfaces/GunnerInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Managers/EnumCluster.h"
 #include "Managers/CommonFunctions.h"
@@ -42,6 +43,7 @@ void UService_CheckBattleCondition::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	if(attack_target == nullptr)
 	{
 		blackboard->SetValueAsEnum(unit_state_key_.SelectedKeyName, static_cast<uint8>(EUnitState::Forwarding));
+		Cast<IGunnerInterface>(casted_gunner)->FinishFire(); 
 		return;
 	}
 
@@ -51,6 +53,7 @@ void UService_CheckBattleCondition::TickNode(UBehaviorTreeComponent& OwnerComp, 
 		casted_gunner->GetCharacterStat()->GetSightRange())
 	{
 		blackboard->SetValueAsEnum(unit_state_key_.SelectedKeyName, static_cast<uint8>(EUnitState::Forwarding));
+		Cast<IGunnerInterface>(casted_gunner)->FinishFire(); 
 		return;
 	}
 	
@@ -64,6 +67,7 @@ void UService_CheckBattleCondition::TickNode(UBehaviorTreeComponent& OwnerComp, 
 		if(cover_owner_dist > 50.0)
 		{
 			blackboard->SetValueAsEnum(unit_state_key_.SelectedKeyName, static_cast<uint8>(EUnitState::HeadingToCover));
+			Cast<IGunnerInterface>(casted_gunner)->FinishFire(); 
 		}
 	}
 	else
@@ -84,6 +88,7 @@ void UService_CheckBattleCondition::TickNode(UBehaviorTreeComponent& OwnerComp, 
 			best_cover->SetCoveringOwner(true);
 			blackboard->SetValueAsObject(owned_cover_key_.SelectedKeyName, best_cover);
 			blackboard->SetValueAsEnum(unit_state_key_.SelectedKeyName, static_cast<uint8>(EUnitState::HeadingToCover));
+			Cast<IGunnerInterface>(casted_gunner)->FinishFire(); 
 		}
 	}
 	

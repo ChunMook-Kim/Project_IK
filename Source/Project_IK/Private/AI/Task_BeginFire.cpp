@@ -28,7 +28,7 @@ EBTNodeResult::Type UTask_BeginFire::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 	if(	AActor* casted_target = Cast<AActor>(blackboard->GetValueAsObject(attack_target_key_.SelectedKeyName)))
 	{
-		casted_gunner->Fire(casted_target);
+		casted_gunner->StartFire(casted_target);
 		return EBTNodeResult::Succeeded;
 	}
 	return EBTNodeResult::Failed;

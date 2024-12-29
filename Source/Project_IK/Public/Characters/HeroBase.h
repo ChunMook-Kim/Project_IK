@@ -28,6 +28,8 @@ class PROJECT_IK_API AHeroBase : public AUnit, public IGunnerInterface, public I
 public:
 	AHeroBase();
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 public:
 	virtual void Initialize();
 	virtual void Die() override;
@@ -36,9 +38,10 @@ public:
 	virtual void WaitForDuration() override;
 	virtual void FinishReload() override;
 	
-	virtual void Fire(AActor* target) override;
-	virtual void WaitNextFire() override;
+	virtual void StartFire(AActor* target) override;
+	virtual void OnFire(AActor* target) override;
 	virtual void FinishFire() override;
+
 	virtual bool IsMagazineEmpty() const override;
 	virtual float GetFireInterval() const override;
 	virtual float GetReloadDuration() const override;
@@ -70,6 +73,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hero", meta = (AllowPrivateAccess = "true"))
 	USphereComponent* drone_location_;
+
+	UPROPERTY(Transient)
+	FTimerHandle fire_timer_;
 
 	ADrone* drone_;
 };
