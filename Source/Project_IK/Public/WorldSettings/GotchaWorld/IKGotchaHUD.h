@@ -14,6 +14,8 @@ See LICENSE file in the project root for full license information.
 #include "GameFramework/HUD.h"
 #include "IKGotchaHUD.generated.h"
 
+class UGotchaWidget;
+
 /**
  * 
  */
@@ -22,4 +24,14 @@ class PROJECT_IK_API AIKGotchaHUD : public AHUD
 {
 	GENERATED_BODY()
 	
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	TSubclassOf<UGotchaWidget> gotcha_widget_class_;
+
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY()
+	TWeakObjectPtr<UGotchaWidget> gotcha_widget_;
 };
