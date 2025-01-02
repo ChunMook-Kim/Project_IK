@@ -31,6 +31,8 @@ public:
 	void OnFinishHoldTime();
 	bool IsPassiveAvailable() const;
 	
+	void BanPassive(float duration);
+	
 	void OnStunned();
 	float GetHoldTime() const;
 
@@ -43,4 +45,10 @@ private:
 	
 	UPROPERTY(Transient)
 	FTimerHandle hold_time_handle_;
+
+	UPROPERTY(Transient)
+	FTimerHandle ban_time_handle_;
+
+	UPROPERTY(Transient)
+	bool on_banned_;
 };
