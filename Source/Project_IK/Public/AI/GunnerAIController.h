@@ -22,10 +22,6 @@ public:
 	AGunnerAIController();
 	void OnDie() override;
 	virtual void OnPossess(APawn* InPawn) override;
-	UFUNCTION(Blueprintable)
-	void SetFireState(EFireState new_state);
-	UFUNCTION(Blueprintable)
-	void SetReloadState(EReloadState new_state);
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GunnerAIController", meta = (AllowPrivateAccess = "true"))
 	FName owned_cover_key_name_;

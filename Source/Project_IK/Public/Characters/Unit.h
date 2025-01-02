@@ -12,6 +12,7 @@ See LICENSE file in the project root for full license information.
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Damageable.h"
+#include "Interfaces/UnitInterface.h"
 
 #include "Unit.generated.h"
 
@@ -24,7 +25,7 @@ class UCrowdControlComponent;
 class UDamageUI;
 
 UCLASS()
-class PROJECT_IK_API AUnit : public ACharacter, public IDamageable
+class PROJECT_IK_API AUnit : public ACharacter, public IDamageable, public IUnitInterface
 {
 	GENERATED_BODY()
 
@@ -51,10 +52,13 @@ public:
 	void ApplyCrowdControl(ECCType cc_type, float duration);
 
 	UFUNCTION()
-	virtual void GetStunned();
+	virtual void GetStunned(float stun_duration) override;
 
 	UFUNCTION()
-	virtual void FinishStun();
+	virtual void OnStunned() override;
+
+	UFUNCTION()
+	virtual void FinishStun() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UHitPointsUI> hp_UI_class_;
@@ -96,4 +100,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DamageUI", meta = (AllowPrivateAccess = "true"))
 	UObjectPoolComponent* object_pool_component_;
+
+	UPROPERTY(Transient)
+	FTimerHandle stun_timer_;
 };

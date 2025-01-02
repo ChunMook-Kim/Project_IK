@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/ActorComponent.h"
 #include "WeaponMechanics.generated.h"
 
+class AUnit;
 class UCharacterStatComponent;
 class AGun;
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -31,18 +32,23 @@ public:
 
 public:
 	void OnDestroy();
-	void FireWeapon(AActor* target, float damage);
-	void WaitNextFire();
+	
+	void BeginFire(AActor* target);
+	void OnFire(AActor* target);
+	void FireWeapon(AActor* target);
 	void FinishFire();
+	
 	void Reload();
-	void WaitReload();
-	void FinishReload();
+	void OnReload();
+	
 	bool IsMagazineEmpty() const;
 	float GetFireInterval() const;
 	float GetReloadDuration() const;
+
+	void OnStunned();
+	
 	UFUNCTION()
 	void SetWeaponOwner(TWeakObjectPtr<AActor> gun_owner);
-	
 	
 private:
 	void EquipWeapon();
@@ -65,10 +71,16 @@ private:
 
 	UPROPERTY(Transient)
 	FTimerHandle reload_timer_handle_;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
+	UAnimMontage* fire_montage_;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))
+	UAnimMontage* reload_montage_;
 	
 	UPROPERTY(Transient)
 	AGun* weapon_ref_ = nullptr;
 	
 	UPROPERTY(Transient)
-	ACharacter* character_ref_ = nullptr;
+	AUnit* gunner_ref_ = nullptr;
 };

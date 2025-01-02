@@ -35,7 +35,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void ActivateDronePlugin();
-	virtual void WaitForHoldTime();
+	virtual void OnPeriodicDPFinished();
 	void SetPlugins(EDPType p_dp_data, EDPType g_dp_data);
 	float GetDronePluginHoldTime() const;
 	bool IsPluginAvailable() const;
@@ -50,6 +50,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true", BindWidget))
 	UDroneMechanics* drone_mechanics_;
+
+	FTimerHandle dp_hold_timer_;
 
 	AActor* hero_ref_;
 };

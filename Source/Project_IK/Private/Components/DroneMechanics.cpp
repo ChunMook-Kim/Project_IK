@@ -60,25 +60,9 @@ void UDroneMechanics::ActivatePeriodicDronePlugin()
 {
 	if(periodic_plugin_ != nullptr)
 	{
-		periodic_plugin_->StartPassiveSkill();
-		if(auto ai_controller = Cast<ADroneAIC>(Cast<APawn>(GetOwner())->Controller))
+		if(periodic_plugin_->IsPassiveAvailable())
 		{
-			ai_controller->SetDPState(EDPState::WaitingDP);
-		}
-	}
-}
-
-void UDroneMechanics::WaitForHoldTime()
-{
-	if(GetWorld()->GetTimerManager().IsTimerActive(hold_time_handle_) == false)
-	{
-		if(GetPeriodicPluginHoldTime() == 0.f)
-		{
-			FinishHoldTime();
-		}
-		else
-		{
-			GetWorld()->GetTimerManager().SetTimer(hold_time_handle_, this, &UDroneMechanics::FinishHoldTime, GetPeriodicPluginHoldTime());
+			periodic_plugin_->StartPassiveSkill();
 		}
 	}
 }
@@ -86,10 +70,6 @@ void UDroneMechanics::WaitForHoldTime()
 void UDroneMechanics::FinishHoldTime()
 {
 	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
-	if(auto ai_controller = Cast<ADroneAIC>(Cast<APawn>(GetOwner())->Controller))
-	{
-		ai_controller->SetDPState(EDPState::BeginDP);
-	}
 }
 
 void UDroneMechanics::AddPeriodicPlugIn(UClass* plugin_type)

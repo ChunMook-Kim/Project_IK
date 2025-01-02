@@ -20,60 +20,22 @@ APassiveGunnerEnemy::APassiveGunnerEnemy()
 void APassiveGunnerEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	weapon_mechanics_->SetWeaponOwner(this);		
+}
+
+void APassiveGunnerEnemy::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
 }
 
 void APassiveGunnerEnemy::Die()
 {
 	weapon_mechanics_->OnDestroy();
-	
 	Super::Die();
 }
 
-void APassiveGunnerEnemy::Reload()
+void APassiveGunnerEnemy::OnStunned()
 {
-	weapon_mechanics_->Reload();
-	PlayAnimMontage(reload_montage_);
-}
-
-void APassiveGunnerEnemy::WaitForDuration()
-{
-	weapon_mechanics_->WaitReload();
-}
-
-void APassiveGunnerEnemy::FinishReload()
-{
-	weapon_mechanics_->FinishReload();
-}
-
-void APassiveGunnerEnemy::Fire(AActor* target)
-{
-	weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
-	PlayAnimMontage(fire_montage_);
-}
-
-void APassiveGunnerEnemy::WaitNextFire()
-{
-	weapon_mechanics_->WaitNextFire();
-}
-
-void APassiveGunnerEnemy::FinishFire()
-{
-	weapon_mechanics_->FinishFire();
-}
-
-bool APassiveGunnerEnemy::IsMagazineEmpty() const
-{
-	return weapon_mechanics_->IsMagazineEmpty();
-}
-
-float APassiveGunnerEnemy::GetFireInterval() const
-{
-	return weapon_mechanics_->GetFireInterval() * character_stat_component_->GetAttackSpeed();
-}
-
-float APassiveGunnerEnemy::GetReloadDuration() const
-{
-	return weapon_mechanics_->GetReloadDuration();
+	weapon_mechanics_->OnStunned();
+	Super::OnStunned();
 }

@@ -112,17 +112,30 @@ void AUnit::ApplyCrowdControl(ECCType cc_type, float duration)
 	cc_component_->ApplyCrowdControl(cc_type, duration);
 }
 
-void AUnit::GetStunned()
+void AUnit::GetStunned(float stun_duration)
 {
+	UE_LOG(LogTemp, Display, TEXT("AUnit::GetStunned"));
+	if(GetWorld()->GetTimerManager().IsTimerActive(stun_timer_) == false)
+	{
+		OnStunned();
+		GetWorld()->GetTimerManager().SetTimer(stun_timer_, this, &AUnit::FinishStun, stun_duration);
+	}
+}
+
+void AUnit::OnStunned()
+{
+	//BT 역시 stun시키기
+	Cast<AMeleeAIController>(GetController())->GetStunned();
+	
+	//Stun Animation 재생
 	GetMesh()->SetMaterial(0, test_stun_material_);
 	PlayAnimMontage(stun_montage_);
-	Cast<AMeleeAIController>(Controller)->SetStunState(EStunState::WaitingStun);
 }
 
 void AUnit::FinishStun()
 {
+	UE_LOG(LogTemp, Display, TEXT("AUnit::FinishStunned"));
 	GetMesh()->SetMaterial(0, original_material);
-	Cast<AMeleeAIController>(Controller)->SetStunState(EStunState::BeginStun);
 	Cast<AMeleeAIController>(Controller)->SetUnitState(EUnitState::Forwarding);
 }
 

@@ -10,8 +10,8 @@ See LICENSE file in the project root for full license information.
 
 #include "AI/Decorator_IsPassiveAvailable.h"
 
-#include "Interfaces/PassiveCaster.h"
 #include "AIController.h"
+#include "Abilities/PassiveMechanics.h"
 
 UDecorator_IsPassiveAvailable::UDecorator_IsPassiveAvailable() 
 {
@@ -20,9 +20,11 @@ UDecorator_IsPassiveAvailable::UDecorator_IsPassiveAvailable()
 
 bool UDecorator_IsPassiveAvailable::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	if(	IPassiveCaster* casted_passive_caster = Cast<IPassiveCaster>(OwnerComp.GetAIOwner()->GetPawn()))
+	auto casted_pawn = OwnerComp.GetAIOwner()->GetPawn();
+	auto component = casted_pawn->GetComponentByClass(UPassiveMechanics::StaticClass()); 
+	if(auto casted_component = Cast<UPassiveMechanics>(component))
 	{
-		return casted_passive_caster->IsPassiveAvailable();
+		return casted_component->IsPassiveAvailable();
 	}
 	UE_LOG(LogTemp, Error, TEXT("%s node can't find passive caster!"), *NodeName);
 	return false;

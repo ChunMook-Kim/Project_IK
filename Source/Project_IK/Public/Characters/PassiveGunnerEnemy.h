@@ -11,33 +11,22 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "Characters/PassiveEnemy.h"
-#include "Interfaces/GunnerInterface.h"
 #include "PassiveGunnerEnemy.generated.h"
 
 
 class UWeaponMechanics;
 UCLASS()
-class PROJECT_IK_API APassiveGunnerEnemy : public APassiveEnemy, public IGunnerInterface
+class PROJECT_IK_API APassiveGunnerEnemy : public APassiveEnemy
 {
 	GENERATED_BODY()
 public:
 	APassiveGunnerEnemy();
 	virtual void BeginPlay() override;
-	
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:
 	virtual void Die() override;
-	
-	virtual void Reload() override;
-	virtual void WaitForDuration() override;
-	virtual void FinishReload() override;
-	
-	virtual void Fire(AActor* target) override;
-	virtual void WaitNextFire() override;
-	virtual void FinishFire() override;
-	
-	virtual bool IsMagazineEmpty() const override;
-	virtual float GetFireInterval() const override;
-	virtual float GetReloadDuration() const override;
+
+	virtual void OnStunned() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))

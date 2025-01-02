@@ -53,26 +53,18 @@ void AMeleeAIController::OnPossess(APawn* InPawn)
 	}
 }
 
-void AMeleeAIController::GetStunned(float duration)
+void AMeleeAIController::GetStunned()
 {
 	SetUnitState(EUnitState::Stunned);
-	SetStunState(EStunState::BeginStun);
-	GetWorldTimerManager().SetTimer(timer_handle_,this, &AMeleeAIController::FinishStun, duration, false);
 }
 
 void AMeleeAIController::FinishStun()
 {
-	SetStunState(EStunState::FinishStun);
 }
 
 void AMeleeAIController::SetUnitState(EUnitState new_state)
 {
 	GetBlackboardComponent()->SetValueAsEnum(unit_state_key_name_, static_cast<uint8>(new_state));
-}
-
-void AMeleeAIController::SetStunState(EStunState new_state)
-{
-	GetBlackboardComponent()->SetValueAsEnum(stun_state_key_name_, static_cast<uint8>(new_state));
 }
 
 void AMeleeAIController::OnDie()

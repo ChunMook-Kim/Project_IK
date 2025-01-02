@@ -102,7 +102,7 @@ void UCrowdControlComponent::RemoveCrowdControl(ECCType cc_type)
 		MuteItems(false);
 		break;
 	case ECCType::Stun:
-		Stun(false);
+		Stun(-1, false);
 		break;
 	default:
 		break;
@@ -208,8 +208,7 @@ void UCrowdControlComponent::Stun(float duration, bool is_applying)
 	if (is_applying)
 	{
 		AUnit* unit = Cast<AUnit>(GetOwner());
-		AMeleeAIController* controller = Cast<AMeleeAIController>(unit->GetController());
-		controller->GetStunned(duration);
+		unit->GetStunned(duration);
 	}
 	else
 	{

@@ -12,7 +12,7 @@ See LICENSE file in the project root for full license information.
 #include "AI/Task_BeginReload.h"
 
 #include "AIController.h"
-#include "Interfaces/GunnerInterface.h"
+#include "Components/WeaponMechanics.h"
 
 UTask_BeginReload::UTask_BeginReload()
 {
@@ -21,9 +21,11 @@ UTask_BeginReload::UTask_BeginReload()
 
 EBTNodeResult::Type UTask_BeginReload::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if(	IGunnerInterface* casted_gunner = Cast<IGunnerInterface>(OwnerComp.GetAIOwner()->GetPawn()))
+	auto casted_pawn = OwnerComp.GetAIOwner()->GetPawn();
+	auto component = casted_pawn->GetComponentByClass(UWeaponMechanics::StaticClass()); 
+	if(auto casted_component = Cast<UWeaponMechanics>(component))
 	{
-		casted_gunner->Reload();
+		casted_component->Reload();
 		return EBTNodeResult::Succeeded;
 	}
 	return EBTNodeResult::Failed;
