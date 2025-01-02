@@ -72,6 +72,16 @@ void APassiveSkill::FinishCoolDown()
 	GetWorld()->GetTimerManager().ClearTimer(cool_time_handle_);
 }
 
+void APassiveSkill::StartHoldCoolDown()
+{
+	GetWorld()->GetTimerManager().PauseTimer(cool_time_handle_);
+}
+
+void APassiveSkill::FinishHoldCoolDown()
+{
+	GetWorld()->GetTimerManager().UnPauseTimer(cool_time_handle_);
+}
+
 void APassiveSkill::StopPassiveSkill()
 {
 	if(on_passive_skill_)
@@ -122,4 +132,9 @@ void APassiveSkill::SetDuration(float Duration)
 bool APassiveSkill::IsPassiveAvailable() const
 {
 	return is_available;
+}
+
+bool APassiveSkill::IsOnPassiveSkill() const
+{
+	return on_passive_skill_;
 }

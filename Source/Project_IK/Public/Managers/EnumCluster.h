@@ -38,10 +38,10 @@ UENUM(BlueprintType)
 enum class EDroneState  : uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
+	BannedDP UMETA(DisplayName = "BannedDP"),
 	UsingPeriodicDP UMETA(DisplayName = "UsingPeriodicDP"),
 	UsingGeneralDP UMETA(DisplayName = "UsingGeneralDP")
 };
-
 
 UENUM(BlueprintType)
 enum class ECCType : uint8

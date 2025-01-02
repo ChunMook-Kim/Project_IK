@@ -28,6 +28,9 @@ public:
 	virtual void StartPassiveSkill();
 	virtual void FinishPassiveSkillAndStartCoolDown();
 	virtual void FinishCoolDown();
+	virtual void StartHoldCoolDown();
+	virtual void FinishHoldCoolDown();
+
 
 	void StopPassiveSkill();
 
@@ -47,6 +50,7 @@ public:
 	float GetHoldTime() const;
 	void SetHoldTime(float Hold_Time);
 	bool IsPassiveAvailable() const;
+	bool IsOnPassiveSkill() const;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "PassiveSkill", meta = (AllowPrivateAccess = "true"))
