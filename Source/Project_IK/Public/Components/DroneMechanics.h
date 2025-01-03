@@ -31,13 +31,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void GetJammed(float duration);
+	void FinishJam();
 
 	//AI에서 Periodic plugin을 control하기 위한 함수들.
 	float GetPeriodicPluginHoldTime() const;
 	bool IsPeriodicPluginAvailable() const;
 
 	void ActivatePeriodicDronePlugin();
-	void WaitForHoldTime();
 	void FinishHoldTime();
 	
 	void AddPeriodicPlugIn(UClass* plugin_type);
@@ -57,4 +58,10 @@ private:
 
 	UPROPERTY(Transient)
 	FTimerHandle hold_time_handle_;
+
+	UPROPERTY(Transient)
+	FTimerHandle jam_time_handle_;
+
+	UPROPERTY(Transient)
+	bool on_jammed_;
 };

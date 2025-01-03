@@ -231,8 +231,7 @@ void UCrowdControlComponent::Stun(float duration, bool is_applying)
 	if (is_applying)
 	{
 		AUnit* unit = Cast<AUnit>(GetOwner());
-		AMeleeAIController* controller = Cast<AMeleeAIController>(unit->GetController());
-		controller->GetStunned(duration);
+		unit->GetStunned(duration);
 	}
 	else
 	{

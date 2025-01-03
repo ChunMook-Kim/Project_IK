@@ -18,55 +18,20 @@ AEnemy_RifleMan::AEnemy_RifleMan()
 	weapon_mechanics_ = CreateDefaultSubobject<UWeaponMechanics>(TEXT("WeaponMechanics"));
 }
 
+void AEnemy_RifleMan::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+}
+
 void AEnemy_RifleMan::Die()
 {
 	weapon_mechanics_->OnDestroy();
 	Super::Die();
 }
 
-void AEnemy_RifleMan::Reload()
+void AEnemy_RifleMan::OnStunned()
 {
-	weapon_mechanics_->Reload();
-	PlayAnimMontage(reload_montage_);
-}
-
-void AEnemy_RifleMan::WaitForDuration()
-{
-	weapon_mechanics_->WaitReload();
-}
-
-void AEnemy_RifleMan::FinishReload()
-{
-	weapon_mechanics_->FinishReload();
-}
-
-void AEnemy_RifleMan::Fire(AActor* target)
-{
-	weapon_mechanics_->FireWeapon(target, character_stat_component_->GetAttack());
-	PlayAnimMontage(fire_montage_);
-}
-
-void AEnemy_RifleMan::WaitNextFire()
-{
-	weapon_mechanics_->WaitNextFire();
-}
-
-void AEnemy_RifleMan::FinishFire()
-{
-	weapon_mechanics_->FinishFire();
-}
-
-bool AEnemy_RifleMan::IsMagazineEmpty() const
-{
-	return weapon_mechanics_->IsMagazineEmpty();
-}
-
-float AEnemy_RifleMan::GetFireInterval() const
-{
-	return weapon_mechanics_->GetFireInterval() * character_stat_component_->GetAttackSpeed();
-}
-
-float AEnemy_RifleMan::GetReloadDuration() const
-{
-	return weapon_mechanics_->GetReloadDuration();
+	UE_LOG(LogTemp, Warning, TEXT("AEnemy_RifleMan Stunned"));
+	Super::OnStunned();
+	weapon_mechanics_->OnStunned();
 }

@@ -11,6 +11,7 @@ See LICENSE file in the project root for full license information.
 #include "Characters/PassiveEnemy.h"
 
 #include "Abilities/PassiveMechanics.h"
+#include "AI/MeleeAIController.h"
 
 APassiveEnemy::APassiveEnemy()
 {
@@ -20,28 +21,4 @@ APassiveEnemy::APassiveEnemy()
 void APassiveEnemy::Die()
 {
 	Super::Die();
-}
-
-void APassiveEnemy::ActivatePassive()
-{
-	passive_mechanics_->ActivatePassiveSkill();
-}
-
-bool APassiveEnemy::IsPassiveAvailable()
-{
-	return passive_mechanics_->IsPassiveAvailable();
-}
-
-float APassiveEnemy::GetPassiveHoldTime()
-{
-	return passive_mechanics_->GetHoldTime();
-}
-
-void APassiveEnemy::WaitForHoldTime()
-{
-	passive_mechanics_->WaitingHoldTime();
-}
-
-void APassiveEnemy::FinishPassive()
-{
 }

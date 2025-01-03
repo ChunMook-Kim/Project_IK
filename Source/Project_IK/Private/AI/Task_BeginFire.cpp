@@ -12,8 +12,8 @@ See LICENSE file in the project root for full license information.
 
 #include "AIController.h"
 #include "AI/GunnerAIController.h"
-#include "Interfaces/GunnerInterface.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/WeaponMechanics.h"
 
 UTask_BeginFire::UTask_BeginFire()
 {
@@ -24,12 +24,16 @@ EBTNodeResult::Type UTask_BeginFire::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
-	IGunnerInterface* casted_gunner = Cast<IGunnerInterface>(OwnerComp.GetAIOwner()->GetPawn());
 
-	if(	AActor* casted_target = Cast<AActor>(blackboard->GetValueAsObject(attack_target_key_.SelectedKeyName)))
+	auto casted_pawn = OwnerComp.GetAIOwner()->GetPawn();
+	auto component = casted_pawn->GetComponentByClass(UWeaponMechanics::StaticClass()); 
+	if(auto casted_component = Cast<UWeaponMechanics>(component))
 	{
-		casted_gunner->Fire(casted_target);
-		return EBTNodeResult::Succeeded;
+		if(	AActor* casted_target = Cast<AActor>(blackboard->GetValueAsObject(attack_target_key_.SelectedKeyName)))
+		{
+			casted_component->BeginFire(casted_target);
+			return EBTNodeResult::Succeeded;
+		}
 	}
 	return EBTNodeResult::Failed;
 }

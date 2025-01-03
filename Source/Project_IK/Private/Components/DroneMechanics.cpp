@@ -18,6 +18,7 @@ See LICENSE file in the project root for full license information.
 UDroneMechanics::UDroneMechanics()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	on_jammed_ = false;
 }
 
 // Called when the game starts
@@ -35,6 +36,49 @@ void UDroneMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void UDroneMechanics::Initialize(AActor* hero)
 {
 	hero_ref_ = hero;
+}
+
+void UDroneMechanics::GetJammed(float duration)
+{
+	//만약 밴된 도중에 다시 밴 된다면, 밴 시간만 조정한다.
+	if(on_jammed_)
+	{
+		GetWorld()->GetTimerManager().SetTimer(jam_time_handle_, this, &UDroneMechanics::FinishJam, duration, false);
+		return;
+	}
+
+	if(general_plugin_)
+	{
+		if(general_plugin_->IsOnPassiveSkill() || general_plugin_->IsPassiveAvailable())
+		{
+			general_plugin_->FinishPassiveSkillAndStartCoolDown();
+		}
+		general_plugin_->StartHoldCoolDown();
+	}
+	if(periodic_plugin_)
+	{
+		if(periodic_plugin_->IsOnPassiveSkill() || periodic_plugin_->IsPassiveAvailable())
+		{
+			periodic_plugin_->FinishPassiveSkillAndStartCoolDown();
+		}
+		periodic_plugin_->StartHoldCoolDown();
+	}
+	//duration동안 쿨타임이 돌지 못하게 한다.
+	GetWorld()->GetTimerManager().SetTimer(jam_time_handle_, this, &UDroneMechanics::FinishJam, duration, false);
+	on_jammed_ = true;
+}
+
+void UDroneMechanics::FinishJam()
+{
+	if(periodic_plugin_)
+	{
+		periodic_plugin_->FinishHoldCoolDown();
+	}
+	if(general_plugin_)
+	{
+		general_plugin_->FinishHoldCoolDown();
+	}
+	on_jammed_ = false;
 }
 
 float UDroneMechanics::GetPeriodicPluginHoldTime() const
@@ -60,25 +104,9 @@ void UDroneMechanics::ActivatePeriodicDronePlugin()
 {
 	if(periodic_plugin_ != nullptr)
 	{
-		periodic_plugin_->StartPassiveSkill();
-		if(auto ai_controller = Cast<ADroneAIC>(Cast<APawn>(GetOwner())->Controller))
+		if(periodic_plugin_->IsPassiveAvailable())
 		{
-			ai_controller->SetDPState(EDPState::WaitingDP);
-		}
-	}
-}
-
-void UDroneMechanics::WaitForHoldTime()
-{
-	if(GetWorld()->GetTimerManager().IsTimerActive(hold_time_handle_) == false)
-	{
-		if(GetPeriodicPluginHoldTime() == 0.f)
-		{
-			FinishHoldTime();
-		}
-		else
-		{
-			GetWorld()->GetTimerManager().SetTimer(hold_time_handle_, this, &UDroneMechanics::FinishHoldTime, GetPeriodicPluginHoldTime());
+			periodic_plugin_->StartPassiveSkill();
 		}
 	}
 }
@@ -86,10 +114,6 @@ void UDroneMechanics::WaitForHoldTime()
 void UDroneMechanics::FinishHoldTime()
 {
 	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
-	if(auto ai_controller = Cast<ADroneAIC>(Cast<APawn>(GetOwner())->Controller))
-	{
-		ai_controller->SetDPState(EDPState::BeginDP);
-	}
 }
 
 void UDroneMechanics::AddPeriodicPlugIn(UClass* plugin_type)
@@ -111,15 +135,6 @@ void UDroneMechanics::AddPeriodicPlugIn(UClass* plugin_type)
 	}
 }
 
-void UDroneMechanics::RemovePeriodicPlugIn()
-{
-	if(periodic_plugin_ != nullptr)
-	{
-		periodic_plugin_->Destroy();
-	}
-	periodic_plugin_ = nullptr;
-}
-
 void UDroneMechanics::AddGeneralPlugIn(UClass* plugin_type)
 {
 	if(plugin_type)
@@ -138,6 +153,16 @@ void UDroneMechanics::AddGeneralPlugIn(UClass* plugin_type)
 			general_plugin_->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		}
 	}
+}
+
+
+void UDroneMechanics::RemovePeriodicPlugIn()
+{
+	if(periodic_plugin_ != nullptr)
+	{
+		periodic_plugin_->Destroy();
+	}
+	periodic_plugin_ = nullptr;
 }
 
 void UDroneMechanics::RemoveGeneralPlugIn()

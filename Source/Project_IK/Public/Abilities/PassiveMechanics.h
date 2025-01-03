@@ -26,10 +26,14 @@ public:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:
+	void BeginPassive();
 	void ActivatePassiveSkill();
-	void WaitingHoldTime();
-	void FinishHoldTime();
+	void OnFinishHoldTime();
 	bool IsPassiveAvailable() const;
+	
+	void BanPassive(float duration);
+	
+	void OnStunned();
 	float GetHoldTime() const;
 
 private:
@@ -41,4 +45,10 @@ private:
 	
 	UPROPERTY(Transient)
 	FTimerHandle hold_time_handle_;
+
+	UPROPERTY(Transient)
+	FTimerHandle ban_time_handle_;
+
+	UPROPERTY(Transient)
+	bool on_banned_;
 };

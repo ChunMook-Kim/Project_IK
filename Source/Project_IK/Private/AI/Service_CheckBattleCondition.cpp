@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CharacterStatComponent.h"
 #include "AI/Service_FindBestCover.h"
+#include "Components/WeaponMechanics.h"
 #include "Environments/Cover.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Managers/EnumCluster.h"
@@ -34,23 +35,28 @@ void UService_CheckBattleCondition::TickNode(UBehaviorTreeComponent& OwnerComp, 
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
-	AUnit* casted_gunner = Cast<AUnit>(OwnerComp.GetAIOwner()->GetPawn());
 	UObject* attack_target = blackboard->GetValueAsObject(attack_target_key_.SelectedKeyName);
 	UObject* owned_cover = blackboard->GetValueAsObject(owned_cover_key_.SelectedKeyName);
 	
+	auto casted_unit = Cast<AUnit>(OwnerComp.GetAIOwner()->GetPawn());
+	auto component = casted_unit->GetComponentByClass(UWeaponMechanics::StaticClass());
+	UWeaponMechanics* casted_component = Cast<UWeaponMechanics>(component);
+		
 	//적이 죽으면 state변경.
 	if(attack_target == nullptr)
 	{
 		blackboard->SetValueAsEnum(unit_state_key_.SelectedKeyName, static_cast<uint8>(EUnitState::Forwarding));
+		casted_component->FinishFire();
 		return;
 	}
 
 	//적이 시야 밖으로 사라지면 state변경.
 	AActor* casted_target = Cast<AActor>(attack_target);
-	if(FVector::Dist2D(casted_target->GetActorLocation(), casted_gunner->GetActorLocation()) >
-		casted_gunner->GetCharacterStat()->GetSightRange())
+	if(FVector::Dist2D(casted_target->GetActorLocation(), casted_unit->GetActorLocation()) >
+		casted_unit->GetCharacterStat()->GetSightRange())
 	{
 		blackboard->SetValueAsEnum(unit_state_key_.SelectedKeyName, static_cast<uint8>(EUnitState::Forwarding));
+		casted_component->FinishFire();
 		return;
 	}
 	
@@ -59,11 +65,12 @@ void UService_CheckBattleCondition::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	{
 		//만약 소유중인 엄폐물이 있다면, 만약 도달하지 않았다면 먼저 도달하도록 state를 변경.
 		AActor* casted_cover = Cast<AActor>(owned_cover);
-		float cover_owner_dist = FVector::Dist2D(casted_cover->GetActorLocation(), casted_gunner->GetActorLocation());
+		float cover_owner_dist = FVector::Dist2D(casted_cover->GetActorLocation(), casted_unit->GetActorLocation());
 		//TODO: 플레이어-엄폐물 사이 위치 threshold를 하드코딩이 아닌 적절한 값으로 대체해야 한다. 
 		if(cover_owner_dist > 50.0)
 		{
 			blackboard->SetValueAsEnum(unit_state_key_.SelectedKeyName, static_cast<uint8>(EUnitState::HeadingToCover));
+			casted_component->FinishFire();
 		}
 	}
 	else
@@ -74,16 +81,18 @@ void UService_CheckBattleCondition::TickNode(UBehaviorTreeComponent& OwnerComp, 
 		TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
 		traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
 			
-		UKismetSystemLibrary::SphereOverlapActors(GetWorld(), casted_gunner->GetActorLocation(),
-			casted_gunner->GetCharacterStat()->GetSightRange(),
+		UKismetSystemLibrary::SphereOverlapActors(GetWorld(), casted_unit->GetActorLocation(),
+			casted_unit->GetCharacterStat()->GetSightRange(),
 			traceObjectTypes, ACover::StaticClass(), ignore_actors, out_actors);
 
 		//만약 사용 가능한 엄폐물을 찾으면 해당 엄폐물로 향한다.
-		if(ACover* best_cover = CommonFunctions::FindBestCover(out_actors, casted_target->GetActorLocation(), casted_gunner->GetCharacterStat()->GetFireRange()))
+		if(ACover* best_cover = CommonFunctions::FindBestCover(out_actors, casted_target->GetActorLocation(),
+			casted_unit->GetCharacterStat()->GetFireRange()))
 		{
 			best_cover->SetCoveringOwner(true);
 			blackboard->SetValueAsObject(owned_cover_key_.SelectedKeyName, best_cover);
 			blackboard->SetValueAsEnum(unit_state_key_.SelectedKeyName, static_cast<uint8>(EUnitState::HeadingToCover));
+			casted_component->FinishFire();
 		}
 	}
 	

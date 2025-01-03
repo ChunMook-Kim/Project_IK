@@ -58,6 +58,11 @@ void AHeroBase::BeginPlay()
 	}
 }
 
+void AHeroBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+}
+
 void AHeroBase::Initialize()
 {
 	if(drone_)
@@ -79,73 +84,15 @@ void AHeroBase::Die()
 	Super::Die();
 }
 
-void AHeroBase::Reload()
-{	UE_LOG(LogTemp, Warning, TEXT("Reloaded"));
-	PlayAnimMontage(reload_montage_);
-	weapon_mechanics_->Reload();
+void AHeroBase::GetStunned(float stun_duration)
+{
+	Super::GetStunned(stun_duration);
 }
 
-void AHeroBase::WaitForDuration()
+void AHeroBase::OnStunned()
 {
-	weapon_mechanics_->WaitReload();
-}
-
-void AHeroBase::FinishReload()
-{
-	weapon_mechanics_->FinishReload();
-}
-
-void AHeroBase::Fire(AActor* target)
-{
-	weapon_mechanics_->FireWeapon(target, GetCharacterStat()->GetAttack());
-	PlayAnimMontage(fire_montage_);
-}
-
-void AHeroBase::WaitNextFire()
-{
-	weapon_mechanics_->WaitNextFire();
-}
-
-void AHeroBase::FinishFire()
-{
-	weapon_mechanics_->FinishFire();
-}
-
-bool AHeroBase::IsMagazineEmpty() const
-{
-	return weapon_mechanics_->IsMagazineEmpty();
-}
-
-float AHeroBase::GetFireInterval() const
-{
-	return weapon_mechanics_->GetFireInterval() * character_stat_component_->GetAttackSpeed();
-}
-
-float AHeroBase::GetReloadDuration() const
-{
-	return weapon_mechanics_->GetReloadDuration();
-}
-
-void AHeroBase::ActivatePassive()
-{
-	passive_mechanics_->ActivatePassiveSkill();
-}
-
-void AHeroBase::WaitForHoldTime()
-{
-	passive_mechanics_->WaitingHoldTime();
-}
-
-void AHeroBase::FinishPassive()
-{
-}
-
-bool AHeroBase::IsPassiveAvailable()
-{
-	return passive_mechanics_->IsPassiveAvailable();
-}
-
-float AHeroBase::GetPassiveHoldTime()
-{
-	return passive_mechanics_->GetHoldTime();
+	UE_LOG(LogTemp, Warning, TEXT("Hero Stunned"));
+	Super::OnStunned();
+	weapon_mechanics_->OnStunned();
+	passive_mechanics_->OnStunned();
 }

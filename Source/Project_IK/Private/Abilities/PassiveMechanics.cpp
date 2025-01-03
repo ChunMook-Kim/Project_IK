@@ -13,6 +13,7 @@ See LICENSE file in the project root for full license information.
 #include "Abilities/PassiveSkill.h"
 #include "AI/PassiveGunnerAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/HeroBase.h"
 
 // Sets default values for this component's properties
 UPassiveMechanics::UPassiveMechanics()
@@ -20,6 +21,7 @@ UPassiveMechanics::UPassiveMechanics()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	on_banned_ = false;
 }
 
 // Called when the game starts
@@ -39,41 +41,64 @@ void UPassiveMechanics::BeginPlay()
 void UPassiveMechanics::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
+	GetWorld()->GetTimerManager().ClearTimer(ban_time_handle_);
+
 	Super::EndPlay(EndPlayReason);
+}
+
+void UPassiveMechanics::BeginPassive()
+{
+	if(IsPassiveAvailable())
+	{
+		ActivatePassiveSkill();
+		GetWorld()->GetTimerManager().SetTimer(hold_time_handle_, this, &UPassiveMechanics::OnFinishHoldTime , GetHoldTime());
+	}
+}
+
+void UPassiveMechanics::BanPassive(float duration)
+{
+	//만약 밴된 도중에 다시 밴 된다면, 밴 시간만 조정한다.
+	if(on_banned_)
+	{
+		GetWorld()->GetTimerManager().SetTimer(ban_time_handle_, FTimerDelegate::CreateWeakLambda(this, [this]()
+		{
+			passive_ref_->FinishHoldCoolDown();
+			on_banned_ = false;
+		}), duration, false);
+		return;
+	}
+
+	//만약 패시브 스킬을 사용 중이거나, 실행 가능한 상태에서 ban이 걸리면, 패시브가 강제로 끝낸다.
+	if(passive_ref_->IsOnPassiveSkill() || passive_ref_->IsPassiveAvailable())
+	{
+		passive_ref_->FinishPassiveSkillAndStartCoolDown();
+	}
+	
+	//duration동안 쿨타임이 돌지 못하게 한다.
+	passive_ref_->StartHoldCoolDown();
+	GetWorld()->GetTimerManager().SetTimer(ban_time_handle_, FTimerDelegate::CreateWeakLambda(this, [this]()
+			{
+				passive_ref_->FinishHoldCoolDown();
+				on_banned_ = false;
+			}), duration, false);
+
+	on_banned_ = true;
+}
+
+
+void UPassiveMechanics::OnFinishHoldTime()
+{
+	Cast<AMeleeAIController>(Cast<APawn>(GetOwner())->Controller)->SetUnitState(EUnitState::Forwarding);
 }
 
 void UPassiveMechanics::ActivatePassiveSkill()
 {
 	passive_ref_->StartPassiveSkill();
-	if(auto ai_controller = Cast<APassiveGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
-	{
-		ai_controller->SetPassiveState(EPassiveState::WaitingHoldTime);
-	}
 }
 
-void UPassiveMechanics::WaitingHoldTime()
+void UPassiveMechanics::OnStunned()
 {
-	if(GetWorld()->GetTimerManager().IsTimerActive(hold_time_handle_) == false)
-	{
-		if(GetHoldTime() == 0.f)
-		{
-			FinishHoldTime();
-		}
-		else
-		{
-			GetWorld()->GetTimerManager().SetTimer(hold_time_handle_, this, &UPassiveMechanics::FinishHoldTime, GetHoldTime());
-		}
-	}
-}
-
-void UPassiveMechanics::FinishHoldTime()
-{
-	GetWorld()->GetTimerManager().ClearTimer(hold_time_handle_);
-	if(auto ai_controller = Cast<APassiveGunnerAIController>(Cast<APawn>(GetOwner())->Controller))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Finish Hold Time"));
-		ai_controller->SetPassiveState(EPassiveState::BeginPassive);
-	}
+	passive_ref_->StopPassiveSkill();
 }
 
 bool UPassiveMechanics::IsPassiveAvailable() const

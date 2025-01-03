@@ -25,14 +25,11 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UFUNCTION(Blueprintable, BlueprintCallable, Category = "AI")
-	virtual void GetStunned(float duration);
+	virtual void GetStunned();
 	virtual void FinishStun();
 	
 	UFUNCTION(Blueprintable)
 	void SetUnitState(EUnitState new_state);
-
-	UFUNCTION(Blueprintable)
-	void SetStunState(EStunState new_state);
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MeleeAI", meta = (AllowPrivateAccess = "true", BindWidget))
