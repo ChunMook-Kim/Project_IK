@@ -17,11 +17,15 @@ See LICENSE file in the project root for full license information.
 #include "Managers/ItemDataManager.h"
 #include "Abilities/ItemInventory.h"
 
+#include "Blueprint/WidgetTree.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "UI/GotchaResultWidget.h"
 
 void UGotchaWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	if (back_space_.IsValid())
 	{
 		back_space_->OnClicked.AddDynamic(this, &UGotchaWidget::BackSpace);
@@ -33,6 +37,11 @@ void UGotchaWidget::NativeConstruct()
 	if (pull_ten_button_.IsValid())
 	{
 		pull_ten_button_->OnClicked.AddDynamic(this, &UGotchaWidget::PullTen);
+	}
+	if (result_widget_class_)
+	{
+		result_widget_ = WidgetTree->ConstructWidget<UGotchaResultWidget>(result_widget_class_);
+		result_widget_->AddToViewport(1);
 	}
 
 	tickets_ = 99;
@@ -63,7 +72,7 @@ void UGotchaWidget::PullTen()
 		return;
 	}
 	SetTickets(tickets_ - 10);
-		Gotcha(10);
+	Gotcha(10);
 }
 
 void UGotchaWidget::SetTickets(int32 tickets)
@@ -82,9 +91,20 @@ void UGotchaWidget::Gotcha(int32 pulls)
 	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	const UItemDataManager* item_data_manager = game_instance->GetItemDataManager();
 	
+	TArray<UTexture2D*> textures;
 	// @@ TODO: Expand it from only item to item, DP, manuals, money
 	for (int32 i = 0; i < pulls; i++)
 	{
-		game_instance->GetItemInventory()->AddItem(*item_data_manager->GetItemDataRandomly());
+		FItemData* data = item_data_manager->GetItemDataRandomly();
+		game_instance->GetItemInventory()->AddItem(*data);
+		textures.Add(data->item_icon_);
+	}
+	if (pulls <= 1)
+	{
+		result_widget_->DisplayResult(textures[0]);
+	}
+	else
+	{
+		result_widget_->DisplayResults(textures);
 	}
 }

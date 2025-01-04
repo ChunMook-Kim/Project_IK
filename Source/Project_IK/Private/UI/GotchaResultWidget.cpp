@@ -18,14 +18,20 @@ See LICENSE file in the project root for full license information.
 
 void UGotchaResultWidget::DisplayResults(TArray<UTexture2D*> textures)
 {
+	SetVisibility(ESlateVisibility::Visible);
+	UGridSlot* grid_slot = Cast<UGridSlot>(images_[0]->Slot);
+	grid_slot->SetNudge(FVector2D(0.f, 0.f));
+
 	for (int32 i = 0; i < MAX_IMAGE; i++)
 	{
 		images_[i]->SetBrushResourceObject(textures[i]);
+		images_[i]->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
 void UGotchaResultWidget::DisplayResult(UTexture2D* texture)
 {
+	SetVisibility(ESlateVisibility::Visible);
 	images_[0]->SetBrushResourceObject(texture);
 	UGridSlot* grid_slot = Cast<UGridSlot>(images_[0]->Slot);
 	grid_slot->SetNudge(FVector2D(600.f, 150.f));
@@ -38,6 +44,8 @@ void UGotchaResultWidget::DisplayResult(UTexture2D* texture)
 
 void UGotchaResultWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	FSlateBrush default_brush;
 	default_brush.DrawAs = ESlateBrushDrawType::Type::Image;
 	default_brush.SetImageSize(FVector2D(128.0));
@@ -58,4 +66,16 @@ void UGotchaResultWidget::NativeConstruct()
 
 		images_.Add(image);
 	}
+
+	SetVisibility(ESlateVisibility::Hidden);
+}
+
+FReply UGotchaResultWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }

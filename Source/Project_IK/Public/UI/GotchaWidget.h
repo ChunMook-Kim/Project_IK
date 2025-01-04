@@ -16,6 +16,7 @@ See LICENSE file in the project root for full license information.
 
 class UButton;
 class UTextBlock;
+class UGotchaResultWidget;
 
 /**
  * 
@@ -26,11 +27,16 @@ class PROJECT_IK_API UGotchaWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UGotchaResultWidget> result_widget_class_;
+
 protected:
 	virtual void NativeConstruct() override;
-
+	UFUNCTION()
 	void BackSpace();
+	UFUNCTION()
 	void PullOne();
+	UFUNCTION()
 	void PullTen();
 
 	void SetTickets(int32 tickets);
@@ -47,6 +53,8 @@ protected:
 	TWeakObjectPtr<UButton> pull_ten_button_;
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	TWeakObjectPtr<UTextBlock> tickets_count_text_;
+	UPROPERTY(VisibleAnywhere)
+	TWeakObjectPtr<UGotchaResultWidget> result_widget_;
 
 	int32 tickets_;
 };
