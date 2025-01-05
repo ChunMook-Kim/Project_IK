@@ -16,44 +16,46 @@ See LICENSE file in the project root for full license information.
 #include "Components/GridSlot.h"
 #include "Components/Image.h"
 
+#include "Animation/WidgetAnimation.h"
+
+#include "UI/GotchaSlot.h"
+
 void UGotchaResultWidget::DisplayResults(TArray<UTexture2D*> textures)
 {
 	SetVisibility(ESlateVisibility::Visible);
-	UGridSlot* grid_slot = Cast<UGridSlot>(images_[0]->Slot);
+	UGridSlot* grid_slot = Cast<UGridSlot>(slots_[0]->Slot);
 	grid_slot->SetNudge(FVector2D(0.f, 0.f));
 
 	for (int32 i = 0; i < MAX_IMAGE; i++)
 	{
-		images_[i]->SetBrushResourceObject(textures[i]);
-		images_[i]->SetVisibility(ESlateVisibility::Visible);
+		slots_[i]->SetImage(textures[i]);
+		slots_[i]->SetVisibility(ESlateVisibility::Visible);
 	}
+
+	StartAnimationSquence();
 }
 
 void UGotchaResultWidget::DisplayResult(UTexture2D* texture)
 {
 	SetVisibility(ESlateVisibility::Visible);
-	images_[0]->SetBrushResourceObject(texture);
-	UGridSlot* grid_slot = Cast<UGridSlot>(images_[0]->Slot);
+	slots_[0]->SetImage(texture);
+	UGridSlot* grid_slot = Cast<UGridSlot>(slots_[0]->Slot);
 	grid_slot->SetNudge(FVector2D(600.f, 150.f));
 
 	for (int32 i = 1; i < MAX_IMAGE; i++)
 	{
-		images_[i]->SetVisibility(ESlateVisibility::Hidden);
+		slots_[i]->SetVisibility(ESlateVisibility::Hidden);
 	}
+	StartAnimationSquence();
 }
 
 void UGotchaResultWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	FSlateBrush default_brush;
-	default_brush.DrawAs = ESlateBrushDrawType::Type::Image;
-	default_brush.SetImageSize(FVector2D(128.0));
 	
 	for (int32 i = 0; i < MAX_IMAGE; i++)
 	{
-		UImage* image = WidgetTree->ConstructWidget<UImage>();
-		image->SetBrush(default_brush);
+		UGotchaSlot* image = WidgetTree->ConstructWidget<UGotchaSlot>(gotcha_slot_class_);
 		UGridSlot* grid_slot = image_containers_->AddChildToGrid(image);
 		if (grid_slot)
 		{
@@ -64,18 +66,80 @@ void UGotchaResultWidget::NativeConstruct()
 			grid_slot->SetRow(i / 5);
 		}
 
-		images_.Add(image);
+		slots_.Add(image);
 	}
+
+	current_animation_index_ = 0;
+	is_running_ = false;
 
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
 FReply UGotchaResultWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	// Mouse clicked when everythings done
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && !is_running_)
 	{
 		SetVisibility(ESlateVisibility::Hidden);
 	}
+	// Mouse clicked to skip gotcha animation
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && is_running_)
+	{
+		StopAllAnimations();
+	}
 
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+}
+
+void UGotchaResultWidget::ContinueAnimation()
+{
+	++current_animation_index_;
+	PlayNextAnimation();
+}
+
+void UGotchaResultWidget::StartAnimationSquence()
+{
+	for (int32 i = 0; i < MAX_IMAGE; i++)
+	{
+		slots_[i]->ResetAnimationStatus();
+	}
+
+	is_running_ = true;
+	current_animation_index_ = 0;
+	PlayNextAnimation();
+}
+
+void UGotchaResultWidget::PlayNextAnimation()
+{
+	if (current_animation_index_ >= slots_.Num())
+	{
+		is_running_ = false;
+		return;
+	}
+
+	UWidgetAnimation* current_animation = slots_[current_animation_index_]->GetAnimation();
+	if (current_animation)
+	{
+		slots_[current_animation_index_]->PlayAnimation(current_animation);
+
+		float animation_duration = slots_[current_animation_index_]->GetAnimation()->GetEndTime();
+		GetWorld()->GetTimerManager().SetTimer(
+			animation_timer_handle_,
+			this,
+			&UGotchaResultWidget::ContinueAnimation,
+			animation_duration,
+			false
+		);
+	}
+}
+
+void UGotchaResultWidget::StopAllAnimations()
+{
+	GetWorld()->GetTimerManager().ClearTimer(animation_timer_handle_);
+	is_running_ = false;
+	
+	for (int32 i = 0; i < MAX_IMAGE; i++)
+	{
+		slots_[i]->PlayAnimation(slots_[i]->GetAnimation(), slots_[i]->GetAnimation()->GetEndTime());
+	}
 }

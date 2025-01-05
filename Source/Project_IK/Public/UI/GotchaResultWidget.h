@@ -14,6 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "Blueprint/UserWidget.h"
 #include "GotchaResultWidget.generated.h"
 
+class UGotchaSlot;
 class UGridPanel;
 class UImage;
 
@@ -28,14 +29,28 @@ public:
 	void DisplayResults(TArray<UTexture2D*> textures);
 	void DisplayResult(UTexture2D* texture);
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UGotchaSlot> gotcha_slot_class_;
 protected:
 	virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+	UFUNCTION()
+	void ContinueAnimation();
+	void StartAnimationSquence();
+	void PlayNextAnimation();
+	void StopAllAnimations();
+
+
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	TWeakObjectPtr<UGridPanel> image_containers_;
 
-	TArray<TWeakObjectPtr<UImage>> images_;
+	TArray<TWeakObjectPtr<UGotchaSlot>> slots_;
 
 	static constexpr int32 MAX_IMAGE = 10;
+
+	int32 current_animation_index_;
+
+	FTimerHandle animation_timer_handle_;
+	bool is_running_;
 };
