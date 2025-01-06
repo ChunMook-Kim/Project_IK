@@ -15,6 +15,8 @@ See LICENSE file in the project root for full license information.
 
 #include "WorldSettings/IKGameInstance.h"
 #include "Managers/ItemDataManager.h"
+#include "Managers/DronePluginManager.h"
+#include "Managers/TextureManager.h"
 #include "Abilities/ItemInventory.h"
 
 #include "Blueprint/WidgetTree.h"
@@ -90,14 +92,31 @@ void UGotchaWidget::Gotcha(int32 pulls)
 {
 	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	const UItemDataManager* item_data_manager = game_instance->GetItemDataManager();
+	const UDronePluginManager* drone_plugin_manager = game_instance->GetDronePluginManager();
+	const UTextureManager* texture_manager = game_instance->GetTextureManager();
 	
 	TArray<UTexture2D*> textures;
 	// @@ TODO: Expand it from only item to item, DP, manuals, money
 	for (int32 i = 0; i < pulls; i++)
 	{
-		FItemData* data = item_data_manager->GetItemDataRandomly();
-		game_instance->GetItemInventory()->AddItem(*data);
-		textures.Add(data->item_icon_);
+		int32 tmp = FMath::RandRange(0, 2);
+		FItemData* data_item;
+		FDronePluginData data_dp;
+		switch (tmp)
+		{
+		case 0:
+			data_item = item_data_manager->GetItemDataRandomly();
+			game_instance->GetItemInventory()->AddItem(*data_item);
+			textures.Add(data_item->item_icon_);
+			break;
+		case 1:
+			data_dp = drone_plugin_manager->GetDPDataRandomly();
+			textures.Add(data_dp.dp_icon_);
+			break;
+		default:
+			textures.Add(texture_manager->GetTexture("currency"));
+			break;
+		}
 	}
 	if (pulls <= 1)
 	{

@@ -11,6 +11,7 @@ See LICENSE file in the project root for full license information.
 #include "Managers/DronePluginManager.h"
 
 UDronePluginManager::UDronePluginManager()
+	:Super::URarityAbstractObject()
 {
 	FString dp_data_path = TEXT("/Script/Engine.DataTable'/Game/Resources/IK_Proto_DP_Data.IK_Proto_DP_Data'");
 	static ConstructorHelpers::FObjectFinder<UDataTable> dt_dp_data(*dp_data_path);
@@ -19,6 +20,8 @@ UDronePluginManager::UDronePluginManager()
 		UE_LOG(LogTemp, Error, TEXT("GameInstance has failed to load a dp file data (IK_Proto_Drone_Plugin_Data)"));
 	}
 	dp_table_= dt_dp_data.Object;
+
+	CategorizeByRarity(dp_table_);
 }
 
 //BP에서는 struct의 pointer를 return할 수 없다. 그러므로, 복사본으로 넘긴다.
@@ -28,7 +31,25 @@ FDronePluginData UDronePluginManager::GetDPData(EDPType dp_id) const
 	{
 		return *dp_table_->FindRow<FDronePluginData>(*EnumToString(dp_id), TEXT(""));
 	}
-	return *dp_table_->FindRow<FDronePluginData>(*EnumToString(EDPType::Empty), TEXT(""));;
+	return *dp_table_->FindRow<FDronePluginData>(*EnumToString(EDPType::Empty), TEXT(""));
+}
+
+FDronePluginData UDronePluginManager::GetDPDataRandomly(ERarity weight_rarity) const
+{
+	if (!dp_table_)
+	{
+		return *dp_table_->FindRow<FDronePluginData>(*EnumToString(EDPType::Empty), TEXT(""));
+	}
+
+	FDronePluginData* ptr = reinterpret_cast<FDronePluginData*>(GetRandomDataByRarity(GetRarityRandomly(weight_rarity)));
+	if (ptr)
+	{
+		return *ptr;
+	}
+	else
+	{
+		return *dp_table_->FindRow<FDronePluginData>(*EnumToString(EDPType::Empty), TEXT(""));
+	}
 }
 
 FString UDronePluginManager::EnumToString(EDPType dp_type) const
