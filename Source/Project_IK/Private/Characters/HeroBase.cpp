@@ -60,6 +60,7 @@ void AHeroBase::BeginPlay()
 
 void AHeroBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	Die();
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -74,7 +75,10 @@ void AHeroBase::Initialize()
 void AHeroBase::Die()
 {
 	weapon_mechanics_->OnDestroy();
-	Cast<AGunnerAIController>(GetController())->OnDie();
+	if(auto casted_gunner_aic = Cast<AGunnerAIController>(GetController()))
+	{
+		casted_gunner_aic->OnDie();
+	}
 	if(auto casted_drone = Cast<ADrone>(drone_))
 	{
 		casted_drone->Die();

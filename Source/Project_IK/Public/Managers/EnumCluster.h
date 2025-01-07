@@ -105,7 +105,15 @@ enum class EDialogueEventType : uint8
 	GetFireRangeDP UMETA(DisplayName = "GetFireRangeDP")
 };
 
-
+UENUM(BlueprintType)
+enum class EHeroType  : uint8
+{
+	Hero1 UMETA(DisplayName = "Hero1"),
+	Hero2 UMETA(DisplayName = "Hero2"),
+	Hero3 UMETA(DisplayName = "Hero3"),
+	Hero4 UMETA(DisplayName = "Hero4"),
+	INVALID UMETA(DisplayName = "INVALID")
+};
 
 UENUM(BlueprintType)
 enum class ERarity : uint8
@@ -115,4 +123,3 @@ enum class ERarity : uint8
 	A UMETA(DisplayName = "A"),
 	B UMETA(DisplayName = "B")
 };
-
