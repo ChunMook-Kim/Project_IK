@@ -46,6 +46,8 @@ protected:
 	void InitializeWidgets();
 
 	FVector2D GetButtonPosition(TWeakObjectPtr<UButton> button) const;
+	void EnableReachableButtons();
+	void EnableZeroLevelButtons();
 
 	void SetSlotRowCol(UGridSlot* GridSlot, int32 Row, int32 Column);
 

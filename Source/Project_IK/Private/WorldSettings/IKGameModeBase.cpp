@@ -31,7 +31,7 @@ AIKGameModeBase::AIKGameModeBase()
 void AIKGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (game_instance)
 	{
@@ -82,7 +82,10 @@ void AIKGameModeBase::CheckWinLoseCondition()
 
 	DisplayCombatResult();
 	AIKPlayerController* pc = Cast<AIKPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	pc->GetTargetingComponent()->StopTargeting();
+	if (pc)
+	{
+		pc->GetTargetingComponent()->StopTargeting();
+	}
 
 	if (enemies_.Num() <= 0)
 	{

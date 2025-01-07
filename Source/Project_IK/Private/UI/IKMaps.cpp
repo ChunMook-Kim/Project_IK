@@ -37,8 +37,6 @@ void UIKMaps::GenerateMaps(int32 row, int32 col)
 		departures.AddUnique(d);
 	}
 
-	SetPlayerGridPosition(FIntPoint(0, departures[0]));
-
 	// then connects it with a Path to one of the 3 closest Rooms on the 2nd Floor. 
 	for (int32 i = 0; i < departures_num; i++)
 	{
@@ -142,7 +140,7 @@ void UIKMaps::ClearMaps()
 	}
 	map.Empty();
 
-	player_grid_position_ = FIntPoint(0);
+	player_grid_position_ = FIntPoint(-1);
 	player_visited_path_.Empty();
 }
 

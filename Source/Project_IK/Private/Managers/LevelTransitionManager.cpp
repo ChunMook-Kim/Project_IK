@@ -16,6 +16,7 @@ See LICENSE file in the project root for full license information.
 #include "Kismet/GameplayStatics.h"
 #include "WorldSettings/IKGameInstance.h"
 #include "WorldSettings/IKGameModeBase.h"
+#include "WorldSettings/HeroSelect/IKHeroSelectMode.h"
 #include "Components/CharacterStatComponent.h"
 
 #include "Environments/SpawnMarker.h"
@@ -56,7 +57,9 @@ void ULevelTransitionManager::SaveData(UWorld* world)
 {
 	data_.Empty();
 
-	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(world));
+	UIKGameInstance* instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(world));
+	AGameModeBase* raw_game_mode = UGameplayStatics::GetGameMode(world);
+	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(raw_game_mode);
 	if (game_mode)
 	{
 		TArray<AActor*> heroes = game_mode->GetHeroContainers();
@@ -67,6 +70,17 @@ void ULevelTransitionManager::SaveData(UWorld* world)
 
 			// @@ TODO: Need to save proper data.
 			data_.Add(stat_component->GetCharacterData());
+		}
+		return;
+	}
+	AIKHeroSelectMode* hero_select_mode = Cast<AIKHeroSelectMode>(raw_game_mode);
+	if (hero_select_mode)
+	{
+		// @@ TODO : Save selected hero data rather than hard coded one.
+				// Currently, save 4 stat data directly. Doesn't make sense.
+		for (int32 i = 0; i < 4; i++)
+		{
+			data_.Add(*instance->GetCharacterDataManager()->GetCharacterData(0));
 		}
 	}
 }

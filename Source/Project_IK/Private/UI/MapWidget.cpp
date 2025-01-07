@@ -172,15 +172,7 @@ void UMapWidget::InitializeButtons()
 		}
 	}
 
-	// Disable Not-reachable buttons
-	FIntPoint player_grid_position = maps_->GetPlayerGridPosition();
-	FMapNode node = maps_->GetNode(player_grid_position.X, player_grid_position.Y);
-	for (int32 i = 0; i < node.next.Num(); i++)
-	{
-		buttons_[FIntPoint(player_grid_position.X + 1, node.next[i])]->SetIsEnabled(true);
-	}
-	// Update scroll bar
-	scroll_box_->ScrollWidgetIntoView(buttons_[player_grid_position].Get());
+	EnableReachableButtons();
 
 	// Display check icons on visited nodes
 	check_images_.Empty();
@@ -238,6 +230,40 @@ void UMapWidget::InitializeWidgets()
 FVector2D UMapWidget::GetButtonPosition(TWeakObjectPtr<UButton> button) const
 {
 	return background_border_->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + scroll_box_->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0f)) + button->GetPaintSpaceGeometry().GetLocalPositionAtCoordinates(FVector2D(0.0)) - FVector2D(0.0, scroll_box_->GetScrollOffset()) + (button->GetPaintSpaceGeometry().GetLocalSize() / 2.f);
+}
+
+void UMapWidget::EnableReachableButtons()
+{
+	FIntPoint player_grid_position = maps_->GetPlayerGridPosition();
+	if (player_grid_position.X < 0 && player_grid_position.Y < 0)
+	{
+		// If we are in hero select level, (nothing progress recorded)
+		EnableZeroLevelButtons();
+		return;
+	}
+	FMapNode node = maps_->GetNode(player_grid_position.X, player_grid_position.Y);
+	for (int32 i = 0; i < node.next.Num(); i++)
+	{
+		buttons_[FIntPoint(player_grid_position.X + 1, node.next[i])]->SetIsEnabled(true);
+	}
+	// Update scroll bar
+	scroll_box_->ScrollWidgetIntoView(buttons_[player_grid_position].Get());
+}
+
+void UMapWidget::EnableZeroLevelButtons()
+{
+	int32 final_column = -1;
+	for (int32 i = 0; i < maps_->GetWidth(); i++)
+	{
+		if (maps_->GetNode(0, i).type != NodeType::None)
+		{
+			buttons_[FIntPoint(0, i)]->SetIsEnabled(true);
+			final_column = i;
+		}
+	}
+	// Update scroll bar
+	scroll_box_->ScrollWidgetIntoView(buttons_[FIntPoint(0, final_column)].Get());
+	return;
 }
 
 void UMapWidget::SetSlotRowCol(UGridSlot* GridSlot, int32 Row, int32 Column)
