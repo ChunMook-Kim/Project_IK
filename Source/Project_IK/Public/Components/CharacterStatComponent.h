@@ -20,6 +20,7 @@ class ADamageUI;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDieDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShieldChangedDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBuffChangedDelegate);
 
 UENUM(BlueprintType)
 enum class ECharacterID : uint8
@@ -181,6 +182,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnShieldChangedDelegate OnShieldChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnBuffChangedDelegate OnBuffChanged;
 
 protected:
 	// Called when the game starts or when spawned

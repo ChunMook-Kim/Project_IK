@@ -11,15 +11,12 @@ See LICENSE file in the project root for full license information.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "RarityAbstractObject.h"
+#include "EnumCluster.h"
 #include "ItemDataManager.generated.h"
 
-enum class ETargetingMode : uint8;
-enum class ETargetType : uint8;
-enum class EItemLogicType : uint8;
-
 USTRUCT(BlueprintType)
-struct FItemData : public FTableRowBase
+struct FItemData : public FRarityData
 {
 	GENERATED_BODY()
 
@@ -53,14 +50,14 @@ public:
  * 
  */
 UCLASS()
-class PROJECT_IK_API UItemDataManager : public UObject
+class PROJECT_IK_API UItemDataManager : public URarityAbstractObject
 {
 	GENERATED_BODY()
 public:
 	UItemDataManager();
 
 	FItemData* GetItemData(int32 item_id) const;
-	FItemData* GetItemDataRandomly() const;
+	FItemData* GetItemDataRandomly(ERarity rarity = ERarity::B) const;
 
 protected:
 	class UDataTable* item_table_;

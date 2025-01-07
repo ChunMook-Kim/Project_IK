@@ -97,7 +97,7 @@ enum class ETargetType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EDialogueEventType  : uint8
+enum class EDialogueEventType : uint8
 {
 	GetRandomItem UMETA(DisplayName = "GetRandomItem"),
 	GetRandomDP UMETA(DisplayName = "GetRandomDP"),
@@ -113,4 +113,13 @@ enum class EHeroType  : uint8
 	Hero3 UMETA(DisplayName = "Hero3"),
 	Hero4 UMETA(DisplayName = "Hero4"),
 	INVALID UMETA(DisplayName = "INVALID")
+};
+
+UENUM(BlueprintType)
+enum class ERarity : uint8
+{
+	None UMETA(DisplayName = "None"),
+	S UMETA(DisplayName = "S"),
+	A UMETA(DisplayName = "A"),
+	B UMETA(DisplayName = "B")
 };

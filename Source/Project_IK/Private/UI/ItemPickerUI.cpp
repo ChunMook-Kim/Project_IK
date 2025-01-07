@@ -29,7 +29,7 @@ See LICENSE file in the project root for full license information.
 #include "Kismet/GameplayStatics.h"
 #include "WorldSettings/IKGameInstance.h"
 #include "Abilities/ItemInventory.h"
-#include "UI/IKHUD.h"
+#include "WorldSettings/IKHUD.h"
 #include "Managers/LevelEndUIManager.h"
 #include "Managers/ItemDataManager.h"
 #include "Managers/TextureManager.h"

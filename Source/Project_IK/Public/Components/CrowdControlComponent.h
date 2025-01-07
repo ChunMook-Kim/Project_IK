@@ -15,6 +15,8 @@ See LICENSE file in the project root for full license information.
 #include "Managers/EnumCluster.h"
 #include "CrowdControlComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCrowdControlChangedDelegate);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_IK_API UCrowdControlComponent : public UActorComponent
 {
@@ -39,8 +41,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<ECCType> GetAppliedCCArray() const;
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnCrowdControlChangedDelegate OnCrowdControlChanged;
+
 protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
+
+	void BeginCC(ECCType cc_type, float duration);
+	void EndCC(ECCType cc_type);
 
 	void DroneJamming(bool is_applying = true);
 	void Silence(bool is_applying = true);

@@ -32,11 +32,18 @@ void UHitPointsUI::BindNecessaryComponents(UCharacterStatComponent* NewCharacter
 
 		character_stat_->OnHPChanged.AddDynamic(this, &UHitPointsUI::UpdateHPWidget);
 		character_stat_->OnShieldChanged.AddDynamic(this, &UHitPointsUI::UpdateShieldWidget);
+		character_stat_->OnBuffChanged.AddDynamic(this, &UHitPointsUI::UpdateBuffWidgets);	
+		
+		UpdateHPWidget();
+		UpdateShieldWidget();
 	}
 	if (NewCrowdControl)
 	{
 		crowd_control_ = NewCrowdControl;
+
+		crowd_control_->OnCrowdControlChanged.AddDynamic(this, &UHitPointsUI::UpdateBuffWidgets);
 	}
+	UpdateBuffWidgets();
 }
 
 void UHitPointsUI::NativeConstruct()
@@ -45,20 +52,13 @@ void UHitPointsUI::NativeConstruct()
 
 	InitializeImages();
 
-	UpdateHPWidget();
 
-	if (shield_progress_bar_.Get())
-	{
-		shield_progress_bar_->SetVisibility(ESlateVisibility::Hidden);
-	}
-	UpdateShieldWidget();
 
 	texture_manager_ = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GetTextureManager();
 }
 
 void UHitPointsUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
-	UpdateBuffWidgets();
 }
 
 void UHitPointsUI::UpdateHPWidget()

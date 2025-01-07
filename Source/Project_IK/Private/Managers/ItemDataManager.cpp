@@ -14,7 +14,7 @@ See LICENSE file in the project root for full license information.
 #include "Managers/EnumCluster.h"
 
 UItemDataManager::UItemDataManager()
-	:Super::UObject()
+	:Super::URarityAbstractObject()
 {
 	FString item_data_path = TEXT("/Script/Engine.DataTable'/Game/Resources/IK_Proto_ItemData.IK_Proto_ItemData'");
 	static ConstructorHelpers::FObjectFinder<UDataTable> dt_item_data(*item_data_path);
@@ -23,6 +23,8 @@ UItemDataManager::UItemDataManager()
 		UE_LOG(LogTemp, Error, TEXT("GameInstance has failed to load a game file data (IK_Proto_ItemData)"));
 	}
 	item_table_= dt_item_data.Object;
+
+	CategorizeByRarity(item_table_);
 }
 
 FItemData* UItemDataManager::GetItemData(int32 item_id) const
@@ -34,17 +36,12 @@ FItemData* UItemDataManager::GetItemData(int32 item_id) const
 	return nullptr;
 }
 
-FItemData* UItemDataManager::GetItemDataRandomly() const
+FItemData* UItemDataManager::GetItemDataRandomly(ERarity weight_rarity) const
 {
-	if (item_table_)
+	if (!item_table_)
 	{
-		TArray<FName> row_names = item_table_->GetRowNames();
-		if (row_names.Num() <= 0)
-		{
-			return nullptr;
-		}
-		int32 queried_index = FMath::RandRange(0, row_names.Num() - 1);
-		return item_table_->FindRow<FItemData>(row_names[queried_index], TEXT(""));
+		return nullptr;
 	}
-	return nullptr;
+
+	return reinterpret_cast<FItemData*>(GetRandomDataByRarity(GetRarityRandomly(weight_rarity)));
 }
