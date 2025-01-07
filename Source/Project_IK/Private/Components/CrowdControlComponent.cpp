@@ -12,7 +12,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/CrowdControlComponent.h"
 
 #include "GameFramework/PlayerController.h"
-#include "UI/IKHUD.h"
+#include "WorldSettings/IKHUD.h"
 
 #include "Characters/Unit.h"
 #include "AI/MeleeAIController.h"
@@ -29,6 +29,7 @@ void UCrowdControlComponent::ApplyCrowdControl(ECCType cc_type, float duration)
 {
 	if (HasCrowdControl(cc_type))
 	{
+		// Update only timer if existed.
 		FTimerHandle timer_handle = CC_timers_[cc_type];
 		UWorld* world = GetWorld();
 		if (world)
@@ -53,25 +54,10 @@ void UCrowdControlComponent::ApplyCrowdControl(ECCType cc_type, float duration)
 
 			CC_timers_.Add(cc_type, timer_handle);
 		}
+		OnCrowdControlChanged.Broadcast();
 	}
 
-	switch (cc_type)
-	{
-	case ECCType::DroneJamming:
-		DroneJamming();
-		break;
-	case ECCType::Silence:
-		Silence();
-		break;
-	case ECCType::MuteItems:
-		MuteItems();
-		break;
-	case ECCType::Stun:
-		Stun(duration);
-		break;
-	default:
-		break;
-	}
+	BeginCC(cc_type, duration);
 }
 
 void UCrowdControlComponent::RemoveCrowdControl(ECCType cc_type)
@@ -87,34 +73,28 @@ void UCrowdControlComponent::RemoveCrowdControl(ECCType cc_type)
 	{
 		world->GetTimerManager().ClearTimer(CC_timers_[cc_type]);
 		CC_timers_.Remove(cc_type);
+		OnCrowdControlChanged.Broadcast();
 	}
 	
-	// Do something when cc is resolved
-	switch (cc_type)
-	{
-	case ECCType::DroneJamming:
-		DroneJamming(false);
-		break;
-	case ECCType::Silence:
-		Silence(false);
-		break;
-	case ECCType::MuteItems:
-		MuteItems(false);
-		break;
-	case ECCType::Stun:
-		Stun(-1, false);
-		break;
-	default:
-		break;
-	}
+	EndCC(cc_type);
 }
 
 void UCrowdControlComponent::RemoveAllCrowdControl()
 {
+	UWorld* world = GetWorld();
+	if (!world)
+	{
+		return;
+	}
+
 	for (TPair<ECCType, FTimerHandle> pair : CC_timers_)
 	{
-		RemoveCrowdControl(pair.Key);
+		world->GetTimerManager().ClearTimer(pair.Value);
+		EndCC(pair.Key);
 	}
+
+	CC_timers_.Empty();
+	OnCrowdControlChanged.Broadcast();
 }
 
 
@@ -146,6 +126,49 @@ void UCrowdControlComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		// Clear timer
 		timer_manager.ClearTimer(pair.Value);
+	}
+}
+
+void UCrowdControlComponent::BeginCC(ECCType cc_type, float duration)
+{
+	switch (cc_type)
+	{
+	case ECCType::DroneJamming:
+		DroneJamming();
+		break;
+	case ECCType::Silence:
+		Silence();
+		break;
+	case ECCType::MuteItems:
+		MuteItems();
+		break;
+	case ECCType::Stun:
+		Stun(duration);
+		break;
+	default:
+		break;
+	}
+}
+
+void UCrowdControlComponent::EndCC(ECCType cc_type)
+{
+	// Do something when cc has resolved
+	switch (cc_type)
+	{
+	case ECCType::DroneJamming:
+		DroneJamming(false);
+		break;
+	case ECCType::Silence:
+		Silence(false);
+		break;
+	case ECCType::MuteItems:
+		MuteItems(false);
+		break;
+	case ECCType::Stun:
+		Stun(false);
+		break;
+	default:
+		break;
 	}
 }
 

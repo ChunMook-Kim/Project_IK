@@ -10,12 +10,12 @@ See LICENSE file in the project root for full license information.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "RarityAbstractObject.h"
 #include "Managers/EnumCluster.h"
 #include "DronePluginManager.generated.h"
 
 USTRUCT(BlueprintType)
-struct FDronePluginData : public FTableRowBase
+struct FDronePluginData : public FRarityData
 {
 	GENERATED_BODY()
 	
@@ -36,14 +36,17 @@ struct FDronePluginData : public FTableRowBase
 };
 
 UCLASS(Blueprintable)
-class PROJECT_IK_API UDronePluginManager : public UObject
+class PROJECT_IK_API UDronePluginManager : public URarityAbstractObject
 {
 	GENERATED_BODY()
 public:
 	UDronePluginManager();
-	
+
 	UFUNCTION(BlueprintCallable, Category = "DronePluginManager")
 	FDronePluginData GetDPData(EDPType dp_id) const;
+
+	UFUNCTION(BlueprintCallable, Category = "DronePluginManager")
+	FDronePluginData GetDPDataRandomly(ERarity weight_rarity = ERarity::B) const;
 	
 	FString EnumToString(EDPType dp_type) const;
 	

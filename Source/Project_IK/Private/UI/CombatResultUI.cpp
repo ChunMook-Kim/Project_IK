@@ -28,7 +28,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/CharacterStatComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "WorldSettings/IKGameModeBase.h"
-#include "UI/IKHUD.h"
+#include "WorldSettings/IKHUD.h"
 #include "Managers/LevelTransitionManager.h"
 #include "Managers/LevelEndUIManager.h"
 
