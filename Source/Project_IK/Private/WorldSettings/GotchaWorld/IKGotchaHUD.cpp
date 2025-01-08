@@ -10,7 +10,7 @@ See LICENSE file in the project root for full license information.
 
 #include "WorldSettings/GotchaWorld/IKGotchaHUD.h"
 
-#include "UI/GotchaWidget.h"
+#include "Blueprint/UserWidget.h"
 
 void AIKGotchaHUD::BeginPlay()
 {
@@ -18,12 +18,12 @@ void AIKGotchaHUD::BeginPlay()
 
 	UWorld* world = GetWorld();
 
-	if (gotcha_widget_class_)
+	if (widget_class_)
 	{
-		gotcha_widget_ = CreateWidget<UGotchaWidget>(world, gotcha_widget_class_);
-		if (gotcha_widget_.IsValid())
+		widget_ = CreateWidget<UUserWidget>(world, widget_class_);
+		if (widget_.IsValid())
 		{
-			gotcha_widget_->AddToViewport();
+			widget_->AddToViewport();
 		}
 	}
 }
