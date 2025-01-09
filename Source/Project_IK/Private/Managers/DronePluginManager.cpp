@@ -9,6 +9,7 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 #include "Managers/DronePluginManager.h"
+#include "Managers/EnumCluster.h"
 
 UDronePluginManager::UDronePluginManager()
 	:Super::URarityAbstractObject()

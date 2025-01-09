@@ -9,31 +9,10 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 #pragma once
 
+#include "StructCluster.h"
 #include "CoreMinimal.h"
-#include "RarityAbstractObject.h"
-#include "Managers/EnumCluster.h"
+#include "Structs/DronePluginData.h"
 #include "DronePluginManager.generated.h"
-
-USTRUCT(BlueprintType)
-struct FDronePluginData : public FRarityData
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "DronePlugin")
-	bool is_periodic_;
-	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "DronePlugin")
-	UClass* dp_class_;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "DronePlugin")
-	EDPType dp_type_;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "DronePlugin")
-	UTexture2D* dp_icon_;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "DronePlugin")
-	FString dp_description_;
-};
 
 UCLASS(Blueprintable)
 class PROJECT_IK_API UDronePluginManager : public URarityAbstractObject
