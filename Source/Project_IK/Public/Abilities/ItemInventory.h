@@ -27,6 +27,7 @@ class PROJECT_IK_API UItemInventory : public UObject
 	GENERATED_BODY()
 	
 public:
+	static constexpr int32 INVENTORY_CAPACITY = 3;
 
 	void AddItem(TWeakObjectPtr<UItem> item);
 	void AddItem(FItemData item_data);
