@@ -1,8 +1,8 @@
 /******************************************************************************
 Copyright(C) 2024
 Author: sinil.kang(rtd99062@gmail.com)
-Creation Date : 12.28.2024
-Summary : Header file of HUD for Gotcha level.
+Creation Date : 01.07.2025
+Summary : Header file for a widget to display currency.
 
 Licensed under the MIT License.
 See LICENSE file in the project root for full license information.
@@ -11,27 +11,24 @@ See LICENSE file in the project root for full license information.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/HUD.h"
-#include "IKGotchaHUD.generated.h"
+#include "Blueprint/UserWidget.h"
+#include "CurrencyWidget.generated.h"
 
-class UUserWidget;
+class UTextBlock;
 
 /**
  * 
  */
 UCLASS()
-class PROJECT_IK_API AIKGotchaHUD : public AHUD
+class PROJECT_IK_API UCurrencyWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
-	TSubclassOf<UUserWidget> widget_class_;
-
 protected:
-	virtual void BeginPlay() override;
+	virtual void NativeConstruct() override;
 
-	UPROPERTY()
-	TWeakObjectPtr<UUserWidget> widget_;
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	TWeakObjectPtr<UTextBlock> money_text_;
 };

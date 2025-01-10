@@ -16,7 +16,7 @@ See LICENSE file in the project root for full license information.
 
 void UItemInventory::AddItem(TWeakObjectPtr<UItem> item)
 {
-	if (item_inventory_.Num() < 3)
+	if (item_inventory_.Num() < INVENTORY_CAPACITY)
 	{
 		if (item.IsValid())
 		{
@@ -28,7 +28,7 @@ void UItemInventory::AddItem(TWeakObjectPtr<UItem> item)
 void UItemInventory::AddItem(FItemData item_data)
 {
 
-	if (item_inventory_.Num() < 3)
+	if (item_inventory_.Num() < INVENTORY_CAPACITY)
 	{
 		UItem* item = NewObject<UItem>(this, item_class_);
 		item->InitializeItemUsingData(item_data);
