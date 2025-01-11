@@ -101,7 +101,7 @@ void UGotchaWidget::Gotcha(int32 pulls)
 	{
 		int32 tmp = FMath::RandRange(0, 2);
 		FItemData* data_item;
-		FDronePluginData data_dp;
+		FDPData data_dp;
 		switch (tmp)
 		{
 		case 0:

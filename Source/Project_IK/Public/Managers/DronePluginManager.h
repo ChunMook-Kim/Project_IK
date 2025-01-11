@@ -9,9 +9,8 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 #pragma once
 
-#include "StructCluster.h"
 #include "CoreMinimal.h"
-#include "Structs/DronePluginData.h"
+#include "Structs/DPData.h"
 #include "DronePluginManager.generated.h"
 
 UCLASS(Blueprintable)
@@ -22,10 +21,10 @@ public:
 	UDronePluginManager();
 
 	UFUNCTION(BlueprintCallable, Category = "DronePluginManager")
-	FDronePluginData GetDPData(EDPType dp_id) const;
+	FDPData GetDPData(EDPType dp_id) const;
 
 	UFUNCTION(BlueprintCallable, Category = "DronePluginManager")
-	FDronePluginData GetDPDataRandomly(ERarity weight_rarity = ERarity::B) const;
+	FDPData GetDPDataRandomly(ERarity weight_rarity = ERarity::B) const;
 	
 	FString EnumToString(EDPType dp_type) const;
 	

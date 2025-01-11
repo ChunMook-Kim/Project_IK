@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/Object.h"
 #include "Managers/EnumCluster.h"
 #include "Managers/RarityAbstractObject.h"
-#include "FDronePluginData.generated.h"
+#include "DPData.generated.h"
 
-USTRUCT(BlueprintType)
-struct FDronePluginData : public FRarityData
+USTRUCT()
+struct PROJECT_IK_API FDPData : public FRarityData
 {
 	GENERATED_BODY()
 	
