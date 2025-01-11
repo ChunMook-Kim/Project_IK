@@ -38,7 +38,7 @@ void UItemInventory::AddItem(FItemData item_data)
 
 }
 
-TWeakObjectPtr<UItem> UItemInventory::GetItem(int32 index)
+TWeakObjectPtr<UItem> UItemInventory::GetItem(int32 index) const
 {
 	if (item_inventory_.IsValidIndex(index))
 	{
@@ -54,4 +54,9 @@ void UItemInventory::RemoveItem(int32 index)
 	{
 		item_inventory_.RemoveAt(index);
 	}
+}
+
+void UItemInventory::ClearItems()
+{
+	item_inventory_.Empty();
 }

@@ -32,10 +32,12 @@ public:
 	void AddItem(TWeakObjectPtr<UItem> item);
 	void AddItem(FItemData item_data);
 
-	TWeakObjectPtr<UItem> GetItem(int32 index);
+	TWeakObjectPtr<UItem> GetItem(int32 index) const;
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveItem(int32 index);
+
+	void ClearItems();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	TSubclassOf<UItem> item_class_;

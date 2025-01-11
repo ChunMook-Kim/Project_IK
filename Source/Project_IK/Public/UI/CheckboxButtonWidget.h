@@ -16,6 +16,8 @@ See LICENSE file in the project root for full license information.
 
 class UButton;
 class UImage;
+class FOnButtonClickedEvent;
+struct FItemData;
 
 /**
  * 
@@ -25,12 +27,16 @@ class PROJECT_IK_API UCheckboxButtonWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+	virtual bool Initialize() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
+	void SetItem(FItemData* item);
+	FItemData* GetItem() const;
 	void SetButtonTexture(UTexture2D* texture);
 
 	void SetIsChecked(bool flag);
 	void ToggleChecked();
 	inline bool IsChecked() const;
+	FOnButtonClickedEvent& GetButtonOnClicked();
 
 	static constexpr FLinearColor normal_color = FLinearColor(0.69f, 0.69f, 0.69f);
 	static constexpr FLinearColor hovered_color = FLinearColor(0.95f, 0.95f, 0.95f);
@@ -48,4 +54,5 @@ protected:
 	TWeakObjectPtr<UImage> selection_indicator_image_;
 
 	bool is_checked_;
+	FItemData* item_data_;
 };

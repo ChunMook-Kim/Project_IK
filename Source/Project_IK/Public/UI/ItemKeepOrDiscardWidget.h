@@ -42,6 +42,9 @@ protected:
 	virtual void NativeConstruct() override;
 	UFUNCTION()
 	void OnConfirmButtonClicked();
+	UFUNCTION()
+	void OnCheckboxButtonClicked();
+	bool ToggleCheckboxButton(UCheckboxButtonWidget* widget);
 
 	void AddItemCheckboxInventory(FItemData* item_data);
 	void AddItemCheckboxCandidates(TArray<FItemData*> item_data);
@@ -66,4 +69,6 @@ protected:
 	TArray<FItemData*> candidates_items_;
 	TArray<FItemData*> inventory_items_;
 
+	UPROPERTY(Transient)
+	int32 checked_items_num_;
 };

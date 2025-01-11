@@ -18,6 +18,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "WorldSettings/IKGameInstance.h"
@@ -32,6 +33,8 @@ bool UItemKeepOrDiscardWidget::Initialize()
 	candidates_items_widgets_.Empty();
 	inventory_items_.Empty();
 	inventory_items_widgets_.Empty();
+
+	checked_items_num_ = 0;
 	return true;
 }
 
@@ -42,6 +45,7 @@ void UItemKeepOrDiscardWidget::UpdateItems(TArray<FItemData*> inventory_items, T
 	{
 		AddItemCheckboxInventory(inventory_items[i]);
 	}
+	checked_items_num_ = inventory_item_capacity;
 	AddItemCheckboxCandidates(candidates_items);
 }
 
@@ -55,14 +59,72 @@ void UItemKeepOrDiscardWidget::NativeConstruct()
 
 void UItemKeepOrDiscardWidget::OnConfirmButtonClicked()
 {
-	inventory_items_widgets_[0]->ToggleChecked();
+	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (game_instance)
+	{
+		UItemInventory* inventory = game_instance->GetItemInventory();
+		inventory->ClearItems();
+
+		for (UCheckboxButtonWidget* widget : candidates_items_widgets_)
+		{
+			if (widget->IsChecked())
+			{
+				inventory->AddItem(*widget->GetItem());
+			}
+		}
+		for (UCheckboxButtonWidget* widget : inventory_items_widgets_)
+		{
+			if (widget->IsChecked())
+			{
+				inventory->AddItem(*widget->GetItem());
+			}
+		}
+	}
+}
+
+void UItemKeepOrDiscardWidget::OnCheckboxButtonClicked()
+{
+	for (UCheckboxButtonWidget* widget : candidates_items_widgets_)
+	{
+		// Finish callbackfunction if toggled.
+		if (ToggleCheckboxButton(widget))
+		{
+			return;
+		}
+	}
+	for (UCheckboxButtonWidget* widget : inventory_items_widgets_)
+	{
+		if (ToggleCheckboxButton(widget))
+		{
+			return;
+		}
+	}
+}
+
+bool UItemKeepOrDiscardWidget::ToggleCheckboxButton(UCheckboxButtonWidget* widget)
+{
+	if (widget->IsHovered())
+	{
+		item_text_->SetText(FText::FromString(widget->GetItem()->item_description_));
+		if (widget->IsChecked())
+		{
+			widget->ToggleChecked();
+			--checked_items_num_;
+			return true;
+		}
+		else if(checked_items_num_ < UItemInventory::INVENTORY_CAPACITY)
+		{
+			widget->ToggleChecked();
+			++checked_items_num_;
+			return true;
+		}
+	}
+	return false;
 }
 
 void UItemKeepOrDiscardWidget::AddItemCheckboxInventory(FItemData* item_data)
 {
 	UCheckboxButtonWidget* cb = WidgetTree->ConstructWidget<UCheckboxButtonWidget>(check_box_button_class_);
-	cb->SetButtonTexture(item_data->item_icon_);
-	cb->ToggleChecked();
 	if (cb)
 	{
 		UHorizontalBoxSlot* cb_slot = inventory_item_container_->AddChildToHorizontalBox(cb);
@@ -70,6 +132,11 @@ void UItemKeepOrDiscardWidget::AddItemCheckboxInventory(FItemData* item_data)
 		{
 			cb_slot->SetPadding(FMargin(64.f, 0.f));
 		}
+		cb->SetItem(item_data);
+		cb->ToggleChecked();
+		FOnButtonClickedEvent& on_clicked = cb->GetButtonOnClicked(); 
+		on_clicked.Clear();
+		on_clicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnCheckboxButtonClicked);
 
 		inventory_items_widgets_.Add(cb);
 		inventory_items_.Add(item_data);
@@ -94,7 +161,6 @@ void UItemKeepOrDiscardWidget::AddItemCheckboxCandidates(TArray<FItemData*> cand
 	for (int32 i = 0; i < candidates_items.Num(); i++)
 	{
 		UCheckboxButtonWidget* cb = WidgetTree->ConstructWidget<UCheckboxButtonWidget>(check_box_button_class_);
-		cb->SetButtonTexture(candidates_items[i]->item_icon_);
 		if (cb)
 		{
 			UHorizontalBoxSlot* cb_slot = candidates_item_containers_[i / MAX_ROW]->AddChildToHorizontalBox(cb);
@@ -102,6 +168,10 @@ void UItemKeepOrDiscardWidget::AddItemCheckboxCandidates(TArray<FItemData*> cand
 			{
 				cb_slot->SetPadding(FMargin(64.f, 16.f));
 			}
+			cb->SetItem(candidates_items[i]);
+			FOnButtonClickedEvent& on_clicked = cb->GetButtonOnClicked();
+			on_clicked.Clear();
+			on_clicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnCheckboxButtonClicked);
 
 			candidates_items_widgets_.Add(cb);
 			candidates_items_.Add(candidates_items[i]);
