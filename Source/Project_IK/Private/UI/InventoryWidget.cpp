@@ -63,8 +63,7 @@ void UInventoryWidget::ApplyHeroDP()
 	AIKGameModeBase* ik_mode = Cast<AIKGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (auto selected_hero = Cast<AHeroBase>(ik_mode->GetHeroContainers()[cur_hero_idx_]))
 	{
-		auto char_stat_cache = selected_hero->GetCharacterStat();
-		char_stat_cache->SetGeneralDP(heroDP_generic_->dp_data_.dp_type_);
-		char_stat_cache->SetPeriodicDP(heroDP_periodic_->dp_data_.dp_type_);
+		selected_hero->SetGenericDP(heroDP_generic_->dp_data_.dp_type_);
+		selected_hero->SetPeriodicDP(heroDP_periodic_->dp_data_.dp_type_);
 	}
 }
