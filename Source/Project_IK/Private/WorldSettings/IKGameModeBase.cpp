@@ -31,7 +31,7 @@ AIKGameModeBase::AIKGameModeBase()
 void AIKGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (game_instance)
 	{
