@@ -9,7 +9,7 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 #pragma once
-
+#include "Managers/EnumCluster.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Managers/CharacterDataManager.h"
@@ -21,13 +21,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDieDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShieldChangedDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBuffChangedDelegate);
-
-UENUM(BlueprintType)
-enum class ECharacterID : uint8
-{
-	Gunner UMETA(DisplayName = "Gunner"),
-	Cover UMETA(DisplayName = "Cover"),
-};
 
 UENUM(BlueprintType)
 enum class ECharacterStatType : uint8
@@ -191,11 +184,10 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	//TODO: 현재는 HeroType으로 되어있지만, Character stat은 Hero뿐만이 아닌 Enemy역시 사용하므로 이후 리펙토링이 되어야 한다.
 	UPROPERTY(EditAnywhere, Category = "Stats")
-	ECharacterID character_id_;
-
-
-
+	EHeroType character_id_;
+	
 	UFUNCTION(BlueprintCallable)
 	void SetAbilityPower(float ability_power) noexcept;
 	UFUNCTION(BlueprintCallable)

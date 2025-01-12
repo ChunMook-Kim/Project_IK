@@ -110,6 +110,7 @@ void UIKGameInstance::InitializeLevelTransitionManager()
 {
 	level_transition_manager_ = NewObject<ULevelTransitionManager>();
 	level_transition_manager_->SetActorBlueprints(hero_blueprint_, enemy_blueprint_);
+	level_transition_manager_->SetInstanceCache(this);
 }
 
 void UIKGameInstance::InitializeDronePluginManager()
