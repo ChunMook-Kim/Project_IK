@@ -223,18 +223,20 @@ void UItemPickerUI::SelectButtonBindingFunc()
 	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (game_instance)
 	{
-		// @@ TODO: Currently added item temporarily by 0
 		if (selected_button_index_ >= 0 && selected_button_index_ < item_candidates_.Num())
 		{
-			game_instance->GetItemInventory()->AddItem(*item_candidates_[selected_button_index_]);
+			game_instance->GetItemInventory()->AddItem(item_candidates_[selected_button_index_], [this]() 
+				{
+					// Update HUD status
+					AIKHUD* hud = Cast<AIKHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+					if (hud)
+					{
+						hud->SynchroItemButtons();
+						hud->SwitchUIByState(ELevelEndState::ShowingMapUI);
+					}
+				}
+			);
 		}
-	}
-	// Update HUD status
-	AIKHUD* hud = Cast<AIKHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
-	if (hud)
-	{
-		hud->SynchroItemButtons();
-		hud->SwitchUIByState(ELevelEndState::ShowingMapUI);
 	}
 }
 

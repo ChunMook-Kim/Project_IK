@@ -12,12 +12,6 @@ See LICENSE file in the project root for full license information.
 
 #include "Blueprint/UserWidget.h"
 
-// @@ TODO: remove it
-#include "UI/ItemKeepOrDiscardWidget.h"
-#include "Kismet/GameplayStatics.h"
-#include "WorldSettings/IKGameInstance.h"
-#include "Managers/ItemDataManager.h"
-
 void AIKGotchaHUD::BeginPlay()
 {
 	Super::BeginPlay();
@@ -30,26 +24,6 @@ void AIKGotchaHUD::BeginPlay()
 		if (widget_.IsValid())
 		{
 			widget_->AddToViewport();
-			UItemKeepOrDiscardWidget* item_widget = Cast<UItemKeepOrDiscardWidget>(widget_);
-			if (item_widget)
-			{
-				UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-				if (game_instance)
-				{
-					const UItemDataManager* item_manager = game_instance->GetItemDataManager();
-					TArray<FItemData*> inventory_items;
-					for (int32 i = 0; i < 3; i++)
-					{
-						inventory_items.Add(item_manager->GetItemDataRandomly());
-					}
-					TArray<FItemData*> candidates_items;
-					for (int32 i = 0; i < 7; i++)
-					{
-						candidates_items.Add(item_manager->GetItemDataRandomly());
-					}
-					item_widget->UpdateItems(inventory_items, candidates_items);
-				}
-			}
 		}
 	}
 

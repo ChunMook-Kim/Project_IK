@@ -35,6 +35,8 @@ public:
 	UFUNCTION()
 	FItemData GetData() const;
 
+	FItemData* GetDataPtr();
+
 	UFUNCTION()
 	FTargetParameters GetTargetParameters() const;
 

@@ -64,6 +64,11 @@ FItemData UItem::GetData() const
 	return item_data_;
 }
 
+FItemData* UItem::GetDataPtr()
+{
+	return &item_data_;
+}
+
 FTargetParameters UItem::GetTargetParameters() const
 {
 	return FTargetParameters(item_data_.targeting_mode_, item_data_.target_type_, item_data_.range_, item_data_.radius_);

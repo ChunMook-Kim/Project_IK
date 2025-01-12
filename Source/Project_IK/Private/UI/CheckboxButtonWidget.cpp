@@ -89,7 +89,7 @@ void UCheckboxButtonWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	selection_indicator_image_->SetVisibility(ESlateVisibility::Hidden);
+	selection_indicator_image_->SetVisibility(is_checked_ ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Hidden);
 
 	if (button_.IsValid())
 	{

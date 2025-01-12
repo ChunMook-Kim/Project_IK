@@ -21,6 +21,8 @@ class UCheckboxButtonWidget;
 class UTextBlock;
 struct FItemData;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConfirmed, TArray<FItemData>, data);
+
 /**
  * 
  */
@@ -37,6 +39,9 @@ public:
 	TSubclassOf<UCheckboxButtonWidget> check_box_button_class_;
 
 	static constexpr int32 MAX_ROW = 5;
+
+	UPROPERTY(BlueprintAssignable, Category = "Bindings")
+	FOnConfirmed OnConfirmed;
 
 protected:
 	virtual void NativeConstruct() override;

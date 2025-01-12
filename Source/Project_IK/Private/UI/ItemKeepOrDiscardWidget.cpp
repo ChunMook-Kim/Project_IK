@@ -52,33 +52,50 @@ void UItemKeepOrDiscardWidget::UpdateItems(TArray<FItemData*> inventory_items, T
 void UItemKeepOrDiscardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	const UTextureManager* texture_manager = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GetTextureManager();
 
 	confirm_button_->OnClicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnConfirmButtonClicked);
+
+	for (UCheckboxButtonWidget* widget : candidates_items_widgets_)
+	{
+		FOnButtonClickedEvent& on_clicked = widget->GetButtonOnClicked();
+		on_clicked.Clear();
+		on_clicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnCheckboxButtonClicked);
+	}
+	for (UCheckboxButtonWidget* widget : inventory_items_widgets_)
+	{
+		FOnButtonClickedEvent& on_clicked = widget->GetButtonOnClicked();
+		on_clicked.Clear();
+		on_clicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnCheckboxButtonClicked);
+	}
 }
 
 void UItemKeepOrDiscardWidget::OnConfirmButtonClicked()
 {
-	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (game_instance)
-	{
-		UItemInventory* inventory = game_instance->GetItemInventory();
-		inventory->ClearItems();
+	TArray<FItemData> selected_items;
 
-		for (UCheckboxButtonWidget* widget : candidates_items_widgets_)
+	for (UCheckboxButtonWidget* widget : inventory_items_widgets_)
+	{
+		if (widget->IsChecked())
 		{
-			if (widget->IsChecked())
-			{
-				inventory->AddItem(*widget->GetItem());
-			}
+			selected_items.Add(*widget->GetItem());
 		}
-		for (UCheckboxButtonWidget* widget : inventory_items_widgets_)
+	}
+	for (UCheckboxButtonWidget* widget : candidates_items_widgets_)
+	{
+		if (widget->IsChecked())
 		{
-			if (widget->IsChecked())
-			{
-				inventory->AddItem(*widget->GetItem());
-			}
+			selected_items.Add(*widget->GetItem());
 		}
+	}
+
+	if (OnConfirmed.IsBound())
+	{
+		OnConfirmed.Broadcast(selected_items);
+	}
+
+	if (IsInViewport())
+	{
+		RemoveFromParent();
 	}
 }
 
@@ -134,9 +151,6 @@ void UItemKeepOrDiscardWidget::AddItemCheckboxInventory(FItemData* item_data)
 		}
 		cb->SetItem(item_data);
 		cb->ToggleChecked();
-		FOnButtonClickedEvent& on_clicked = cb->GetButtonOnClicked(); 
-		on_clicked.Clear();
-		on_clicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnCheckboxButtonClicked);
 
 		inventory_items_widgets_.Add(cb);
 		inventory_items_.Add(item_data);
@@ -169,9 +183,6 @@ void UItemKeepOrDiscardWidget::AddItemCheckboxCandidates(TArray<FItemData*> cand
 				cb_slot->SetPadding(FMargin(64.f, 16.f));
 			}
 			cb->SetItem(candidates_items[i]);
-			FOnButtonClickedEvent& on_clicked = cb->GetButtonOnClicked();
-			on_clicked.Clear();
-			on_clicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnCheckboxButtonClicked);
 
 			candidates_items_widgets_.Add(cb);
 			candidates_items_.Add(candidates_items[i]);
