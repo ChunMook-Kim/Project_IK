@@ -41,7 +41,7 @@ void UInventoryComponent::BeginPlay()
 	RemoveDP(2);
 }
 
-TArray<FDPData> UInventoryComponent::GetInventory()
+TArray<FDPData>& UInventoryComponent::GetInventory()
 {
 	return inventory_;
 }
@@ -97,4 +97,5 @@ void UInventoryComponent::RemoveInventory()
 	inventory_widget_ref_->RemoveFromParent();
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
 	inventory_widget_ref_->ApplyHeroDP();
+	inventory_widget_ref_->ApplyInventoryComponent();
 }

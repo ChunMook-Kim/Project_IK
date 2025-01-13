@@ -24,9 +24,18 @@ class PROJECT_IK_API UInventoryWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+	virtual void NativeConstruct() override;
+	
 	void Initialize(UInventoryComponent* inventory_component);
 	void LoadInventoryComponent();
 	void ApplyHeroDP();
+	void ApplyInventoryComponent();
+
+	UFUNCTION()
+	void SwitchToLeftHero();
+	UFUNCTION()
+	void SwitchToRightHero();
+
 
 private:
 	UInventoryComponent* inventory_component_ref_;

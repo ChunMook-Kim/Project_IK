@@ -40,7 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveInventory();
 
-	TArray<FDPData> GetInventory();
+	TArray<FDPData>& GetInventory();
 	int GetInventorySize();
 
 private:

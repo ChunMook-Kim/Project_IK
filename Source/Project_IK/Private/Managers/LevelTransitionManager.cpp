@@ -102,6 +102,21 @@ const TArray<FCharacterData>& ULevelTransitionManager::GetSavedData() const
 	return data_;
 }
 
+FCharacterData ULevelTransitionManager::GetSavedData(int idx) const
+{
+	return data_[idx];
+}
+
+void ULevelTransitionManager::SetHeroPeriodicDPData(EDPType type, int idx)
+{
+	data_[idx].periodic_dp_ = type;
+}
+
+void ULevelTransitionManager::SetHeroGenericDPData(EDPType type, int idx)
+{
+	data_[idx].general_dp_ = type;
+}
+
 void ULevelTransitionManager::SpawnHeroes(UWorld* world)
 {
 	TArray<AActor*> marker;

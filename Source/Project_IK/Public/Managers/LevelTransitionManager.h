@@ -46,6 +46,14 @@ public:
 	void SetActorBlueprints(TSubclassOf<AActor> hero_blueprint, TSubclassOf<AActor> enemy_blueprint);
 	
 	const TArray<FCharacterData>& GetSavedData() const;
+	FCharacterData GetSavedData(int idx) const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetHeroPeriodicDPData(EDPType type, int idx);
+
+	UFUNCTION(BlueprintCallable)
+	void SetHeroGenericDPData(EDPType type, int idx);
+	
 
 protected:
 	void SpawnHeroes(UWorld* world);
