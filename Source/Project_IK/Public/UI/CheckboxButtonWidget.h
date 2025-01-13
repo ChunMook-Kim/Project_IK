@@ -43,6 +43,7 @@ public:
 	static constexpr FLinearColor pressed_color = FLinearColor(0.5f, 0.5f, 0.5f);
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 	void UpdateImageColor();
 	UFUNCTION()

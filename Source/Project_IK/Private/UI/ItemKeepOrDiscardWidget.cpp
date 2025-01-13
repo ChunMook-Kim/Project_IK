@@ -69,6 +69,11 @@ void UItemKeepOrDiscardWidget::NativeConstruct()
 	}
 }
 
+void UItemKeepOrDiscardWidget::NativeDestruct()
+{
+	OnConfirmed.Clear();
+}
+
 void UItemKeepOrDiscardWidget::OnConfirmButtonClicked()
 {
 	TArray<FItemData> selected_items;

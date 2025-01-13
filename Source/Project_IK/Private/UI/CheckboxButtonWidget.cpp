@@ -98,6 +98,14 @@ void UCheckboxButtonWidget::NativeConstruct()
 
 }
 
+void UCheckboxButtonWidget::NativeDestruct()
+{
+	if (button_.IsValid())
+	{
+		button_->OnClicked.Clear();
+	}
+}
+
 void UCheckboxButtonWidget::UpdateImageColor()
 {
 	// Retrieve the button's current state from its style

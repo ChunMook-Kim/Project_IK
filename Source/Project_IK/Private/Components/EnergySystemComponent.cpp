@@ -35,6 +35,11 @@ void UEnergySystemComponent::BeginPlay()
 	
 }
 
+void UEnergySystemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	OnEnergyChanged.Clear();
+}
+
 
 // Called every frame
 void UEnergySystemComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

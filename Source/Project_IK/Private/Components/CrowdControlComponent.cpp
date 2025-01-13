@@ -127,6 +127,8 @@ void UCrowdControlComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		// Clear timer
 		timer_manager.ClearTimer(pair.Value);
 	}
+
+	OnCrowdControlChanged.Clear();
 }
 
 void UCrowdControlComponent::BeginCC(ECCType cc_type, float duration)

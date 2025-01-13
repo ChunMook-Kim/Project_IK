@@ -75,6 +75,11 @@ void UGotchaResultWidget::NativeConstruct()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
+void UGotchaResultWidget::NativeDestruct()
+{
+	OnResultFinished.Clear();
+}
+
 FReply UGotchaResultWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	// Mouse clicked when everythings done

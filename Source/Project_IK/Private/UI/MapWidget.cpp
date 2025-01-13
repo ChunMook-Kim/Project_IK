@@ -105,6 +105,14 @@ void UMapWidget::NativeConstruct()
 	InitializeWidgets();
 }
 
+void UMapWidget::NativeDestruct()
+{
+	for (TPair<FIntPoint,TWeakObjectPtr<UButton>>& button : buttons_)
+	{
+		button.Value->OnClicked.Clear();
+	}
+}
+
 void UMapWidget::InitializeWidgetTree()
 {
 	root_canvas_panel_ = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), TEXT("MapWidgetRootCanvas"));
@@ -276,7 +284,7 @@ void UMapWidget::OpenLevel()
 {
 	UWorld* world = GetWorld();
 
-	for (const auto& pair : buttons_)
+	for (const TPair<FIntPoint, TWeakObjectPtr<UButton>>& pair : buttons_)
 	{
 		if (pair.Value->IsHovered())
 		{

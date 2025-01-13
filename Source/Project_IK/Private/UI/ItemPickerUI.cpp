@@ -67,6 +67,16 @@ void UItemPickerUI::NativeConstruct()
 	is_highligh_fade_in_ = true;
 }
 
+void UItemPickerUI::NativeDestruct()
+{
+	for (UButton* button : buttons_)
+	{
+		button->OnClicked.Clear();
+	}
+
+	select_button_->OnClicked.Clear();
+}
+
 void UItemPickerUI::InitializeRootWidget()
 {
 	root_canvas_panel_ = WidgetTree->ConstructWidget<UCanvasPanel>();

@@ -53,6 +53,22 @@ void UGotchaWidget::NativeConstruct()
 	ClearContainers();
 }
 
+void UGotchaWidget::NativeDestruct()
+{
+	if (back_space_.IsValid())
+	{
+		back_space_->OnClicked.Clear();
+	}
+	if (pull_one_button_.IsValid())
+	{
+		pull_one_button_->OnClicked.Clear();
+	}
+	if (pull_ten_button_.IsValid())
+	{
+		pull_ten_button_->OnClicked.Clear();
+	}
+}
+
 void UGotchaWidget::BackSpace()
 {
 	// @@ TODO: Go to proper level
