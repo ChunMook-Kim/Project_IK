@@ -100,3 +100,13 @@ void AHeroBase::OnStunned()
 	weapon_mechanics_->OnStunned();
 	passive_mechanics_->OnStunned();
 }
+
+void AHeroBase::SetPeriodicDP(EDPType dp_type)
+{
+	character_stat_component_->SetPeriodicDP(dp_type);
+}
+
+void AHeroBase::SetGenericDP(EDPType dp_type)
+{
+	character_stat_component_->SetGeneralDP(dp_type);
+}

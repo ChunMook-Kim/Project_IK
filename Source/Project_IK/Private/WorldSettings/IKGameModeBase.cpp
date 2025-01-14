@@ -81,8 +81,7 @@ void AIKGameModeBase::CheckWinLoseCondition()
 	}
 
 	DisplayCombatResult();
-	AIKPlayerController* pc = Cast<AIKPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (pc)
+	if(	AIKPlayerController* pc = Cast<AIKPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 	{
 		pc->GetTargetingComponent()->StopTargeting();
 	}

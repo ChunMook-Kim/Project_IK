@@ -22,7 +22,7 @@ See LICENSE file in the project root for full license information.
 
 // Sets default values
 UCharacterStatComponent::UCharacterStatComponent()
-	: character_id_(ECharacterID::Gunner), max_hit_points_(0.f)
+	: character_id_(EHeroType::Hero1), max_hit_points_(0.f)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
@@ -37,7 +37,7 @@ void UCharacterStatComponent::InitializeComponent()
 
 	if (ik_game_instance)
 	{
-		FCharacterData* character_data = ik_game_instance->GetCharacterDataManager()->GetCharacterData(static_cast<int32>(character_id_));
+		FCharacterData* character_data = ik_game_instance->GetCharacterDataManager()->GetCharacterData(character_id_);
 
 		stat_.ability_power_ = character_data->ability_power_;
 		stat_.attack_ = character_data->attack_;

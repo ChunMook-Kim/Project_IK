@@ -11,6 +11,7 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "Characters/Unit.h"
+#include "Managers/EnumCluster.h"
 #include "HeroBase.generated.h"
 
 class ADrone;
@@ -34,6 +35,11 @@ public:
 	
 	virtual void GetStunned(float stun_duration) override;
 	virtual void OnStunned() override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetPeriodicDP(EDPType dp_type);
+	UFUNCTION(BlueprintCallable)
+	void SetGenericDP(EDPType dp_type);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gunner", meta = (AllowPrivateAccess = "true", BindWidget))

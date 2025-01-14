@@ -33,6 +33,21 @@ ULevelTransitionManager::ULevelTransitionManager()
 {
 }
 
+void ULevelTransitionManager::SetInstanceCache(UGameInstance* game_instance)
+{
+	instance_cache_ = game_instance;
+}
+
+//
+void ULevelTransitionManager::InitHeroData(const TArray<EHeroType>& hero_types)
+{
+	UIKGameInstance* instance = Cast<UIKGameInstance>(instance_cache_);
+	for(const auto& type : hero_types)
+	{
+		data_.Add(*instance->GetCharacterDataManager()->GetCharacterData(type));
+	}
+}
+
 void ULevelTransitionManager::OpenLevel(UWorld* world, FIntPoint map_position)
 {
 	SaveData(world);
@@ -55,9 +70,6 @@ void ULevelTransitionManager::OpenLevel(UWorld* world, FIntPoint map_position)
 
 void ULevelTransitionManager::SaveData(UWorld* world)
 {
-	data_.Empty();
-
-	UIKGameInstance* instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(world));
 	AGameModeBase* raw_game_mode = UGameplayStatics::GetGameMode(world);
 	AIKGameModeBase* game_mode = Cast<AIKGameModeBase>(raw_game_mode);
 	if (game_mode)
@@ -69,18 +81,7 @@ void ULevelTransitionManager::SaveData(UWorld* world)
 			const UCharacterStatComponent* stat_component = hero->GetCharacterStat();
 
 			// @@ TODO: Need to save proper data.
-			data_.Add(stat_component->GetCharacterData());
-		}
-		return;
-	}
-	AIKHeroSelectMode* hero_select_mode = Cast<AIKHeroSelectMode>(raw_game_mode);
-	if (hero_select_mode)
-	{
-		// @@ TODO : Save selected hero data rather than hard coded one.
-				// Currently, save 4 stat data directly. Doesn't make sense.
-		for (int32 i = 0; i < 4; i++)
-		{
-			data_.Add(*instance->GetCharacterDataManager()->GetCharacterData(0));
+			data_[i] = stat_component->GetCharacterData();
 		}
 	}
 }
@@ -93,13 +94,27 @@ void ULevelTransitionManager::PrepareLevel(UWorld* world)
 
 void ULevelTransitionManager::SetActorBlueprints(TSubclassOf<AActor> hero_blueprint, TSubclassOf<AActor> enemy_blueprint)
 {
-	hero_blueprint_ = hero_blueprint;
 	enemy_blueprint_ = enemy_blueprint;
 }
 
 const TArray<FCharacterData>& ULevelTransitionManager::GetSavedData() const
 {
 	return data_;
+}
+
+FCharacterData ULevelTransitionManager::GetSavedData(int idx) const
+{
+	return data_[idx];
+}
+
+void ULevelTransitionManager::SetHeroPeriodicDPData(EDPType type, int idx)
+{
+	data_[idx].periodic_dp_ = type;
+}
+
+void ULevelTransitionManager::SetHeroGenericDPData(EDPType type, int idx)
+{
+	data_[idx].general_dp_ = type;
 }
 
 void ULevelTransitionManager::SpawnHeroes(UWorld* world)
@@ -116,7 +131,7 @@ void ULevelTransitionManager::SpawnHeroes(UWorld* world)
 
 	for (int32 i = 0; i < data_.Num(); ++i)
 	{
-		AHeroBase* hero = world->SpawnActor<AHeroBase>(hero_blueprint_, spawn_position + FVector(0, (300.f * (data_.Num() - 1) / -2.f ) + (i * 300), 90), spawn_rotation);
+		AHeroBase* hero = world->SpawnActor<AHeroBase>(data_[i].unit_class_, spawn_position + FVector(0, (300.f * (data_.Num() - 1) / -2.f ) + (i * 300), 90), spawn_rotation);
 		hero->SpawnDefaultController();
 		hero->GetComponentByClass<USkillContainer>()->SetSkill(UMyTestSkill::StaticClass());
 		hero->GetComponentByClass<UCharacterStatComponent>()->SetCharacterData(data_[0]);
