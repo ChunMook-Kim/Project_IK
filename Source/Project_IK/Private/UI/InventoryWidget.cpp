@@ -51,6 +51,8 @@ void UInventoryWidget::LoadInventoryComponent()
 		heroDP_generic_->SetImageTexture();
 		heroDP_periodic_->dp_data_ = dp_manager->GetDPData(char_stat_cache.periodic_dp_);
 		heroDP_periodic_->SetImageTexture();
+
+		hero_name_text_->SetText(FText::FromName(char_stat_cache.character_name_));
 	}
 	
 	wrap_box_->ClearChildren();
@@ -72,7 +74,6 @@ void UInventoryWidget::SwitchToLeftHero()
 	ApplyHeroDP();
 	ApplyInventoryComponent();
 	cur_hero_idx_ = FMath::Max(0, cur_hero_idx_ - 1);
-	UE_LOG(LogTemp, Error, TEXT("Cur Hero Idx: %d"), cur_hero_idx_);
 	LoadInventoryComponent();
 }
 
@@ -81,8 +82,6 @@ void UInventoryWidget::SwitchToRightHero()
 	ApplyHeroDP();
 	ApplyInventoryComponent();
 	cur_hero_idx_ = FMath::Min(cur_hero_idx_ + 1, 3);
-	UE_LOG(LogTemp, Error, TEXT("Cur Hero Idx: %d"), cur_hero_idx_);
-
 	LoadInventoryComponent();
 }
 

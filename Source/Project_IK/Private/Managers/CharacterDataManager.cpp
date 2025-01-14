@@ -14,11 +14,11 @@ See LICENSE file in the project root for full license information.
 UCharacterDataManager::UCharacterDataManager()
 	: Super::UObject()
 {
-	FString character_data_path = TEXT("/Script/Engine.DataTable'/Game/Resources/IK_Proto_Character_Data.IK_Proto_Character_Data'");
+	FString character_data_path = TEXT("/Script/Engine.DataTable'/Game/Resources/IK_Character_Data.IK_Character_Data'");
 	static ConstructorHelpers::FObjectFinder<UDataTable> dt_character_data(*character_data_path);
 	if (dt_character_data.Succeeded() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("GameInstance has failed to load a game file data (IK_Proto_Character_Data)"));
+		UE_LOG(LogTemp, Error, TEXT("GameInstance has failed to load a game file data (IK_Character_Data)"));
 	}
 	character_table = dt_character_data.Object;
 }

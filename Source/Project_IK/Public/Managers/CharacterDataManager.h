@@ -31,8 +31,11 @@ public:
 	{};
 
 	// Unit Type
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TSubclassOf<AUnit> unit_class_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Data")
+	FName character_name_;
 	
 	// Scaling powers
 	UPROPERTY(VisibleAnywhere, Category = "Data")
