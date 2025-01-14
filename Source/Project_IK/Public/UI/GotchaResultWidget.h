@@ -18,6 +18,8 @@ class UGotchaSlot;
 class UGridPanel;
 class UImage;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnResultFinished);
+
 /**
  * 
  */
@@ -31,8 +33,13 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UGotchaSlot> gotcha_slot_class_;
+
+	UPROPERTY(BlueprintAssignable, Category = "UI")
+	FOnResultFinished OnResultFinished;
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	UFUNCTION()

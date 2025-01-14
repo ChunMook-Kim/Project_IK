@@ -49,6 +49,8 @@ void UTargetingComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		targeting_visual_actor_->Destroy();
 		targeting_visual_actor_ = nullptr;
 	}
+	OnTargetResultSelected.Clear();
+	OnTargetingCanceled.Clear();
 }
 
 

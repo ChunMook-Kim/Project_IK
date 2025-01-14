@@ -101,6 +101,39 @@ void UButtonBarWidget::NativeConstruct()
 	is_item_muted_ = false;
 }
 
+void UButtonBarWidget::NativeDestruct()
+{
+	if (skill_button_0_)
+	{
+		skill_button_0_->OnClicked.Clear();
+	}
+	if (skill_button_1_)
+	{
+		skill_button_1_->OnClicked.Clear();
+	}
+	if (skill_button_2_)
+	{
+		skill_button_2_->OnClicked.Clear();
+	}
+	if (skill_button_3_)
+	{
+		skill_button_3_->OnClicked.Clear();
+	}
+
+	if (item_button_0_)
+	{
+		item_button_0_->OnClicked.Clear();
+	}
+	if (item_button_1_)
+	{
+		item_button_1_->OnClicked.Clear();
+	}
+	if (item_button_2_)
+	{
+		item_button_2_->OnClicked.Clear();
+	}
+}
+
 void UButtonBarWidget::OnSkillButtonClicked0()
 {
 	caster_ = 0;

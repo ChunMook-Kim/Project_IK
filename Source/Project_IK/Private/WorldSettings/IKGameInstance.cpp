@@ -42,7 +42,7 @@ void UIKGameInstance::Init()
 	InitializeTextureManager();
 	InitializeDialogueEventManager();
 
-	item_inventory_->AddItem(*item_data_manager_->GetItemDataRandomly());
+	item_inventory_->AddItem(item_data_manager_->GetItemDataRandomly());
 }
 
 const UItemDataManager* UIKGameInstance::GetItemDataManager() noexcept

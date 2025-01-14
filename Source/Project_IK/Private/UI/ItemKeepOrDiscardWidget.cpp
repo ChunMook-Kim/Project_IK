@@ -18,6 +18,7 @@ See LICENSE file in the project root for full license information.
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "WorldSettings/IKGameInstance.h"
@@ -32,6 +33,8 @@ bool UItemKeepOrDiscardWidget::Initialize()
 	candidates_items_widgets_.Empty();
 	inventory_items_.Empty();
 	inventory_items_widgets_.Empty();
+
+	checked_items_num_ = 0;
 	return true;
 }
 
@@ -42,27 +45,108 @@ void UItemKeepOrDiscardWidget::UpdateItems(TArray<FItemData*> inventory_items, T
 	{
 		AddItemCheckboxInventory(inventory_items[i]);
 	}
+	checked_items_num_ = inventory_item_capacity;
 	AddItemCheckboxCandidates(candidates_items);
 }
 
 void UItemKeepOrDiscardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	const UTextureManager* texture_manager = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->GetTextureManager();
 
 	confirm_button_->OnClicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnConfirmButtonClicked);
+
+	for (UCheckboxButtonWidget* widget : candidates_items_widgets_)
+	{
+		FOnButtonClickedEvent& on_clicked = widget->GetButtonOnClicked();
+		on_clicked.Clear();
+		on_clicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnCheckboxButtonClicked);
+	}
+	for (UCheckboxButtonWidget* widget : inventory_items_widgets_)
+	{
+		FOnButtonClickedEvent& on_clicked = widget->GetButtonOnClicked();
+		on_clicked.Clear();
+		on_clicked.AddDynamic(this, &UItemKeepOrDiscardWidget::OnCheckboxButtonClicked);
+	}
+}
+
+void UItemKeepOrDiscardWidget::NativeDestruct()
+{
+	OnConfirmed.Clear();
 }
 
 void UItemKeepOrDiscardWidget::OnConfirmButtonClicked()
 {
-	inventory_items_widgets_[0]->ToggleChecked();
+	TArray<FItemData> selected_items;
+
+	for (UCheckboxButtonWidget* widget : inventory_items_widgets_)
+	{
+		if (widget->IsChecked())
+		{
+			selected_items.Add(*widget->GetItem());
+		}
+	}
+	for (UCheckboxButtonWidget* widget : candidates_items_widgets_)
+	{
+		if (widget->IsChecked())
+		{
+			selected_items.Add(*widget->GetItem());
+		}
+	}
+
+	if (OnConfirmed.IsBound())
+	{
+		OnConfirmed.Broadcast(selected_items);
+	}
+
+	if (IsInViewport())
+	{
+		RemoveFromParent();
+	}
+}
+
+void UItemKeepOrDiscardWidget::OnCheckboxButtonClicked()
+{
+	for (UCheckboxButtonWidget* widget : candidates_items_widgets_)
+	{
+		// Finish callbackfunction if toggled.
+		if (ToggleCheckboxButton(widget))
+		{
+			return;
+		}
+	}
+	for (UCheckboxButtonWidget* widget : inventory_items_widgets_)
+	{
+		if (ToggleCheckboxButton(widget))
+		{
+			return;
+		}
+	}
+}
+
+bool UItemKeepOrDiscardWidget::ToggleCheckboxButton(UCheckboxButtonWidget* widget)
+{
+	if (widget->IsHovered())
+	{
+		item_text_->SetText(FText::FromString(widget->GetItem()->item_description_));
+		if (widget->IsChecked())
+		{
+			widget->ToggleChecked();
+			--checked_items_num_;
+			return true;
+		}
+		else if(checked_items_num_ < UItemInventory::INVENTORY_CAPACITY)
+		{
+			widget->ToggleChecked();
+			++checked_items_num_;
+			return true;
+		}
+	}
+	return false;
 }
 
 void UItemKeepOrDiscardWidget::AddItemCheckboxInventory(FItemData* item_data)
 {
 	UCheckboxButtonWidget* cb = WidgetTree->ConstructWidget<UCheckboxButtonWidget>(check_box_button_class_);
-	cb->SetButtonTexture(item_data->item_icon_);
-	cb->ToggleChecked();
 	if (cb)
 	{
 		UHorizontalBoxSlot* cb_slot = inventory_item_container_->AddChildToHorizontalBox(cb);
@@ -70,6 +154,8 @@ void UItemKeepOrDiscardWidget::AddItemCheckboxInventory(FItemData* item_data)
 		{
 			cb_slot->SetPadding(FMargin(64.f, 0.f));
 		}
+		cb->SetItem(item_data);
+		cb->ToggleChecked();
 
 		inventory_items_widgets_.Add(cb);
 		inventory_items_.Add(item_data);
@@ -94,7 +180,6 @@ void UItemKeepOrDiscardWidget::AddItemCheckboxCandidates(TArray<FItemData*> cand
 	for (int32 i = 0; i < candidates_items.Num(); i++)
 	{
 		UCheckboxButtonWidget* cb = WidgetTree->ConstructWidget<UCheckboxButtonWidget>(check_box_button_class_);
-		cb->SetButtonTexture(candidates_items[i]->item_icon_);
 		if (cb)
 		{
 			UHorizontalBoxSlot* cb_slot = candidates_item_containers_[i / MAX_ROW]->AddChildToHorizontalBox(cb);
@@ -102,6 +187,7 @@ void UItemKeepOrDiscardWidget::AddItemCheckboxCandidates(TArray<FItemData*> cand
 			{
 				cb_slot->SetPadding(FMargin(64.f, 16.f));
 			}
+			cb->SetItem(candidates_items[i]);
 
 			candidates_items_widgets_.Add(cb);
 			candidates_items_.Add(candidates_items[i]);

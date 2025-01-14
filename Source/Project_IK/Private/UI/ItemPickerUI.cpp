@@ -67,6 +67,16 @@ void UItemPickerUI::NativeConstruct()
 	is_highligh_fade_in_ = true;
 }
 
+void UItemPickerUI::NativeDestruct()
+{
+	for (UButton* button : buttons_)
+	{
+		button->OnClicked.Clear();
+	}
+
+	select_button_->OnClicked.Clear();
+}
+
 void UItemPickerUI::InitializeRootWidget()
 {
 	root_canvas_panel_ = WidgetTree->ConstructWidget<UCanvasPanel>();
@@ -223,18 +233,20 @@ void UItemPickerUI::SelectButtonBindingFunc()
 	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (game_instance)
 	{
-		// @@ TODO: Currently added item temporarily by 0
 		if (selected_button_index_ >= 0 && selected_button_index_ < item_candidates_.Num())
 		{
-			game_instance->GetItemInventory()->AddItem(*item_candidates_[selected_button_index_]);
+			game_instance->GetItemInventory()->AddItem(item_candidates_[selected_button_index_], [this]() 
+				{
+					// Update HUD status
+					AIKHUD* hud = Cast<AIKHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+					if (hud)
+					{
+						hud->SynchroItemButtons();
+						hud->SwitchUIByState(ELevelEndState::ShowingMapUI);
+					}
+				}
+			);
 		}
-	}
-	// Update HUD status
-	AIKHUD* hud = Cast<AIKHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
-	if (hud)
-	{
-		hud->SynchroItemButtons();
-		hud->SwitchUIByState(ELevelEndState::ShowingMapUI);
 	}
 }
 

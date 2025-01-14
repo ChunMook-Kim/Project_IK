@@ -17,6 +17,8 @@ See LICENSE file in the project root for full license information.
 class UButton;
 class UTextBlock;
 class UGotchaResultWidget;
+struct FItemData;
+struct FDPData;
 
 /**
  * 
@@ -32,6 +34,7 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	UFUNCTION()
 	void BackSpace();
 	UFUNCTION()
@@ -45,6 +48,11 @@ protected:
 
 	void Gotcha(int32 pulls);
 
+	void ClearContainers();
+
+	UFUNCTION()
+	void StorePulledData();
+
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	TWeakObjectPtr<UButton> back_space_;
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
@@ -55,6 +63,10 @@ protected:
 	TWeakObjectPtr<UTextBlock> tickets_count_text_;
 	UPROPERTY(VisibleAnywhere)
 	TWeakObjectPtr<UGotchaResultWidget> result_widget_;
+
+	TArray<FItemData*> pulled_items_;
+	TArray<FDPData> pulled_dps_;
+	int32 pulled_currency_;
 
 	int32 tickets_;
 };

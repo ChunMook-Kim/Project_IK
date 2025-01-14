@@ -40,6 +40,7 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 	void InitializeWidgetTree();
 	void InitializeButtons();

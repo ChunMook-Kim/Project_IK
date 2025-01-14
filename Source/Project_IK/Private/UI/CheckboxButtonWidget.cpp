@@ -11,14 +11,37 @@ See LICENSE file in the project root for full license information.
 
 #include "UI/CheckboxButtonWidget.h"
 
+#include "Managers/ItemDataManager.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+
+bool UCheckboxButtonWidget::Initialize()
+{
+	Super::Initialize();
+
+
+	item_data_ = nullptr;
+
+	is_checked_ = false;
+	return true;
+}
 
 void UCheckboxButtonWidget::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
 	Super::NativeTick(MyGeometry, DeltaTime);
 
 	UpdateImageColor();
+}
+
+void UCheckboxButtonWidget::SetItem(FItemData* item)
+{
+	item_data_ = item;
+	SetButtonTexture(item_data_->item_icon_);
+}
+
+FItemData* UCheckboxButtonWidget::GetItem() const
+{
+	return item_data_;
 }
 
 void UCheckboxButtonWidget::SetButtonTexture(UTexture2D* texture)
@@ -57,16 +80,29 @@ bool UCheckboxButtonWidget::IsChecked() const
 	return is_checked_;
 }
 
+FOnButtonClickedEvent& UCheckboxButtonWidget::GetButtonOnClicked()
+{
+	return button_->OnClicked;
+}
+
 void UCheckboxButtonWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	is_checked_ = false;
-	selection_indicator_image_->SetVisibility(ESlateVisibility::Hidden);
+	selection_indicator_image_->SetVisibility(is_checked_ ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Hidden);
 
 	if (button_.IsValid())
 	{
 		button_->OnClicked.AddDynamic(this, &UCheckboxButtonWidget::OnButtonClicked);
+	}
+
+}
+
+void UCheckboxButtonWidget::NativeDestruct()
+{
+	if (button_.IsValid())
+	{
+		button_->OnClicked.Clear();
 	}
 }
 

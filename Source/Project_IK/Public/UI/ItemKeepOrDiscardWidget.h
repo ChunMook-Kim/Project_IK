@@ -21,6 +21,8 @@ class UCheckboxButtonWidget;
 class UTextBlock;
 struct FItemData;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConfirmed, TArray<FItemData>, data);
+
 /**
  * 
  */
@@ -38,10 +40,17 @@ public:
 
 	static constexpr int32 MAX_ROW = 5;
 
+	UPROPERTY(BlueprintAssignable, Category = "Bindings")
+	FOnConfirmed OnConfirmed;
+
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	UFUNCTION()
 	void OnConfirmButtonClicked();
+	UFUNCTION()
+	void OnCheckboxButtonClicked();
+	bool ToggleCheckboxButton(UCheckboxButtonWidget* widget);
 
 	void AddItemCheckboxInventory(FItemData* item_data);
 	void AddItemCheckboxCandidates(TArray<FItemData*> item_data);
@@ -66,4 +75,6 @@ protected:
 	TArray<FItemData*> candidates_items_;
 	TArray<FItemData*> inventory_items_;
 
+	UPROPERTY(Transient)
+	int32 checked_items_num_;
 };

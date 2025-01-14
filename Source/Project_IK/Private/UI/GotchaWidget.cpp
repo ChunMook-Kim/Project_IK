@@ -44,10 +44,29 @@ void UGotchaWidget::NativeConstruct()
 	{
 		result_widget_ = WidgetTree->ConstructWidget<UGotchaResultWidget>(result_widget_class_);
 		result_widget_->AddToViewport(1);
+		result_widget_->OnResultFinished.AddDynamic(this, &UGotchaWidget::StorePulledData);
 	}
 
 	tickets_ = 99;
 	UpdateGotchaTicketCount();
+	
+	ClearContainers();
+}
+
+void UGotchaWidget::NativeDestruct()
+{
+	if (back_space_.IsValid())
+	{
+		back_space_->OnClicked.Clear();
+	}
+	if (pull_one_button_.IsValid())
+	{
+		pull_one_button_->OnClicked.Clear();
+	}
+	if (pull_ten_button_.IsValid())
+	{
+		pull_ten_button_->OnClicked.Clear();
+	}
 }
 
 void UGotchaWidget::BackSpace()
@@ -90,6 +109,8 @@ void UGotchaWidget::UpdateGotchaTicketCount()
 
 void UGotchaWidget::Gotcha(int32 pulls)
 {
+	ClearContainers();
+
 	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	const UItemDataManager* item_data_manager = game_instance->GetItemDataManager();
 	const UDronePluginManager* drone_plugin_manager = game_instance->GetDronePluginManager();
@@ -106,15 +127,17 @@ void UGotchaWidget::Gotcha(int32 pulls)
 		{
 		case 0:
 			data_item = item_data_manager->GetItemDataRandomly();
-			game_instance->GetItemInventory()->AddItem(*data_item);
+			pulled_items_.Add(data_item);
 			textures.Add(data_item->item_icon_);
 			break;
 		case 1:
 			data_dp = drone_plugin_manager->GetDPDataRandomly();
+			pulled_dps_.Add(data_dp);
 			textures.Add(data_dp.dp_icon_);
 			break;
 		default:
 			textures.Add(texture_manager->GetTexture("currency"));
+			pulled_currency_ += 10;
 			break;
 		}
 	}
@@ -126,4 +149,19 @@ void UGotchaWidget::Gotcha(int32 pulls)
 	{
 		result_widget_->DisplayResults(textures);
 	}
+}
+
+void UGotchaWidget::ClearContainers()
+{
+	pulled_currency_ = 0;
+	pulled_dps_.Empty();
+	pulled_items_.Empty();
+}
+
+void UGotchaWidget::StorePulledData()
+{
+	UIKGameInstance* game_instance = Cast<UIKGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	game_instance->GetItemInventory()->AddItems(pulled_items_);
+	// @@ TODO: Add DPs.
+	// @@ TODO: Add currency.
 }

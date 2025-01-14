@@ -68,6 +68,11 @@ void UCharacterStatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	GetWorld()->GetTimerManager().ClearTimer(shield_timer_);
+
+	Die.Clear();
+	OnHPChanged.Clear();
+	OnShieldChanged.Clear();
+	OnBuffChanged.Clear();
 }
 
 // Called every frame

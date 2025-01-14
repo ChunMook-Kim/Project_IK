@@ -75,12 +75,18 @@ void UGotchaResultWidget::NativeConstruct()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
+void UGotchaResultWidget::NativeDestruct()
+{
+	OnResultFinished.Clear();
+}
+
 FReply UGotchaResultWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	// Mouse clicked when everythings done
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && !is_running_)
 	{
 		SetVisibility(ESlateVisibility::Hidden);
+		OnResultFinished.Broadcast();
 	}
 	// Mouse clicked to skip gotcha animation
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && is_running_)
