@@ -18,7 +18,7 @@ class UButton;
 class UTextBlock;
 class UGotchaResultWidget;
 struct FItemData;
-struct FDronePluginData;
+struct FDPData;
 
 /**
  * 
@@ -65,7 +65,7 @@ protected:
 	TWeakObjectPtr<UGotchaResultWidget> result_widget_;
 
 	TArray<FItemData*> pulled_items_;
-	TArray<FDronePluginData> pulled_dps_;
+	TArray<FDPData> pulled_dps_;
 	int32 pulled_currency_;
 
 	int32 tickets_;
