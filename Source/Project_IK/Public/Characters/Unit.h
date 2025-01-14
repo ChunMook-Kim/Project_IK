@@ -50,7 +50,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyCrowdControl(ECCType cc_type, float duration);
-
+	
 	UFUNCTION()
 	virtual void GetStunned(float stun_duration) override;
 

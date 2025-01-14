@@ -9,6 +9,8 @@ See LICENSE file in the project root for full license information.
 ******************************************************************************/
 
 #include "Managers/DronePluginManager.h"
+#include "Managers/EnumCluster.h"
+#include "Structs/DPData.h"
 
 UDronePluginManager::UDronePluginManager()
 	:Super::URarityAbstractObject()
@@ -25,30 +27,30 @@ UDronePluginManager::UDronePluginManager()
 }
 
 //BP에서는 struct의 pointer를 return할 수 없다. 그러므로, 복사본으로 넘긴다.
-FDronePluginData UDronePluginManager::GetDPData(EDPType dp_id) const
+FDPData UDronePluginManager::GetDPData(EDPType dp_id) const
 {
 	if (dp_table_)
 	{
-		return *dp_table_->FindRow<FDronePluginData>(*EnumToString(dp_id), TEXT(""));
+		return *dp_table_->FindRow<FDPData>(*EnumToString(dp_id), TEXT(""));
 	}
-	return *dp_table_->FindRow<FDronePluginData>(*EnumToString(EDPType::Empty), TEXT(""));
+	return *dp_table_->FindRow<FDPData>(*EnumToString(EDPType::Empty), TEXT(""));
 }
 
-FDronePluginData UDronePluginManager::GetDPDataRandomly(ERarity weight_rarity) const
+FDPData UDronePluginManager::GetDPDataRandomly(ERarity weight_rarity) const
 {
 	if (!dp_table_)
 	{
-		return *dp_table_->FindRow<FDronePluginData>(*EnumToString(EDPType::Empty), TEXT(""));
+		return *dp_table_->FindRow<FDPData>(*EnumToString(EDPType::Empty), TEXT(""));
 	}
 
-	FDronePluginData* ptr = reinterpret_cast<FDronePluginData*>(GetRandomDataByRarity(GetRarityRandomly(weight_rarity)));
+	FDPData* ptr = reinterpret_cast<FDPData*>(GetRandomDataByRarity(GetRarityRandomly(weight_rarity)));
 	if (ptr)
 	{
 		return *ptr;
 	}
 	else
 	{
-		return *dp_table_->FindRow<FDronePluginData>(*EnumToString(EDPType::Empty), TEXT(""));
+		return *dp_table_->FindRow<FDPData>(*EnumToString(EDPType::Empty), TEXT(""));
 	}
 }
 

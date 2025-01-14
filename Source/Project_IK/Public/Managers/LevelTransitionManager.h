@@ -12,7 +12,7 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-
+#include "EnumCluster.h"
 
 #include "LevelTransitionManager.generated.h"
 
@@ -29,6 +29,12 @@ class PROJECT_IK_API ULevelTransitionManager : public UObject
 public:
 	ULevelTransitionManager();
 
+	UFUNCTION()
+	void SetInstanceCache(UGameInstance* game_instance);
+	
+	UFUNCTION(BlueprintCallable)
+	void InitHeroData(const TArray<EHeroType>& hero_types);
+
 	UFUNCTION(BlueprintCallable)
 	void OpenLevel(UWorld* world, FIntPoint map_position);
 	
@@ -40,6 +46,14 @@ public:
 	void SetActorBlueprints(TSubclassOf<AActor> hero_blueprint, TSubclassOf<AActor> enemy_blueprint);
 	
 	const TArray<FCharacterData>& GetSavedData() const;
+	FCharacterData GetSavedData(int idx) const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetHeroPeriodicDPData(EDPType type, int idx);
+
+	UFUNCTION(BlueprintCallable)
+	void SetHeroGenericDPData(EDPType type, int idx);
+	
 
 protected:
 	void SpawnHeroes(UWorld* world);
@@ -48,10 +62,11 @@ protected:
 	void SaveData(UWorld* world);
 
 	UPROPERTY()
+	UGameInstance* instance_cache_;
+	
+	UPROPERTY()
 	TArray<FCharacterData> data_;
 
-	UPROPERTY()
-	TSubclassOf<AActor> hero_blueprint_;
 	UPROPERTY()
 	TSubclassOf<AActor> enemy_blueprint_;
 };

@@ -123,3 +123,12 @@ enum class ERarity : uint8
 	A UMETA(DisplayName = "A"),
 	B UMETA(DisplayName = "B")
 };
+
+UENUM(BlueprintType)
+enum class EDPSlotType : uint8
+{
+	Inventory UMETA(DisplayName = "Inventory"),
+	HeroPeriodic UMETA(DisplayName = "HeroPeriodic"),
+	HeroGeneral UMETA(DisplayName = "HeroGeneral"),
+	INVALID UMETA(DisplayName = "INVALID")
+};

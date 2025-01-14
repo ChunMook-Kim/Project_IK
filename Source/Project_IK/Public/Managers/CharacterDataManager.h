@@ -19,7 +19,7 @@ See LICENSE file in the project root for full license information.
 /**
  * 
  */
-
+class AUnit;
 USTRUCT(BlueprintType)
 struct FCharacterData : public FTableRowBase
 {
@@ -30,6 +30,13 @@ public:
 		fire_range_(0.f), move_speed_(0.f), sight_range_(0.f)
 	{};
 
+	// Unit Type
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TSubclassOf<AUnit> unit_class_;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Data")
+	FName character_name_;
+	
 	// Scaling powers
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	float ability_power_;
@@ -66,8 +73,8 @@ class PROJECT_IK_API UCharacterDataManager : public UObject
 public:
 	UCharacterDataManager();
 
-	FCharacterData* GetCharacterData(int32 char_id) const;
-
+	FCharacterData* GetCharacterData(EHeroType char_id) const;
+	FString EnumToString(EHeroType dp_type) const;
 protected:
 	class UDataTable* character_table;
 };

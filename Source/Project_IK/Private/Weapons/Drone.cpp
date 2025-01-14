@@ -68,7 +68,7 @@ void ADrone::SetPlugins(EDPType p_dp_id, EDPType g_dp_id)
 {
 	if(p_dp_id != EDPType::Empty)
 	{
-		FDronePluginData p_dp_data = Cast<UIKGameInstance>(GetGameInstance())->GetDronePluginManager()->GetDPData(p_dp_id);
+		FDPData p_dp_data = Cast<UIKGameInstance>(GetGameInstance())->GetDronePluginManager()->GetDPData(p_dp_id);
 		if(p_dp_data.dp_class_ != nullptr)
 		{
 			drone_mechanics_->AddPeriodicPlugIn(p_dp_data.dp_class_);
@@ -76,7 +76,7 @@ void ADrone::SetPlugins(EDPType p_dp_id, EDPType g_dp_id)
 	}
 	if(g_dp_id != EDPType::Empty)
 	{
-		FDronePluginData g_dp_data = Cast<UIKGameInstance>(GetGameInstance())->GetDronePluginManager()->GetDPData(g_dp_id);
+		FDPData g_dp_data = Cast<UIKGameInstance>(GetGameInstance())->GetDronePluginManager()->GetDPData(g_dp_id);
 		if(g_dp_data.dp_class_ != nullptr)
 		{
 			drone_mechanics_->AddGeneralPlugIn(g_dp_data.dp_class_);
