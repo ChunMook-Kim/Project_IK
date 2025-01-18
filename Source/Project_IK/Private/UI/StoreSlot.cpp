@@ -11,3 +11,13 @@ See LICENSE file in the project root for full license information.
 
 #include "UI/StoreSlot.h"
 
+#include "UI/CheckboxButtonWidget.h"
+#include "Components/TextBlock.h"
+
+void UStoreSlot::NativeConstruct()
+{
+}
+
+void UStoreSlot::NativeDestruct()
+{
+}

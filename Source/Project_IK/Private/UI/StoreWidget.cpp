@@ -11,3 +11,10 @@ See LICENSE file in the project root for full license information.
 
 #include "UI/StoreWidget.h"
 
+void UStoreWidget::NativeConstruct()
+{
+}
+
+void UStoreWidget::NativeDestruct()
+{
+}

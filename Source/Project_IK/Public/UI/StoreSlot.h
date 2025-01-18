@@ -14,6 +14,9 @@ See LICENSE file in the project root for full license information.
 #include "Blueprint/UserWidget.h"
 #include "StoreSlot.generated.h"
 
+class UCheckboxButtonWidget;
+class UTextBlock;
+
 /**
  * 
  */
@@ -25,6 +28,12 @@ class PROJECT_IK_API UStoreSlot : public UUserWidget
 public:
 
 protected:
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCheckboxButtonWidget> checkbox_button_;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> cost_;
 	
 };
