@@ -25,6 +25,7 @@ class PROJECT_IK_API UInventoryWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	
 	void Initialize(UInventoryComponent* inventory_component);
 	void LoadInventoryComponent();

@@ -30,6 +30,13 @@ void UInventoryWidget::NativeConstruct()
 	switch_hero_right_button_->OnClicked.AddDynamic(this, &UInventoryWidget::UInventoryWidget::SwitchToRightHero);
 }
 
+void UInventoryWidget::NativeDestruct()
+{
+	switch_hero_left_button_->OnClicked.Clear();
+	switch_hero_right_button_->OnClicked.Clear();
+	Super::NativeDestruct();
+}
+
 void UInventoryWidget::Initialize(UInventoryComponent* inventory_component)
 {
 	inventory_component_ref_ = inventory_component;
