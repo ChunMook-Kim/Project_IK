@@ -14,9 +14,13 @@ See LICENSE file in the project root for full license information.
 #include "Blueprint/UserWidget.h"
 #include "StoreWidget.generated.h"
 
+enum class ERarity : uint8;
+struct FItemData;
+struct FDPData;
 class UHorizontalBox;
 class UTextBlock;
 class UButton;
+class UStoreSlot;
 
 /**
  * 
@@ -28,9 +32,19 @@ class PROJECT_IK_API UStoreWidget : public UUserWidget
 
 public:
 
+	static constexpr int32 STOCK = 3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UStoreSlot> store_widget_class_;
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+
+	UFUNCTION()
+	void OnPayButtonClicked();
+
+	int32 GetPriceByRarity(ERarity rarity);
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UHorizontalBox> item_container_;
@@ -44,5 +58,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> pay_button_;
 
-
+	TArray<FItemData*> items_;
+	TArray<FDPData> dps_;
 };

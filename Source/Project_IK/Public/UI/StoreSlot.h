@@ -26,6 +26,12 @@ class PROJECT_IK_API UStoreSlot : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void SetTexture(UTexture2D* texture);
+	UFUNCTION(BlueprintCallable)
+	void SetPrice(int32 price);
+
+	void BindOnClicked(const FSimpleDelegate& Callback);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -34,6 +40,7 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCheckboxButtonWidget> checkbox_button_;
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> cost_;
+	TObjectPtr<UTextBlock> price_text_;
 	
+	int32 price_;
 };
