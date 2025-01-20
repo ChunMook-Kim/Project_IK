@@ -26,27 +26,36 @@ void UGotchaResultWidget::DisplayResults(TArray<UTexture2D*> textures)
 	UGridSlot* grid_slot = Cast<UGridSlot>(slots_[0]->Slot);
 	grid_slot->SetNudge(FVector2D(0.f, 0.f));
 
-	for (int32 i = 0; i < MAX_IMAGE; i++)
+	const int32 texture_num = FMath::Min(textures.Num(), MAX_IMAGE);
+	for (int32 i = 0; i < texture_num; i++)
 	{
 		slots_[i]->SetImage(textures[i]);
-		slots_[i]->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	StartAnimationSquence();
+	// Hide unused slots
+	for (int32 i = texture_num; i < MAX_IMAGE; i++)
+	{
+		slots_[i]->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	StartAnimationSquence(texture_num);
 }
 
 void UGotchaResultWidget::DisplayResult(UTexture2D* texture)
 {
 	SetVisibility(ESlateVisibility::Visible);
 	slots_[0]->SetImage(texture);
+	slots_[0]->SetVisibility(ESlateVisibility::Visible);
 	UGridSlot* grid_slot = Cast<UGridSlot>(slots_[0]->Slot);
 	grid_slot->SetNudge(FVector2D(600.f, 150.f));
 
+	// Hide unused slots
 	for (int32 i = 1; i < MAX_IMAGE; i++)
 	{
 		slots_[i]->SetVisibility(ESlateVisibility::Hidden);
 	}
-	StartAnimationSquence();
+
+	StartAnimationSquence(1);
 }
 
 void UGotchaResultWidget::NativeConstruct()
@@ -68,7 +77,7 @@ void UGotchaResultWidget::NativeConstruct()
 
 		slots_.Add(image);
 	}
-
+	animation_max = MAX_IMAGE;
 	current_animation_index_ = 0;
 	is_running_ = false;
 
@@ -86,7 +95,14 @@ FReply UGotchaResultWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry,
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && !is_running_)
 	{
 		SetVisibility(ESlateVisibility::Hidden);
+
+		for (int32 i = 0; i < MAX_IMAGE; i++)
+		{
+			slots_[i]->SetVisibility(ESlateVisibility::Visible);
+		}
+
 		OnResultFinished.Broadcast();
+
 	}
 	// Mouse clicked to skip gotcha animation
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && is_running_)
@@ -103,9 +119,10 @@ void UGotchaResultWidget::ContinueAnimation()
 	PlayNextAnimation();
 }
 
-void UGotchaResultWidget::StartAnimationSquence()
+void UGotchaResultWidget::StartAnimationSquence(int32 animation_max_)
 {
-	for (int32 i = 0; i < MAX_IMAGE; i++)
+	animation_max = animation_max_;
+	for (int32 i = 0; i < animation_max; i++)
 	{
 		slots_[i]->ResetAnimationStatus();
 	}
@@ -117,7 +134,7 @@ void UGotchaResultWidget::StartAnimationSquence()
 
 void UGotchaResultWidget::PlayNextAnimation()
 {
-	if (current_animation_index_ >= slots_.Num())
+	if (current_animation_index_ >= animation_max)
 	{
 		is_running_ = false;
 		return;

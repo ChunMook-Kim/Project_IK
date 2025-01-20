@@ -17,6 +17,8 @@ See LICENSE file in the project root for full license information.
 class UCheckboxButtonWidget;
 class UTextBlock;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStoreSlotClickedDelegate);
+
 /**
  * 
  */
@@ -30,12 +32,23 @@ public:
 	void SetTexture(UTexture2D* texture);
 	UFUNCTION(BlueprintCallable)
 	void SetPrice(int32 price);
+	UFUNCTION(BlueprintCallable)
+	int32 GetPrice() const;
 
-	void BindOnClicked(const FSimpleDelegate& Callback);
+	UFUNCTION(BlueprintCallable)
+	bool IsChecked() const;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnStoreSlotClickedDelegate OnStoreSlotClickedDelegate;
 
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+
+
+	UFUNCTION()
+	void ForwardButtonClick();
+
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCheckboxButtonWidget> checkbox_button_;

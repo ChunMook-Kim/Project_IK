@@ -12,11 +12,12 @@ See LICENSE file in the project root for full license information.
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+// MUST include it because array need to instance it.
+#include "Structs/DPData.h"
 #include "StoreWidget.generated.h"
 
 enum class ERarity : uint8;
 struct FItemData;
-struct FDPData;
 class UHorizontalBox;
 class UTextBlock;
 class UButton;
@@ -31,6 +32,7 @@ class PROJECT_IK_API UStoreWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	virtual bool Initialize() override;
 
 	static constexpr int32 STOCK = 3;
 
@@ -43,14 +45,20 @@ protected:
 
 	UFUNCTION()
 	void OnPayButtonClicked();
+	UFUNCTION()
+	void OnStoreSlotClicked();
 
 	int32 GetPriceByRarity(ERarity rarity);
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UHorizontalBox> item_container_;
+	UPROPERTY()
+	TArray < TObjectPtr<UStoreSlot>> item_slots_;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UHorizontalBox> dp_container_;
+	UPROPERTY()
+	TArray<TObjectPtr<UStoreSlot>> dp_slots_;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> total_cost_text_;
@@ -60,4 +68,7 @@ protected:
 
 	TArray<FItemData*> items_;
 	TArray<FDPData> dps_;
+
+	UPROPERTY()
+	int32 total_cost_;
 };

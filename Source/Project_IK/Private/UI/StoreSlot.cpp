@@ -25,15 +25,37 @@ void UStoreSlot::SetPrice(int32 price)
 	price_text_->SetText(FText::FromString(FString::FromInt(price)));
 }
 
-void UStoreSlot::BindOnClicked(const FSimpleDelegate& Callback)
+int32 UStoreSlot::GetPrice() const
 {
+	return price_;
+}
 
+bool UStoreSlot::IsChecked() const
+{
+	return checkbox_button_->IsChecked();
 }
 
 void UStoreSlot::NativeConstruct()
 {
+	Super::NativeConstruct();
+
+	if (checkbox_button_)
+	{
+		checkbox_button_->OnCheckboxButtonClickedDelegate.AddDynamic(this, &UStoreSlot::ForwardButtonClick);
+	}
 }
 
 void UStoreSlot::NativeDestruct()
 {
+	Super::NativeDestruct();
+
+	OnStoreSlotClickedDelegate.Clear();
+}
+
+void UStoreSlot::ForwardButtonClick()
+{
+	if (OnStoreSlotClickedDelegate.IsBound())
+	{
+		OnStoreSlotClickedDelegate.Broadcast();
+	}
 }
