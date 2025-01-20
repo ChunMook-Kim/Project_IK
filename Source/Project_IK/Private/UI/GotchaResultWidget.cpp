@@ -35,7 +35,7 @@ void UGotchaResultWidget::DisplayResults(TArray<UTexture2D*> textures)
 	// Hide unused slots
 	for (int32 i = texture_num; i < MAX_IMAGE; i++)
 	{
-		slots_[i]->SetVisibility(ESlateVisibility::Hidden);
+		slots_[i]->SetRenderOpacity(0.f);
 	}
 
 	StartAnimationSquence(texture_num);
@@ -45,14 +45,14 @@ void UGotchaResultWidget::DisplayResult(UTexture2D* texture)
 {
 	SetVisibility(ESlateVisibility::Visible);
 	slots_[0]->SetImage(texture);
-	slots_[0]->SetVisibility(ESlateVisibility::Visible);
+	slots_[0]->SetRenderOpacity(1.f);
 	UGridSlot* grid_slot = Cast<UGridSlot>(slots_[0]->Slot);
 	grid_slot->SetNudge(FVector2D(600.f, 150.f));
 
 	// Hide unused slots
 	for (int32 i = 1; i < MAX_IMAGE; i++)
 	{
-		slots_[i]->SetVisibility(ESlateVisibility::Hidden);
+		slots_[i]->SetRenderOpacity(0.f);
 	}
 
 	StartAnimationSquence(1);
@@ -98,7 +98,8 @@ FReply UGotchaResultWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry,
 
 		for (int32 i = 0; i < MAX_IMAGE; i++)
 		{
-			slots_[i]->SetVisibility(ESlateVisibility::Visible);
+			slots_[i]->SetRenderOpacity(1.f);
+			slots_[i]->ResetAnimationStatus();
 		}
 
 		OnResultFinished.Broadcast();
